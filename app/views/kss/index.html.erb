@@ -1,0 +1,169 @@
+<!--
+<div style="margin-top:50px;margin-right:100px;margin-left:50px;">
+	<table class="table table-bordered">
+		<thead>
+			<tr class="active">
+				<td >処理名</td>
+				<td >対象月度</td>
+				<td >処理開始日時</td>
+				<td >実行状態</td>
+				<td >最終更新日時</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><%#= link_to '来店反響', kss_exec_raiten_path, :style=>'text-decoration: underline;' %></td>
+				<td><%#= @raiten[0]['month'] if @raiten[0] %></td>
+				<td><%#= @raiten[0]['start_datetime'] if @raiten[0] %></td>
+				<td><%#= @raiten[0]['exec_status'] if @raiten[0] %></td>
+				<td><%#= @raiten[0]['end_datetime'] if @raiten[0] %></td>
+			</tr>
+			<tr>
+				<td><%#= link_to '賃貸契約', kss_exec_chintai_path, :style=>'text-decoration: underline;' %></td>
+				<td><%#= @chintai[0]['month'] if @chintai[0] %></td>
+				<td><%#= @chintai[0]['start_status'] if @chintai[0] %></td>
+				<td><%#= @chintai[0]['exec_status'] if @chintai[0] %></td>
+				<td><%#= @chintai[0]['end_datetime'] if @chintai[0] %></td>
+			</tr>
+			<tr>
+				<td><%#= link_to '管理物件', kss_exec_kanri_bukken_path, :style=>'text-decoration: underline;' %></td>
+				<td><%#= @kanri_bukken[0]['month'] if @kanri_bukken[0] %></td>
+				<td><%#= @kanri_bukken[0]['start_datetime'] if @kanri_bukken[0] %></td>
+				<td><%#= @kanri_bukken[0]['exec_status'] if @kanri_bukken[0] %></td>
+				<td><%#= @kanri_bukken[0]['end_datetime'] if @kanri_bukken[0] %></td>
+			</tr>
+		</tbody>
+	</table>
+
+</div>
+-->
+
+			
+<script type="text/javascript">
+
+	init_jqgrid();
+  	
+	function exec_batch(batch_cd, month){
+		if(window.confirm('バッチ処理を開始します。よろしいですか？')){
+			
+			if(batch_cd == 20){
+				screen_block();
+				location.href = "/biruweb/kss/exec_raiten/" + month;
+			}
+			else if(batch_cd == 21){
+				screen_block();
+				location.href = "/biruweb/kss/exec_chintai/" + month;
+			}
+			else if(batch_cd == 22){
+				screen_block();
+				location.href = "/biruweb/kss/exec_mail_reaction/" + month;
+			}
+			else if(batch_cd == 10){
+				screen_block();
+				location.href = "/biruweb/kss/exec_kanri_bukken/" + month;
+			}
+			else if(batch_cd == 30){
+				screen_block();
+				location.href = "/biruweb/kss/exec_kouji_uriage/" + month;
+			}
+			else if(batch_cd == 40){
+				screen_block();
+				location.href = "/biruweb/kss/exec_nyuukyo_point/" + month;
+			}
+			else if(batch_cd == 35){
+				screen_block();
+				location.href = "/biruweb/kss/exec_trust_attack/" + month;
+			}
+			else if(batch_cd == 50){
+				screen_block();
+				location.href = "/biruweb/kss/exec_check_all/" + month;
+			}
+			else if(batch_cd == 51){
+				screen_block();
+				location.href = "/biruweb/kss/exec_check_keiyaku/" + month;
+			}
+			else if(batch_cd == 53){
+				screen_block();
+				location.href = "/biruweb/kss/exec_check_taikyo/" + month;
+			}
+			else if(batch_cd == 52){
+				screen_block();
+				location.href = "/biruweb/kss/exec_check_tasyakeiyaku/" + month;
+			}
+			else{
+				window.alert("指定したバッチIDは定義されていません：" + batch_cd);
+			}
+		}
+	}
+	
+	// バッチをクリックした時の実行
+	function formatter_exec_batch(cellValue, options, rowdata, action){
+		return "<a style='text-decoration: underline' href='javascript:exec_batch(" + rowdata.batch_cd + ", " + rowdata.month + ");'>" + cellValue + "</a>"
+		//return "<a style='text-decoration: underline' href='javascript:exec_batch(20, 201605);'>" + cellValue + "</a>"
+	}
+	
+	// 表を作成
+	function init_jqgrid(){
+		// 列名の定義
+		var col_names = ["バッチCD", "処理名", "対象月度", "処理開始日時", "実行状態", "最終更新日時"];
+		
+		// 列属性の定義
+		var col_model = [
+			 {name:"batch_cd", index:"batch_cd", align:"left", classes:"no_class", hidden:true}
+			,{name:"batch_name", index:"batch_name", align:"left", classes:"no_class", formatter:formatter_exec_batch}
+			,{name:"month", index:"month", align:"left", classes:"no_class", hidden:true}
+			,{name:"start_datetime", index:"start_datetime", align:"left", classes:"no_class"}
+			,{name:"exec_status", index:"exec_status", align:"left", classes:"no_class"}
+			,{name:"end_datetime", index:"end_datetime", align:"left", classes:"no_class"}
+		];
+		
+		// 列データの定義
+		
+		// その他の設定
+		jqgrid_opt = {
+			 table_name:'building_table'
+			,fotter_name:'building_pager'
+			,div_name:'div_dummy_02'
+			,caption:'<%= @month.slice(0,4) + '年' + @month.slice(4,2) + '月度' %> 集計状況'
+			,event_type:30
+			,shrinkFit:true
+			,multiselect:true
+		};
+		
+		// jqgrid作成
+		$(function(){
+			var table_div = $('#' + jqgrid_opt.table_name);
+			var div_box = $('#' + jqgrid_opt.div_name);
+			
+			table_div.jqGrid({
+				data : gon.data_list, // 表示したいデータ
+				datatype : "local",
+				colNames : col_names,
+				colModel : col_model,
+				caption : jqgrid_opt.caption,
+				loadComplete : function(){
+					table_div.jqGrid('setGridWidth', div_box.width(), jqgrid_opt.shrinkFit);
+				},
+			});
+		});
+	}
+	
+	function dropsort() {
+		document.yyyymm.submit();
+	}
+	
+</script>
+
+<div style="margin:30px 40px 10px 40px">
+	<div id="div_dummy_02" style="width100%; height:100%;">
+		<div><h2>集計状況</h2></div>
+		<div style="padding-bottom:5px; padding-top:10px;">
+			<%= form_tag({:action=> :index}, {:name => 'yyyymm', :onchange=>'javascript:screen_block();'} ) do %>
+				<%= select_tag(:month, options_for_select(@calender, @month), :onchange=>"javascript:dropsort();")%>
+			<% end %>
+		</div>
+	</div>
+	
+	<table id="building_table"></table>
+	<div id="building_pager"></div>
+</div>

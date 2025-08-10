@@ -1,0 +1,64 @@
+<% if flash[:notice] %>
+	<div class="alert alert-info alert-dismissible" role="alert" style="margin-bottom:0px;" id="alert-block">
+	  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	  <%= flash[:notice] %>
+	</div>
+<% end %>
+
+<% if flash[:danger] %>
+	<div class="alert alert-danger alert-dismissible" role="alert" style="margin-bottom:0px;" id="alert-block">
+	  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	  <%= flash[:danger] %>
+	</div>
+<% end %>
+
+<div style="padding-bottom:10px;">&nbsp;</div>
+
+<div class="modal-dialog">
+	<div class="modal-content">
+
+		  <div class="modal-header">
+			<%= form_tag( {:action=>'attack_list_maintenance_bulk_owner_csv'} ) do %>
+				<%= hidden_field_tag :sid,  @biru_trust_user.id %>
+			    <h4 class="modal-title" >貸主メンテナンス【　<span style="font-size:5px"><%= @biru_user.name%>&nbsp;さん</span>】<%= submit_tag 'ファイルに出力' , :class=>"btn btn-sm btn-primary", :style=>"margin-left:20px;" %></h4>
+			<% end %>
+		  </div>
+  
+		  <div class="modal-body">
+	  	
+			<%= form_tag( {:action=>'attack_list_maintenance_bulk_owner_input'}, {multipart: true}  ) do %>
+				<%= hidden_field_tag :sid,  @biru_trust_user.id %>
+				<%= submit_tag '取り込み' , :class=>"btn btn-sm btn-primary", :style=>"float:right;margin-right:10px;" , :onclick=>'javascript:screen_block();' %>
+				<%= file_field_tag :upload_file %>
+			<% end %>
+
+		  </div>
+
+	</div>
+</div>
+<div style="padding-bottom:10px;">&nbsp;</div>
+
+<div class="modal-dialog">
+	<div class="modal-content">
+
+		  <div class="modal-header">
+			<%= form_tag( {:action=>''},{:name=>'trust_search'} ) do %>
+				<%= hidden_field_tag :sid,  @biru_trust_user.id %>
+			    <h4 class="modal-title" >物件メンテナンス<%= submit_tag 'ファイルに出力' , :class=>"btn btn-sm btn-success", :style=>"margin-left:20px;margin-right:20px;", :onClick=>'javascript:alert("まだ未実装です");return false;' %>　</h4>
+			<% end %>
+		  </div>
+  
+		  <div class="modal-body">
+			  
+			<%= form_tag( {:action=>''}, {multipart: true}  ) do %>
+				<%= hidden_field_tag :sid,  @biru_trust_user.id %>
+				<%= submit_tag '取り込み' , :class=>"btn btn-sm btn-success", :style=>"float:right;margin-right:10px;", :onClick=>'javascript:alert("まだ未実装です");return false;' %>
+				<%= file_field_tag :upload_file %>
+			<% end %>
+	  	
+
+		  </div>
+
+	</div>
+</div>
+

@@ -1,0 +1,66 @@
+
+<style type="text/css">
+	body {  
+	    text-align: center;  
+	}
+	
+	.main {  
+	    width: 100%;  
+	    border: 0px;
+	}  
+	.main div   {  
+	    width: 40%;  
+	    border: 1px solid #3399FF;  
+	    margin: 0 auto;  
+	}	
+	
+</style>
+
+<div class="main">
+	
+	<div style="margin-top:300px;padding:50px;">
+		<%= @str %>
+	</div>
+	<a id="link" href="javascript:void(0)" style="visibility:hidden;position:absolute;"></a>
+</div>
+
+
+<script type="text/javascript">
+
+$(function(){
+
+	window.name = "iss_redirect_page";
+	
+	// 閉じるウィンドウ名を渡す。
+	<% if @ridirect_type == :owner %>
+		javascript:iss_win_owner(<%= @id %>, null );
+		window.open('about:blank','_self').close();
+
+	<% elsif @ridirect_type == :building %>
+		javascript:iss_win_building(<%= @id %>, null );
+		window.open('about:blank','_self').close();
+
+	<% elsif @ridirect_type == :keiyaku %>
+		javascript:iss_win_keiyaku(<%= @id %>, <%= @biru_user.code %>, null );
+		window.open('about:blank','_self').close();
+
+	<% elsif @ridirect_type == :syuuri %>
+		javascript:iss_win_syuuri(<%= @biru_user.code %>, null );
+		window.open('about:blank','_self').close();
+
+	<% elsif @ridirect_type == :heya %>
+		javascript:iss_win_heya(<%= @bukken_cd.to_i %>, <%= @heya_no %>, null );
+		window.open('about:blank','_self').close();
+	<% elsif @ridirect_type == :construction %>
+		javascript:iss_win_construction(<%= @kouzi_no.to_i %>, null );
+		window.open('about:blank','_self').close();
+			
+	<% elsif @ridirect_type == :kouji_misyuu %>
+		javascript:iss_win_kouji_misyuu(<%= @misyuu_kbn %>, '<%= @seikyuu_no %>', '<%= @kouji_no %>', '<%= @keiyaku_no %>', '<%= @koumoku_code %>', <%= @biru_user.code %>);
+		window.open('about:blank','_self').close();
+		
+	<% end %>
+		
+		
+});
+</script>

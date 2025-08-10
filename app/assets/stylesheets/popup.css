@@ -1,0 +1,200 @@
+
+
+/** ------------ header ------------ **/
+.navbar {
+  min-height: 1px;
+  vertical-align: bottom;
+}
+
+.navbar-inverse{
+  /*background-color: #446e9b;*/
+  
+}
+.title {
+  margin: 0;
+  padding-top:10px;
+  padding-left:20px;
+  padding-right:20px;
+  
+  color: #FFFFFF;
+  text-align: left;
+  font-size: 1.2em;
+  font-weight: bold;
+  width: 100%;
+  cursor: default;
+  /*background-color: #446e9b;*/
+  background-image: linear-gradient(#6D93BF, #446e9b 50%, #3e648d); /*2017/09/06 shibata bootstrapのグラデーションをコピー */
+  height:40px;  
+  
+}
+
+/** user info **/
+.user-header {
+  /* background-color: rgba(255, 255, 255, 0.7); */
+  top: 0;
+  right: 0;
+  float: right;
+  color: #FFFFFF;
+}
+.user-header .user-name {
+  margin: 3px;
+  font-size: 0.8em;
+}
+.user-header .btn-logout {
+  font-size: 0.8em;
+  text-decoration: underline;
+  margin: 3px;
+  color: #2a6496;
+}
+
+/** ------ report ------ **/
+.report-content > * {
+  margin: 10px auto;
+}
+
+.container .common-items > * {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.msg {
+    display: none;
+}
+
+/** ------ report-header ----- **/
+.report-header .table {
+  margin-bottom: 0;
+}
+
+.worklog {
+  background-color: #f7f7f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 5px;
+}
+
+/** ----- section ----- **/
+.section {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+.section > div {
+  margin: 10px auto !important;
+}
+.section textarea {
+  height: 8em;
+}
+
+.img-preview {
+	 display:none;
+}
+
+.img-preview img {
+	height: 256px;
+}
+
+/** ------------ button ------------ **/
+.btn-wrap .btn {
+  font-size: 1.2em;
+  width: 160px;
+  padding: 5px 20px;
+  font-weight: bold;
+}
+
+/** indicator **/
+.indicator-wrap {
+  display: none;
+}
+
+.indicator {
+  position: fixed;
+  height: 80px;
+  width: 80px;
+  padding-left: 35px;
+  background-color: white;
+  opacity: 0.8;
+  z-index: 1001;
+  display: block;
+  border-radius: 10px;
+  left: calc(50% - 80pt);
+}
+
+@keyframes rotate {
+  0% {}
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.throbber {
+  display: inline-block;
+  position: relative;
+  width: 10px;
+  height: 80px;
+  border-top: 20px solid gray;
+  border-bottom: 20px solid rgba(128, 128, 128, 0.3);
+  animation: rotate 2s infinite linear;
+}
+.throbber:before, .throbber:after {
+  content: "";
+  width: 10px;
+  height: 80px;
+  border-top: 20px solid gray;
+  border-bottom: 20px solid gray;
+  position: absolute;
+  top: -20px;
+  opacity: 0.3;
+  transform: rotate(-60deg);
+}
+.throbber:after {
+  transform: rotate(60deg);
+}
+
+.overlay {
+  position: fixed;
+  background-color: black;
+  opacity: 0.6;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.gototop a {
+    display:none;
+}
+@media screen and (max-width : 768px) {
+    .gototop a {
+        display:block;
+        text-decoration: none;
+        font-size: 2.0em;
+        position: fixed;
+        bottom: 10px;
+        right: 15px;
+        z-index: 1001;
+        opacity: 0.7;
+    }
+}
+
+/* 2017.09.12 色は「鮮やかさ」を抑えたマットな感じで少し明るめなほうがしっくりきた。*/
+/* 色早見表：http://www.tagindex.com/color/color_gradation.html#detail */
+.biru-back-color-blue{
+  background-image: linear-gradient(#6D93BF, #446e9b 50%, #3e648d);
+  color:#FFFFFF;
+}
+.biru-back-color-green {
+  background-image: linear-gradient(#478d6a, #387255 50%, #2b5540);
+  color:#FFFFFF;
+}
+.biru-back-color-bgreen{
+  background-image: linear-gradient(#478d8d, #387272 50%, #2b5555);
+  color:#FFFFFF;
+}
+.biru-back-color-red{
+  background-image: linear-gradient(#aa5580, #8d476a 50%, #723855);
+  color:#FFFFFF;
+}
+.biru-back-color-purple{
+  background-image: linear-gradient(#9572b8, #8055aa 50%, #6a478d);
+  color:#FFFFFF;
+}

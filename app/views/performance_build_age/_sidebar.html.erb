@@ -1,0 +1,105 @@
+  
+<%= render :partial=>'performance_def' %> <!-- views/application/_performance_def.html.erb --> 
+
+<% content_for :sidebar_build_age do %>
+
+  <script type="text/javascript">
+
+    function disp(){
+
+      restut_status = false;
+
+      if(frm.monthly_yyyymm_from.value == ""){
+        alert('対象年月を指定してください');
+        return;
+      }
+
+      frm.yyyymm_title.value = frm.monthly_yyyymm_from.value
+      frm.yyyymm_type.value = "1"
+
+      frm.yyyymm_s_monthly.value = frm.monthly_yyyymm_from.value;
+
+      frm.dept.value = $('#tree-dept').tree('getSelectedNode').id;
+      if(frm.dept.value =='undefined' ){
+        alert('部署を指定してください');
+        return;
+      }
+
+      frm.dept_list.value = $('#tree-dept').tree('getSelectedNode').dept_list
+      if(frm.dept_list.value =='undefined' ){
+        alert('dept_listが未定義です');
+        return;
+      }
+
+      frm.graph_name.value = $('#tree-dept').tree('getSelectedNode').graph_name
+      if(frm.graph_name.value =='undefined' ){
+        alert('graph_nameが未定義です');
+        return;
+      }
+
+      restut_status = true;
+      frm.submit();
+    }
+
+  </script>
+  
+
+	<style type="text/css">
+
+		/* リキッドレイアウトを使って左固定バーと共にmainは可変100%に */
+		div#top-wrapper{
+			width:95%;
+		}
+
+		div#top-contents{
+			width: 100%;
+			float: right;
+		}
+
+		div#top-contents-main{
+			margin-left: 280px;
+		}
+
+		div#top-sidebar{
+			width: 250px;
+			margin-right: -250px;
+			float: left;
+		}
+	</style>
+
+  <div id="sidebar" style="padding-left:10px;padding-right:0px;">
+    <div id="myTabContent_search" class="tab-content">
+
+      <div class="tab-pane fade active in" id="tab_month" style="padding:0;margin:0;margin-top:20px;">
+
+        <%= form_tag performance_build_age_display_path ,:name=>"frm" do %>
+          <%= hidden_field_tag 'yyyymm_s_monthly', '' %>
+          <%= hidden_field_tag 'yyyymm_e_monthly', '' %>
+          <%= hidden_field_tag 'yyyymm_title', '' %>
+          <%= hidden_field_tag 'yyyymm_type', '' %>
+          <%= hidden_field_tag 'dept', '' %>
+          <%= hidden_field_tag 'dept_list', '' %>
+          <%= hidden_field_tag 'graph_name', '' %>
+
+          <ul class="nav nav-list well" >
+            <div style="text-align: center;">
+              <%= button_tag "築年数を表示" ,:type=>'button', :style=>'margin-bottom:15px;margin-top:0px;', :id=>'graph-submit-top', :onClick=>"javascript:disp();" %>
+            </div>
+
+            <div>
+              &nbsp;&nbsp;&nbsp;年月&nbsp;&nbsp;&nbsp;<label style="text-align:left;"><%= text_field_tag 'monthly_yyyymm_from', @yyyymm_s_monthly, :class=>'ympicker', :style=>'width:80px;text-align:center;' %></label>
+            </div>
+
+            <div id="tree-dept"></div>
+
+            <div style="text-align: center;">
+              <%= button_tag "築年数を表示" ,:type=>'button', :style=>'margin-top:20px;', :id=>'graph-submit-bottom', :onClick=>"javascript:disp();" %>
+            </div>
+          </ul>
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+
+<% end %>

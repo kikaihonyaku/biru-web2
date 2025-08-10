@@ -1,0 +1,2 @@
+module KssHelper
+end

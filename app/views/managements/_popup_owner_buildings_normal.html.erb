@@ -1,0 +1,41 @@
+<table class="table table-bordered table-condensed" style="padding-bottom:0px;margin-bottom:3px;">
+<thead>
+  <tr>
+    <th class="active biru-back-color-blue" style="min-width:150px;">建物名</th>
+    <th class="active biru-back-color-blue">管理委託／建物CD</th>
+    <th class="active biru-back-color-blue">管理方式</th>
+    <th class="active biru-back-color-blue">管轄営業所</th>
+    <th class="active biru-back-color-blue">定期メンテナンス</th>
+  </tr>
+</thead>
+<tbody>
+<% @owner.trusts.each do | trust | %>
+    
+  <% if trust.building %>
+
+    <tr>
+      <td><a href="javascript:win_building(<%= trust.building.id %>);"><%= trust.building.name %></a></td>
+      <td style="text-align:center;"><%= trust.code %>&nbsp;／&nbsp;<%= trust.building.code %></td>
+      <td style="text-align:center;"><%= trust.manage_type.name %></td>
+      <% if trust.building.shop %>
+        <td style="text-align:center;"><%= trust.building.shop.name %></td>
+      <% else %>
+        <td></td>
+      <% end %>
+      <td>
+
+        <% if arr = @teiki_kouji_map[trust.code] %>
+
+          <%= arr.join(', ') %>
+
+        <% else %>
+          &nbsp;
+        <% end %>
+      </td>
+    </tr>
+
+  <% end %>
+    
+<% end %>
+</tbody>
+</table>

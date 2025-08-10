@@ -1,0 +1,1261 @@
+<% content_for :header do %>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&v=3&language=ja&libraries=visualization&key=AIzaSyCFmLUX03pHtnUN_wP2fh9rNKoOnzrCcTs&client=gme-chuobuildingkanri"></script>
+<script type="text/javascript">
+
+
+// アイコンを変更します。
+function change_icon(){
+
+  // ajaxで凡例を変更
+  document.forms['biru_icon'].s_commit.click();
+
+  // コンボボックスで選択されたものにgooglemapのアイコンを変更
+  change_biru_icon($('#biru_icon_id [name=disp_type]').val());
+
+}
+
+// 建物のアイコンを変更します。
+function change_biru_icon(type){
+  if(type == "siten"){
+    // 支店表示
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].siten_icon );
+    };
+  }else if(type == "area"){
+    // エリア表示
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].area_icon );
+    };
+  } else if(type == "shop" ){
+    // 営業所表示
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].shop_icon );
+    };
+
+  } else if(type == "biru_kind" ){
+    // 建物種別のアイコンにする。
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].build_type_icon );
+    };
+  } else if( type == "manage_type") {
+    // 管理方式のICONを返しますのアイコンにする。
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].manage_icon );
+    };
+  } else if( type == "num") {
+    // 管理戸数のアイコンにする。
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].kanri_room_num );
+    };
+  } else if( type == "aki") {
+    // 空室のアイコンにする。
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].free_room );
+    };
+  } else if( type == "age") {
+    // 築年月のアイコンにする。
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].biru_age );
+    };
+
+  } else {
+    // 何もしない
+  }
+
+}
+
+
+// 営業所マーカーの表示／非表示
+function dips_shops(flg){
+  for(var item in shop_arr){
+    shop_arr[item].set("visible", flg);
+  };
+}
+
+// 委託契約マーカーの表示／非表示
+function dips_trusts(flg){
+  for(var item in trust_arr){
+    trust_arr[item].set("visible", flg);
+  };
+}
+
+// 貸主マーカーの表示／非表示
+function dips_owners(flg){
+  for(var item in owner_arr){
+    owner_arr[item].set("visible", flg);
+  };
+}
+
+
+// 営業所の半径１kmのマーカーの表示／非表示
+function disp_shop_01(flg){
+  for(var item in shop_circle01_arr){
+    shop_circle01_arr[item].set("visible", flg);
+  };
+}
+
+// 営業所の半径１.2kmのマーカーの表示／非表示
+function disp_shop_02(flg){
+  for(var item in shop_circle02_arr){
+    shop_circle02_arr[item].set("visible", flg);
+  };
+}
+
+
+// 市場物件layler
+function dips_market_building_layer(flg){
+	if(flg){
+		market_building_layer.setMap(mapCanvas);
+	}else{
+		market_building_layer.setMap(null);
+	}
+}
+
+// ビル管理　物件layler
+function dips_biru_building_layer(flg){
+	if(flg){
+		biru_building_layer.setMap(mapCanvas);
+	}else{
+		biru_building_layer.setMap(null);
+	}
+}
+
+// マーケットシェア layre
+function dips_market_share_layer(){
+	
+	//--------------------------------------------------------------------
+	// biru-map.jsで定義しているマーケットシェアコントロールラベルのID
+	//--------------------------------------------------------------------
+	
+	// マーケットシェア表示ラベル
+	var disp_flg = document.getElementById("marketShareChk").checked;
+
+	// 表示地域（すべて・重点地域・準重点地域）
+	var area_all_flg = document.getElementById("market_area_01").checked;
+	var area_imp_flg = document.getElementById("market_area_02").checked;
+	var area_imp_sub_flg = document.getElementById("market_area_03").checked;
+	
+	// 棟数・戸数フラグ
+	var ko_flg = document.getElementById("share_kind_01").checked;
+	
+	// 一度全て非表示に設定
+	market_share_layer_all_ko.setMap(null);
+	market_share_layer_all_tou.setMap(null);
+	market_share_layer_imp_ko.setMap(null);
+	market_share_layer_imp_tou.setMap(null);
+	
+	market_share_layer_imp_sub_ko.setMap(null);
+	market_share_layer_imp_sub_tou.setMap(null);
+
+	if(disp_flg == false){
+		return;
+	}
+	
+	if(area_all_flg == true ){
+	  // すべて
+		if(ko_flg == true){
+			market_share_layer_all_ko.setMap(mapCanvas);
+		}else{
+			market_share_layer_all_tou.setMap(mapCanvas);
+		}
+		
+	}else if(area_imp_flg == true ){
+	  // 重点地域
+		if(ko_flg == true){
+			market_share_layer_imp_ko.setMap(mapCanvas);
+		}else{
+			market_share_layer_imp_tou.setMap(mapCanvas);
+		}
+	}else{
+	  // 準重点地域
+		if(ko_flg == true){
+			market_share_layer_imp_sub_ko.setMap(mapCanvas);
+		}else{
+			market_share_layer_imp_sub_tou.setMap(mapCanvas);
+		}
+	}
+	
+}
+
+
+
+// Infoウィンドウに設定します
+function setInfoWnd(marker, msg){
+    google.maps.event.addListener(marker, "click", function(){
+      infoWnd.setContent(msg);
+      infoWnd.open(marker.getMap(), marker);
+    });
+}
+
+// posからpositionオブジェクトを返します。
+function getCoords(position) {
+    return new google.maps.LatLng(position.latitude, position.longitude);
+}
+
+
+  function win_result_biru(){
+    $( "#result_biru" ).dialog({
+		 width: 500
+	   , height: 550 
+	   , position: {
+	       of : window
+	      ,at: 'center'
+	      ,my: 'left top'
+	   }
+	 });
+  }
+
+  function win_result_owner(){
+    $( "#result_owner" ).dialog({ 
+		 width: 500
+		,height: 450
+ 	    ,position: {
+ 	       of : window
+ 	      ,at: 'center'
+ 	      ,my: 'left top'
+ 	   }
+	 });
+  }
+
+  function win_result_shop(){
+    $( "#result_shop" ).dialog({ 
+		width: 500
+	   ,height: 450
+	   ,position: {
+	       of : window
+	      ,at: 'center'
+	      ,my: 'left top'
+	   }
+    });
+  }
+
+  function write_build(biru)
+  {
+    document.getElementById("m_name").innerText=biru;
+  }
+
+  // ズームを変更する maker_kind 1:建物 2:貸主
+  function changeZoom(marker_id, maker_kind) {
+
+    var marker;
+
+    if(maker_kind == 1){
+      marker = build_arr[marker_id];
+    }
+    else{
+      marker = owner_arr[marker_id];
+    }
+
+    mapCanvas.panTo(marker.position);
+    mapCanvas.setZoom(18);
+  }
+
+
+  // 営業所
+  function get_icon_shop(num){
+    var icon;
+
+    if( num == 3 ){
+      icon = 'marker_blue.png'; // 草加
+    }else if (num == 11 ){
+      icon = 'marker_yellow.png'; // 新田
+    }else if (num == 16 ){
+      icon = 'marker_purple.png'; // 北千住
+    }else if (num == 1 ){
+      icon = 'marker_red.png'; // 南越谷
+    }else if (num == 18 ){
+      icon = 'marker_orange.png'; // 越谷
+    }else if (num == 8 ){
+      icon = 'marker_green.png'; // 北越谷
+    }else if (num == 21 ){
+      icon = 'marker_white.png'; // せんげん台
+    }else if (num == 7 ){
+      icon = 'marker_gray.png'; // 春日部
+    }else if (num == 2 ){
+      icon = 'marker_blue.png'; // 戸田
+    }else if (num == 5 ){
+      icon = 'marker_yellow.png'; // 武蔵
+    }else if (num == 15 ){
+      icon = 'marker_purple.png'; // 川口
+    }else if (num == 17 ){
+      icon = 'marker_red.png'; // 与野
+    }else if (num == 13 ){
+      icon = 'marker_orange.png'; // 浦和
+    }else if (num == 10 ){
+      icon = 'marker_green.png'; // 東浦和
+    }else if (num == 6 ){
+      icon = 'marker_white.png'; // 東川口
+    }else if (num == 14 ){
+      icon = 'marker_gray.png'; // 戸塚安行
+    }else if (num == 19 ){
+      icon = 'marker_blue.png'; // 松戸
+    }else if (num == 4 ){
+      icon = 'marker_yellow.png'; // 北松戸
+    }else if (num == 9 ){
+      icon = 'marker_purple.png'; // 柏
+    }else if (num == 12 ){
+      icon = 'marker_red.png'; // 南流山
+    }else if (num == 91 ){
+      icon = 'marker_purple.png'; // 法人課
+    }else if (num == 23 ){
+      icon = 'marker_green.png'; // 竹ノ塚
+    }else if (num == 24 ){
+      icon = 'marker_purple.png'; // 西口
+    }else if (num == 25 ){
+      icon = 'marker_green.png'; // 新八柱
+    }else if (num == 26 ){
+      icon = 'marker_red.png'; // 西新井
+    }else {
+      icon = 'marker_white.png'; // 不明
+    }
+
+    icon = '/biruweb/assets/' + icon;
+    return icon;
+  }
+
+  // エリア
+  function get_icon_area(num){
+    var icon;
+
+    if( num == 3 || num == 11 || num == 16 ){
+      icon = 'marker_blue.png'; // 東武南
+    }else if (num == 1 || num == 18 ){
+      icon = 'marker_yellow.png'; // 東武中央
+    }else if (num == 8 || num == 21 || num == 7){
+      icon = 'marker_purple.png'; // 東武北
+    }else if (num == 2 || num == 5 || num == 15){
+      icon = 'marker_red.png'; // さいたま南
+    }else if (num == 17 || num == 13  ){
+      icon = 'marker_orange.png'; // さいたま北
+    }else if (num == 10 || num == 6 || num == 14 ){
+      icon = 'marker_green.png'; // さいたま東
+    }else if (num == 19 || num == 4 ){
+      icon = 'marker_white.png'; // 常磐西
+    }else if (num == 9 || num == 12){
+      icon = 'marker_gray.png'; // 常磐中央
+    }else if (num == 91 ){
+      icon = 'marker_green.png'; // 法人課
+    }else {
+      icon = 'marker_white.png'; // 不明
+    }
+
+    icon = '/biruweb/assets/' + icon;
+    return icon;
+
+  }
+
+  // 支店
+  function get_icon_siten(num){
+    var icon;
+
+    if( num == 3 || num == 11 || num == 16 || num == 1 || num == 18 || num == 8 || num == 21 || num == 7 ){
+      icon = 'marker_green.png'; // 東武支店
+    }else if (num == 2 || num == 5 || num == 15 || num == 17 || num == 13 || num == 10 || num == 6 || num == 14){
+      icon = 'marker_blue.png'; // さいたま支店
+    }else if (num == 19 || num == 4 || num == 9 || num == 12){
+      icon = 'marker_yellow.png'; // 千葉支店
+    }else if (num == 91 ){
+      icon = 'marker_purple.png'; // アセットマネジメント部
+    }else {
+      icon = 'marker_white.png'; // 不明
+    }
+
+    icon = '/biruweb/assets/' + icon;
+    return icon;
+
+  }
+
+  // 戸数
+  function get_icon_kanri_room_num(num){
+    var icon;
+
+    if(num == 1){
+      icon ='marker_purple.png';
+    }else if( 2 <= num && num <= 4){
+        icon = 'marker_blue.png';
+    }else if( 5 <= num && num <= 6){
+        icon ='marker_green.png';
+    }else if( 6 <= num && num <= 8){
+        icon ='marker_yellow.png';
+    }else if( 8 <= num && num <= 10){
+        icon ='marker_orange.png';
+    }else if( 11 <= num && num <= 15){
+        icon ='marker_red.png';
+    }else if( 16 <= num && num <= 20){
+        icon ='marker_gray.png';
+    }else if( 21 <= num ){
+        icon ='marker_gray.png';
+    }else{
+        icon ='marker_white.png';
+    }
+
+    icon = '/biruweb/assets/' + icon;
+
+    return icon;
+  }
+
+  // 空室割合
+  function get_icon_free_room(kosuu, aki){
+    var flt;
+    var icon;
+    flt = aki / kosuu;
+
+    if(flt == 0){
+        icon = 'marker_blue.png';
+    }else if( 0 < flt && flt <= 0.3 ){
+        icon ='marker_green.png';
+    }else if( 0.3 < flt && flt <= 0.6){
+        icon ='marker_orange.png';
+    }else if( 0.6 < flt && flt <= 0.9){
+        icon ='marker_orange.png';
+    }else if( 0.9 < flt && flt <= 1){
+        icon ='marker_red.png';
+    }else{
+        icon ='marker_white.png';
+    }
+
+    icon = '/biruweb/assets/' + icon;
+
+    return icon;
+
+  }
+
+  // 築年数アイコン
+  function get_icon_biru_age(age){
+    var icon;
+
+    if(0<= age && age <= 1){
+        icon ='marker_purple.png';
+    }else if( 2 <= age && age <= 5){
+        icon = 'marker_blue.png';
+    }else if( 6 <= age && age <= 10){
+        icon ='marker_green.png';
+    }else if( 11 <= age && age <= 20){
+        icon ='marker_yellow.png';
+    }else if( 21 <= age && age <= 30){
+        icon ='marker_orange.png';
+    }else if( 31 <= age && age <= 40){
+        icon ='marker_red.png';
+    }else if( 41 <= age ){
+        icon ='marker_gray.png';
+    }else{
+        icon ='marker_white.png';
+    }
+
+    icon = '/biruweb/assets/' + icon;
+
+    return icon;
+  }
+
+
+  // 数値変換
+  // format_type:0 何もしない 1:% 
+  function map_str2num(str){
+	
+	  var num;
+	  
+	  if(isNaN(str) == true){
+		  // 数値でない時
+		  return "判定不能";
+	  }
+	  
+	  num = parseFloat(str);
+	  
+	  if(num < 0){
+		  return "判定不能２";
+	  }
+	  
+	  return str;
+	
+  }
+  
+  
+//get_share_info(e.row['market_tou'].value, e.row['biru_tou'].value, market_tou, biru_tou, share_tou, state_tou);
+
+	function get_share_info(in_market, in_biru, in_share, out_ret){
+// 0:マーケット
+// 1:ビル
+// 2:シェア率
+// 3:状態
+
+		var num_share;
+		
+		out_ret[0] = map_str2num(in_market);
+		out_ret[1] = map_str2num(in_biru);
+		out_ret[2] = map_str2num(in_share);
+		
+		if(isNaN(out_ret[2]) == false){
+			// 数値の時
+			num_share = Math.round( parseFloat(out_ret[2]) * 100 * 100 ) / 100;
+			if(num_share < 2.8){
+				out_ret[3] = "拠点目標未満";
+			}else if(num_share < 6.8 ){
+				out_ret[3] = "拠点目標";
+			}else if(num_share < 10.9){
+				out_ret[3] = "存在目標";
+			}else if(num_share < 19.3){
+				out_ret[3] = "影響目標";
+			}else if(num_share < 26.1){
+				out_ret[3] = "上位目標";
+			}else if(num_share < 41.7){
+				out_ret[3] = "下限目標";
+			}else if(num_share < 73.9){
+				out_ret[3] = "安定目標";
+			}else {
+				out_ret[3] = "上限目標";
+			}
+			
+			out_ret[2] = num_share + '%';
+		}
+		else{
+			out_ret[3] = "判定不能"
+		}
+		
+	}
+	
+	// imp_type・・・0:すべて、1:重点地域、2:準重点地域
+	function create_market_share_fution_table(imp_type, ko_flg){
+		
+		var where_str = ''
+		if(imp_type == 1){
+			// 重点実施エリアのみに絞る
+			var where_str = 'imp_flg = 1' 
+		}else if( imp_type == 2){
+			// 重点実施エリアと準重点エリアみに絞る
+			var where_str = 'imp_flg In (2)' 
+		}
+		
+		var market_query = {
+			select: 'gml_id'
+//			,from: '12ly1ZbFAYQSZOB4p1nHxhhjyHuT4XLEfIbmlsypD'
+//			,from: '11sSS19CsBju8y5se2j_9UVQMYJL0QT3YPzmIcleh'
+//			,from: '1yk5LpKRp8dF6Pk8wJ4wVH-gnoKX8oe_0CBGxhWaN' // 20160411
+//			,from: '1PEYuUusImgutTzg6DzCmPIlcFlxbxKhKwOjhBkm3' // 20160727
+			,from: '1gb79SPfZx4yCeSKLwWSnie0Xif5CR19rJ9jeCos2' // 20180211
+			,where: where_str
+		};
+		
+		
+		
+		
+		// ※スタイルは最大５色までしか指定できなそう・・(しかも他のFusionLayerでのスタイルも合計して５つまで)
+		var ko_str = ''
+		if(ko_flg == true){
+			ko_str = 'share_ko'
+		}else{
+			ko_str = 'share_tou'
+
+		}
+
+		var market_styles = [
+		{
+	      where: ko_str + '>=0 and ' + ko_str + '< 0.028', // シェアなし
+	      polygonOptions: {
+	        fillOpacity: 0.1,
+					fillColor: '#268080' // 白
+	      }
+	    }　,
+		 {
+	      where: ko_str + '>=0.028 and ' + ko_str + '< 0.068', // 拠点目標値
+	      polygonOptions: {
+	        fillOpacity: 0.5,
+			fillColor: '#4dffff' // 薄い青
+	      }
+	    }, {
+	      where: ko_str + '>=0.068 and ' + ko_str + '< 0.109',  // 存在目標値
+	      polygonOptions: {
+			fillColor: '#33ff77' // 薄い緑
+	      }
+	    }, {
+	      where: ko_str + '>=0.109 and ' + ko_str + '< 0.193',  // 影響目標値
+	      polygonOptions: {
+			fillColor: '#ff8000' // オレンジ
+	      }
+	    }, {
+	      where: ko_str + ' >= 0.193', // 上位目標値
+	      polygonOptions: {
+			fillColor: '#FF0000' // 赤
+	      }
+	    }];
+
+				
+		var fusion_layer = new google.maps.FusionTablesLayer({
+			query: market_query
+			,styles: market_styles
+	        ,options: {
+	          styleId: 2,
+	          templateId: 2
+	        }
+			
+		});
+		
+	    google.maps.event.addListener(fusion_layer, 'click', function(e) {
+		
+			var imp_state;
+		
+			var out_tou = [];
+			var out_ko = [];
+
+			get_share_info(e.row['market_tou'].value, e.row['biru_tou'].value, e.row['share_tou'].value, out_tou);
+			get_share_info(e.row['market_ko'].value, e.row['biru_ko'].value, e.row['share_ko'].value, out_ko);
+
+			if(e.row['imp_flg'].value == '1'){
+				imp_state = '<span style="margin-left:5px;color:red;">重点地域</span>'
+			}else if(e.row['imp_flg'].value == '2'){
+				imp_state = '<span style="margin-left:5px;color:green;">準重点地域</span>'
+			}else{
+				imp_state = '<span style="margin-left:5px;color:blue;">重点地域外</span>'
+			}
+	
+
+			var table_html = "" 
+			table_html += '<caption><b>【〒' + e.row['POSTCODE'].value + '】 ' +  e.row['POSTCODE_GENERATE'].value  + '</b></caption>' + imp_state
+			table_html += '<table style="line-height: 1.33em; border-collapse: collapse;" >'
+			table_html += '<tbody>'
+			table_html += '<tr>'
+			table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center" width="50px;" ></td>'
+			table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center" width="80px;">マーケット</td>'
+			table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center" width="80px;">ビル管理</td>'
+			table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center" width="80px;">シェア</td>'
+			table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center" width="100px;">状態</td>'
+			table_html += '</tr>'
+			table_html += '<tr>'
+			table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center" >戸数</td>'
+			table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" >' + out_ko[0] + '</td>'
+			table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" >' + out_ko[1] + '</td>'
+			table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" >' + out_ko[2] + '</td>'
+			table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" >' + out_ko[3] + '</td>'
+			table_html += '</tr>'
+			table_html += '<tr>'
+			table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center;" >棟数</td>'
+			table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" >' + out_tou[0] + '</td>'
+			table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" >' + out_tou[1] + '</td>'
+			table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" >' + out_tou[2] + '</td>'
+			table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" >' + out_tou[3] + '</td>'
+			table_html += '</tr>'
+			table_html += '</table>'
+			table_html += '※シェア率は郵便番号単位で計算しています。'
+
+
+			//e.infoWindowHtml = e.row['share_ko'].value + "<br>";
+			e.infoWindowHtml = table_html;
+
+
+	    });			
+		
+		return fusion_layer;
+
+	}
+	
+	// sample
+	function dataHandler(b, resp) {
+	    console.log(resp.rows[0][0]);
+		
+//	    var result = document.getElementById('result');
+	    var result = document.getElementById('aaaaa');
+		
+	    var htmlTable = document.createElement('table');
+	    htmlTable.border = 1;
+    
+	    var tableRow = document.createElement('tr');
+	    for (var i = 0; i < resp.columns.length; i++) {        
+	        var tableHeader = document.createElement('th');
+	        var header = document.createTextNode(resp.columns[i]);
+	        tableHeader.appendChild(header);
+	        tableRow.appendChild(tableHeader);
+        
+	    }
+	    htmlTable.appendChild(tableRow);
+	    for (var i = 0; i < resp.rows.length; i++) {
+	        var tableRow = document.createElement('tr');
+	        for (var j = 0; j < resp.rows[i].length; j++) {
+	            var tableData = document.createElement('td');
+	            var content = document.createTextNode(resp.rows[i][j]);
+	            tableData.appendChild(content);
+	            tableRow.appendChild(tableData);
+	        }
+	        htmlTable.appendChild(tableRow);
+	    }
+	    result.appendChild(htmlTable);
+						
+	}
+
+
+	function circle_clicked(circle){
+		
+		// IDの発番
+		var circle_id = Math.floor( Math.random() * 99999 ) ;
+
+  		//----------------------------
+		// 吹き出しの作成
+		//----------------------------
+		var table_html = "" 
+		table_html += '<caption><b>' + circle.circle_name + '</b></caption>&nbsp;&nbsp;半径' + Math.round(circle.getRadius()) + 'メートル'
+		table_html += '<table style="line-height: 1.33em; border-collapse: collapse;" >'
+		table_html += '<tbody>'
+		table_html += '<tr>'
+		table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center" width="50px;" ></td>'
+		table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center" width="80px;">マーケット</td>'
+		table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center" width="80px;">ビル管理</td>'
+		table_html += '</tr>'
+		table_html += '<tr>'
+		table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center" >戸数</td>'
+		table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" id="shop_market_ko_' + circle.getRadius() + "_" + circle_id + '"></td>'
+		table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" id="shop_biru_ko_' + circle.getRadius() + "_" + circle_id + '"></td>'
+		table_html += '</tr>'
+		table_html += '<tr>'
+		table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center;" >棟数</td>'
+		table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" id="shop_market_tou_' + circle.getRadius() + "_" + circle_id + '"></td>'
+		table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" id="shop_biru_tou_' + circle.getRadius() + "_" + circle_id + '"></td>'
+		table_html += '</tr>'
+		table_html += '</table>'
+		
+		
+		var latlng = circle.getCenter()
+		var marker = new google.maps.Marker({
+           position : latlng
+          ,map : mapCanvas
+		  ,draggable: true	// ドラッグ可能にする
+		  ,icon: '/biruweb/assets/marker_shadow.png' // todo windowsではbiruwebを付けること
+		});
+  
+		var infoWnd_circle = new google.maps.InfoWindow();
+		infoWnd_circle.setContent(table_html);
+		infoWnd_circle.setPosition(circle.getCenter());
+		infoWnd_circle.open(mapCanvas, marker);
+
+		//----------------------------
+		// 円の範囲の件数データを取得
+		//----------------------------
+		// マーケット物件
+		var sql = "SELECT COUNT('経度') AS CNT, SUM('総部屋数') AS SUMMARY FROM " + fusion_market + " WHERE ST_INTERSECTS('緯度', CIRCLE(LATLNG(" + latlng.lat() + ", " + latlng.lng() + "), " + circle.getRadius() + "))";
+		getFusionTableData(sql, 'shop_market_tou_' + circle.getRadius() + "_"  + circle_id , 'shop_market_ko_' + circle.getRadius() + "_"  + circle_id );
+	
+		// ビル管理物件
+    var sql = "SELECT COUNT('住所') AS CNT, SUM('戸数') AS SUMMARY FROM " + fusion_biru + " WHERE ST_INTERSECTS('latitude', CIRCLE(LATLNG(" + latlng.lat() + ", " + latlng.lng() + "), " + circle.getRadius() + "))";
+    //var sql = "SELECT COUNT('住所') AS CNT, SUM('戸数') AS SUMMARY FROM " + fusion_biru + " WHERE ST_INTERSECTS('latitude',  '<Polygon><outerBoundaryIs><LinearRing><coordinates>139.789389,35.876609 139.790465,35.876654 139.790767,35.876666 139.791375,35.876683 139.791448,35.876679 139.791744,35.876692 139.79228,35.876671 139.792638,35.876633 139.79333,35.876625 139.7934,35.876217 139.793421,35.876027 139.794081,35.876039 139.79458,35.876035 139.794715,35.876002 139.794815,35.875386 139.794878,35.874923 139.79494,35.874485 139.795072,35.87355 139.795151,35.873018 139.795213,35.872577 139.795263,35.872078 139.795328,35.871646 139.795413,35.871169 139.795467,35.870779 139.795474,35.870724 139.795528,35.870351 139.794281,35.87022 139.793608,35.870095 139.793042,35.869982 139.79253,35.869869 139.79237,35.869848 139.792047,35.869781 139.791995,35.869773 139.791774,35.869732 139.791509,35.86968 139.79138,35.869655 139.791007,35.869598 139.790967,35.869803 139.7908,35.870554 139.790763,35.870738 139.790651,35.871218 139.790611,35.871399 139.79057,35.871598 139.790493,35.871918 139.790464,35.872048 139.79039,35.872378 139.790284,35.872846 139.790259,35.872985 139.790174,35.873316 139.789937,35.874154 139.789861,35.87461 139.789791,35.87489 139.789765,35.87502 139.789672,35.8754 139.789559,35.875967 139.789548,35.876021 139.789532,35.876148 139.789426,35.876433 139.789389,35.876609</coordinates></LinearRing></outerBoundaryIs></Polygon>')";
+    //var sql = "SELECT COUNT('住所') AS CNT, SUM('戸数') AS SUMMARY FROM " + fusion_biru + " WHERE ST_INTERSECTS('latitude',  POLYGON(LATLNG(139.789389,35.876609),LATLNG(139.790465,35.876654),LATLNG(139.790767,35.876666),LATLNG(139.791375,35.876683),LATLNG(139.791448,35.876679),LATLNG(139.791744,35.876692),LATLNG(139.79228,35.876671),LATLNG(139.792638,35.876633),LATLNG(139.79333,35.876625),LATLNG(139.7934,35.876217),LATLNG(139.793421,35.876027),LATLNG(139.794081,35.876039),LATLNG(139.79458,35.876035),LATLNG(139.794715,35.876002),LATLNG(139.794815,35.875386),LATLNG(139.794878,35.874923),LATLNG(139.79494,35.874485),LATLNG(139.795072,35.87355),LATLNG(139.795151,35.873018),LATLNG(139.795213,35.872577),LATLNG(139.795263,35.872078),LATLNG(139.795328,35.871646),LATLNG(139.795413,35.871169),LATLNG(139.795467,35.870779),LATLNG(139.795474,35.870724),LATLNG(139.795528,35.870351),LATLNG(139.794281,35.87022),LATLNG(139.793608,35.870095),LATLNG(139.793042,35.869982),LATLNG(139.79253,35.869869),LATLNG(139.79237,35.869848),LATLNG(139.792047,35.869781),LATLNG(139.791995,35.869773),LATLNG(139.791774,35.869732),LATLNG(139.791509,35.86968),LATLNG(139.79138,35.869655),LATLNG(139.791007,35.869598),LATLNG(139.790967,35.869803),LATLNG(139.7908,35.870554),LATLNG(139.790763,35.870738),LATLNG(139.790651,35.871218),LATLNG(139.790611,35.871399),LATLNG(139.79057,35.871598),LATLNG(139.790493,35.871918),LATLNG(139.790464,35.872048),LATLNG(139.79039,35.872378),LATLNG(139.790284,35.872846),LATLNG(139.790259,35.872985),LATLNG(139.790174,35.873316),LATLNG(139.789937,35.874154),LATLNG(139.789861,35.87461),LATLNG(139.789791,35.87489),LATLNG(139.789765,35.87502),LATLNG(139.789672,35.8754),LATLNG(139.789559,35.875967),LATLNG(139.789548,35.876021),LATLNG(139.789532,35.876148),LATLNG(139.789426,35.876433),LATLNG(139.789389,35.876609)))";
+
+    getFusionTableData(sql, 'shop_biru_tou_' + circle.getRadius() + "_"  + circle_id , 'shop_biru_ko_' + circle.getRadius() + "_"  + circle_id);
+  }	
+	
+
+  //-------------------
+  // グローバル変数定義
+  //-------------------
+  var convert_shop = [];
+  // var fusion_biru = '1O_fppCZ561ku_olq4dxySoI510XzloCzUcXkg2BY'; // ビル管理
+  // var fusion_biru = '1tLcIYXtP4uOJ2BqK1frOoVpxJ3WockTO4nvgzGLK'; // ビル管理 20160727
+  var fusion_biru = '1jgxyFAOJ7TAC35MBem35zlvwET34FPWR-z6G5Yft'; // ビル管理 20180211
+  
+  //var fusion_market = '13h6SQEaVApez8BvDC7bQIl8OOhu0LUpzXQUitPHy'; // マーケット
+  var fusion_market = '1g55AxMKKMqLhFxTVDuQcCqRQxB_BaGvKD1eV4qWa'; // マーケット 20180214
+
+  function initialize(){
+    
+    // 初期化処理
+    init_process();
+
+    // 初期表示は非表示
+    init_display();
+
+    // 地図・ストリートビューを作成します。
+    init_map(<%= @biru_user.id %>, <%= @search_bar_disp_flg %>, <%= @market_bar_disp_flg %>);
+
+    // 初期表示位置を調整
+    var bounds = new google.maps.LatLngBounds();
+
+    /* 建物オブジェクトを作成 */
+    build_arr = {}; // グローバル
+    kyori_text = ""
+    var pos;
+    var idx = 0;
+    var biru_latlngs = [];
+    var populations = [];
+
+    var building_to_owners = gon.building_to_owners
+	
+    gon.buildings.forEach(function(building){
+        pos = new google.maps.LatLng(building.latitude, building.longitude);
+
+        <% if @search_type == 2 # 貸主の時、初期状態で非表示%>
+          var build_disp = false
+        <% else %>
+          var build_disp = true
+          bounds.extend(pos);
+        <% end %>
+
+        var shop_code = convert_shop[building.shop_id];
+
+        build_arr[building.id] = createMarker({
+          position : pos
+          ,map : mapCanvas
+          ,icon : building.tmp_build_type_icon
+          ,siten_icon : get_icon_siten(shop_code)
+          ,area_icon : get_icon_area(shop_code)
+          ,shop_icon : get_icon_shop(shop_code)
+          ,manage_icon : building.tmp_manage_type_icon
+          ,build_type_icon : building.tmp_build_type_icon
+          ,kanri_room_num  : get_icon_kanri_room_num(building.kanri_room_num)
+          ,free_room : get_icon_free_room(building.kanri_room_num, building.free_num)
+          ,biru_age : get_icon_biru_age(building.biru_age)
+          ,shadow : '/biruweb/assets/marker_shadow.png'
+          ,html : info_msg_biru(building, building_to_owners[building.id])
+          ,visible : build_disp
+        });
+
+        /* 距離を測る */
+        /*
+        var origins = [];
+        origins.push(pos)
+        var request = {
+           origins : origins
+          ,destinations : distination_arr
+          ,travelMode : google.maps.TravelMode.WALKING
+        };
+
+        var distanceMatrix = new google.maps.DistanceMatrixService();
+        var x, ele;
+        distanceMatrix.getDistanceMatrix(request, function(result, status){
+          kyori_text = '<%#= biru.name %>' + "<hr>";
+          for(x=0; x<distination_arr.length; x++){
+            ele = result.rows[0].elements[x];
+            kyori_text += distination.getAt(x).name + "まで" + ele.distance.text + "(" + ele.duration.text + ")<br>";
+          }
+
+          setInfoWnd(build_arr[<%#= biru.id %>], kyori_text);
+
+        });
+        */
+
+        /* 戸数別のヒートマップを作る為のオブジェクト */
+        populations.push({
+          location : pos
+          ,weight : building.room_num
+        })
+
+        biru_latlngs[idx] = pos;
+        idx = idx + 1;
+    });
+
+    var heatmap_biru = new google.maps.visualization.HeatmapLayer();
+    heatmap_biru.setData(biru_latlngs);
+
+    var heatmap_room = new google.maps.visualization.HeatmapLayer();
+    heatmap_room.setData(populations);
+
+//    /* ヒートマップイベント登録 */
+//    var hiatmap00Radio = document.getElementById("hiatmap00Radio");
+//    google.maps.event.addDomListener(hiatmap00Radio, "click", function(){
+//      heatmap_biru.setMap(null);
+//      heatmap_room.setMap(null);
+//    });
+
+//    var hiatmap01Radio = document.getElementById("hiatmap01Radio");
+//    google.maps.event.addDomListener(hiatmap01Radio, "click", function(){
+//      heatmap_biru.setMap(mapCanvas);
+//      heatmap_room.setMap(null);
+//    });
+
+//    var hiatmap02Radio = document.getElementById("hiatmap02Radio");
+//    google.maps.event.addDomListener(hiatmap02Radio, "click", function(){
+//      heatmap_biru.setMap(null);
+//      heatmap_room.setMap(mapCanvas);
+//    });
+
+    /* 貸主オブジェクトを作成 */
+    owner_arr = {}; // varを外してグローバル化
+    var owner_to_buildings = gon.owner_to_buildings
+    var owner_icon;
+    var owner_disp;
+	
+    gon.owners.forEach(function(owner){
+      pos = new google.maps.LatLng(owner.latitude, owner.longitude);
+
+      <% if @search_type == 1 # 建物検索の時、初期状態で非表示%>
+        owner_disp = false
+      <% else %>
+        owner_disp = true
+        bounds.extend(pos);
+      <% end %>
+
+      // 貸主かどうかでアタックを決める。
+      if( owner.code == null){
+        // owner_icon = "https://chart.googleapis.com/chart?chst=d_map_pin_icon&chld=home%7C0033FF"
+		owner_icon = '/biruweb/assets/marker_owner_attack.png'
+      } else {
+        // owner_icon = "https://chart.googleapis.com/chart?chst=d_map_pin_icon&chld=home%7CFFFF00"
+		owner_icon = '/biruweb/assets/marker_owner.png'
+      }
+
+      owner_arr[owner.id] = createMarker({
+        position : pos
+        ,map : mapCanvas
+        ,icon : owner_icon
+        ,html : info_msg_owner(owner, owner_to_buildings[owner.id])
+        ,visible : owner_disp
+      });
+	});
+
+    /* 委託契約CDのラインを引く */
+    trust_arr = {}; // varを外してグローバル化
+	gon.trusts.forEach(function(trust){
+
+      // 貸主マスタ・建物マスタに委託で指定した貸主CD・建物CDが存在することを確認
+      if ( !owner_arr[trust.owner_id] ){
+          //continue;
+		  return;
+      }
+
+      if ( !build_arr[trust.building_id]){
+          //continue;
+		  return;
+      }
+
+      trust_arr[trust.id] = new google.maps.Polyline({
+         map : mapCanvas
+        ,path : [owner_arr[trust.owner_id].position, build_arr[trust.building_id].position]
+        ,strokeColor: gon.manage_line_color[trust.manage_type_id]
+        ,strokeOpacity:0.5
+        ,strokeWeight:3
+        ,zIndex:1
+      });
+
+      // 初期状態は非表示
+      trust_arr[trust.id].set("visible", false);
+
+      // ダブルクリック時のイベント登録
+      trust_ev = trust_arr[trust.id]
+      owner_ev = owner_arr[trust.owner_id]
+      build_ev = build_arr[trust.building_id]
+
+      // クリックした時のオブジェクトを保存するために、イベントは関数呼び出しで登録する。
+      create_relation_listener(trust_ev, owner_ev, build_ev)
+	});
+
+    /* 営業所の情報を表示する */
+    shop_arr = {}; // varを消してグローバル化
+    shop_circle01_arr = {}; // varを消してグローバル化
+    shop_circle02_arr = {}; // varを消してグローバル化
+    var distination = new google.maps.MVCArray();
+    var distination_arr = [];
+
+    gon.shops.forEach(function(shop){
+
+      pos = new google.maps.LatLng(shop.latitude, shop.longitude);
+      bounds.extend(pos);
+
+      shop_arr[shop.id] = createMarker({
+        position : pos
+        ,map : mapCanvas
+        ,animation: google.maps.Animation.DROP
+        ,icon : shop.icon
+        ,info_msg : shop.name
+        ,html : info_msg_shop(shop)
+      });
+
+	  /*---------------*/
+      /* 営業所の円を作成 */
+	  /*---------------*/
+	  // 1000メートル
+      shop_circle01_arr[shop.id] = create_circle(1000, mapCanvas, pos);
+	  shop_circle01_arr[shop.id].circle_name = '【' + shop.name + '】' 
+	  shop_circle01_arr[shop.id].circle_id = shop.id
+      google.maps.event.addListener( shop_circle01_arr[shop.id] , 'click' , function(){
+		  circle_clicked(shop_circle01_arr[shop.id] );
+	  });
+	  
+	  
+	  // 1200メートル
+      shop_circle02_arr[shop.id] = create_circle(1200, mapCanvas, pos);
+	  shop_circle02_arr[shop.id].circle_name = '【' + shop.name + '】'
+	  shop_circle02_arr[shop.id].circle_id = shop.id
+      google.maps.event.addListener( shop_circle02_arr[shop.id] , 'click' , function(){
+		  circle_clicked(shop_circle02_arr[shop.id] );
+	  });
+	  
+
+      /* 距離を測る対象を設定 */
+      distination.push({name:shop.name, latLng:[shop.latitude, shop.longitude]});
+      distination_arr.push(pos);
+	});
+
+    mapCanvas.fitBounds(bounds);
+
+//    /* すべての委託契約の表示をON または OFF にする。 */
+//    var trustChkbox = document.getElementById("trustChkbox");
+//    google.maps.event.addDomListener(trustChkbox, "click", function(){
+//        // console.log(trust_arr);
+//        for(var item in trust_arr){
+//          trust_arr[item].set("visible", trustChkbox.checked);
+//        };
+//    });
+
+//    /* すべての貸主を表示・非表示にする */
+//    var ownerChkbox = document.getElementById("ownerChkbox");
+//    google.maps.event.addDomListener(ownerChkbox, "click", function(){
+//        for(var item in owner_arr){
+//          owner_arr[item].set("visible", ownerChkbox.checked);
+//        };
+//    });
+
+//    /* すべての営業所を表示・非表示にする */
+//    var storeChkbox = document.getElementById("storeChkbox");
+//    google.maps.event.addDomListener(storeChkbox, "click", function(){
+//        // console.log(trust_arr);
+//        for(var item in shop_arr){
+//          shop_arr[item].set("visible", storeChkbox.checked);
+//        };
+//    });
+
+//   /* 営業所の範囲サークルの表示１ */
+//    var circle01Check = document.getElementById("circle01Check");
+//    google.maps.event.addDomListener(circle01Check, "click", function(){
+//      for(var item in shop_circle01_arr){
+//        shop_circle01_arr[item].set("visible", circle01Check.checked);
+//      };
+//    });
+
+//    /* 営業所の範囲サークルの表示２ */
+//    var circle02Check = document.getElementById("circle02Check");
+//    google.maps.event.addDomListener(circle02Check, "click", function(){
+//      for(var item in shop_circle02_arr){
+//        shop_circle02_arr[item].set("visible", circle02Check.checked);
+//      };
+//    });
+
+
+	
+	//--------------------------------
+	// マーケットの表示
+	//--------------------------------
+	if(<%= @market_bar_disp_flg %>){
+		// マーケットの物件
+		market_building_layer = new google.maps.FusionTablesLayer({
+			query: {
+				select: '緯度',
+				from: fusion_market
+			}		
+		});
+	
+	    google.maps.event.addListener(market_building_layer, 'click', function(e) {
+
+			var table_html = "";
+			table_html += "〒" + e.row['郵便番号'].value + '<br/>';
+			table_html += e.row['住所'].value + '<br/>';
+			table_html += e.row['建物名'].value + '<br/>';
+			table_html += "戸数：" + e.row['総部屋数'].value + '戸<br/>';
+
+			e.infoWindowHtml = table_html;
+		});
+
+
+		// ビル管理の物件
+		biru_building_layer = new google.maps.FusionTablesLayer({
+			query: {
+				select: '住所',
+	//			from: '1VqDlkAxq1jdUErOmmA3RgEVQharcVQdrCGJ6M0uO',
+	//			where: "MOJI like '%備後%'"
+				from: fusion_biru
+			
+			},
+			// 2016.03.13 複数のFusionレイヤーでそれぞれ「style」を指定すると一方のFusionレイヤーはなぜか表示されない。
+			// だからこちらのレイヤーでアイコンの色は「style」で指定するのではなく、google Drive上で指定した色を表示する。
+			// google driveで指定したスタイルを使用するには「publish」→「Get Html and Javascript」で表示されるoptionsを転記する。
+	        options: {
+	           styleId: 2,
+	           templateId: 2
+	         }
+	  	});
+	
+	    google.maps.event.addListener(biru_building_layer, 'click', function(e) {
+
+			var table_html = "";
+			table_html += e.row['郵便番号'].value + '<br/>';
+			table_html += e.row['住所'].value + '<br/>';
+			table_html += e.row['TTSNM'].value + '<br/>';
+			table_html += "戸数：" + e.row['戸数'].value + '戸<br/>';
+			table_html += "管理方式：" + e.row['IKNM'].value + '<br/>';
+		
+			e.infoWindowHtml = table_html;
+		});
+	
+		// マーケットシェア
+		market_share_layer_all_ko = create_market_share_fution_table(0, true);
+		market_share_layer_all_tou = create_market_share_fution_table(0, false);
+		market_share_layer_imp_ko = create_market_share_fution_table(1, true);
+		market_share_layer_imp_tou = create_market_share_fution_table(1, false);
+
+		market_share_layer_imp_sub_ko = create_market_share_fution_table(2, true);
+		market_share_layer_imp_sub_tou = create_market_share_fution_table(2, false);
+		
+	}
+		
+	
+	
+	/* 地図をダブルクリックした時、円を作成 */
+	google.maps.event.addListener( mapCanvas , 'dblclick' , function(e){
+		
+	    var myCircle = new google.maps.Circle({
+	      map : mapCanvas
+	      ,center : e.latLng
+	      ,strokeColor: 'green' /* ストロークの色 */
+	      ,strokeOpacity: 0.9 /* ストロークの透明度 */
+	      ,strokeWeight: 1 /* ストロークの幅 */
+	      ,fillColor: 'green' /* フィルの色 */
+	      ,fillOpacity: 0.1 /* フィルの透明度 */
+	  	  ,draggable: true  /* ドラッグ可能 */
+	  	  ,editable: true  /* 編集可能 */
+	    });
+
+	    myCircle.setRadius(1000); // メートル単位で指定
+
+		myCircle.circle_name = ''
+		google.maps.event.addListener( myCircle, 'click' , function(){
+		circle_clicked(myCircle);
+		
+  	  });
+	});
+
+
+
+  } // end initialize
+
+  google.maps.event.addDomListener(window, "load", initialize);
+
+
+</script>
+
+  <style type="text/css">
+    html, body{
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #map_canvas{
+      position: fixed;
+      width:100%;
+      height:100%;
+      top:0px;
+      left:0;
+    }
+
+    #top-menu{
+      padding:0;
+      margin:0;
+    }
+	
+	a{
+	  text-decoration:underline;	
+	}
+	
+  </style>
+
+<% end %>
+
+<% content_for :sidebar_map do %>
+
+  <!-- ここは span3で呼び出されている -->
+  <div style="padding-left:0px;width:300px;">
+
+    <div id="myTabContent_search" class="tab-content">
+
+      <!-- 検索条件設定 -->
+      <div class="tab-pane fade active in" id="tab_search" style="padding:0;margin:0">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab1" data-toggle="tab" style="padding-top:10px;padding-bottom:10px;width:90px;text-align: center;">建物検索</a></li>
+          <li><a href="#tab2" data-toggle="tab" style="padding-top:10px;padding-bottom:10px;width:90px;text-align: center;">貸主検索</a></li>
+          <li><a href="#tab3" data-toggle="tab" style="padding-top:10px;padding-bottom:10px;width:105px;text-align: center;">コード一括</a></li>
+        </ul>
+
+        <div id="myTabContent1" class="tab-content">
+          <div class="tab-pane fade active in" id="tab1">
+             <%= render :partial=>'search_build' %>
+          </div>
+          <div class="tab-pane fade" id="tab2" >
+             <%= render :partial=>'search_owner' %>
+          </div>
+          <div class="tab-pane fade" id="tab3" >
+             <%= render :partial=>'search_bulk' %>
+          </div>
+        </div>
+      </div>
+	  
+	  
+      <!-- 検索結果確認 -->
+      <div class="tab-pane fade " id="tab_result" >
+        <ul class="nav nav-tabs">
+          <!--
+          <li class="active"><a href="#tab7" data-toggle="tab" style="width:65px;text-align: center;">表示設定</a></li>
+          -->
+          <li class="active"><a href="#tab6" data-toggle="tab" style="width:45px;text-align: center;">営業所</a></li>
+          <li><a href="#tab4" data-toggle="tab" style="width:40px;text-align: center;">建物</a></li>
+          <li><a href="#tab5" data-toggle="tab" style="width:40px;text-align: center;">貸主</a></li>
+        </ul>
+
+        <div id="myTabContent2" class="tab-content" style="padding-left:10px;">
+          <div class="tab-pane fade" id="tab4">
+            <div id="result_biru" title="建物検索結果">
+             <%= render :partial=>'result_buildings' %>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="tab5">
+            <div id="result_owner" title="貸主検索結果">
+              <%= render :partial=>'result_owners' %>
+            </div>
+          </div>
+          <div class="tab-pane active in fade" id="tab6">
+            <div id="result_shop" title="営業所検索結果">
+              <%= render :partial=>'result_shops' %>
+            </div>
+          </div>
+          <!--
+          <div class="tab-pane active in fade" id="tab7" style="padding-left:10px;">
+             <%#= render :partial=>'disp' %>
+          </div>
+          -->
+        </div>
+
+      </div>
+
+    </div>
+	
+  </div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('#simple-menu').sidr({
+    side: 'right'
+  });
+  
+  // $('#map_canvas').Jcrop();
+});
+</script>
+<% end %>
+
+
+  <!-- ここは span9で呼び出されているので合計も9に合わせる -->
+  <!--
+<div class="span12" style="float:left;padding-left:10px;">
+  -->
+  <a id="simple-menu" href="#sidr"></a>
+  <!--
+  <div style="border-width : 3px;border-style : solid;border-color : silver;">
+  -->
+    <div id="map_canvas" style="width: 100%;height:100%;"></div>
+    <div id="panowide" style="width: 100%; height: 0px;margin-top: 5px;">
+      <!--
+       <input type="button" value="閉じる" onclick="sv_init();" style="top: 10px;right: 20px;position:absolute;z-index: 500;" />
+      -->
+    </div>
+    <!--
+  </div>
+    -->
+    <!--
+</div>
+  -->
+
+
+

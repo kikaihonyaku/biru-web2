@@ -1,0 +1,367 @@
+
+
+<script type="text/javascript">
+
+  /* 営業所チェック制御 */
+  $(document).ready(function(){
+
+//    /* 東武支店 */
+//    $("#group_siten01").click(function(){
+//      if ( this.checked ) {
+//        /* jquery1.9以降、2回目以降もチェックボックス設定するには、attrでなくpropを使う */
+//        $("#tobu_soth input").prop("checked", true);
+//        $("#tobu_center input").prop("checked", true);
+//        $("#tobu_north input").prop("checked", true);
+//
+//      } else {
+//        $("#tobu_soth input").attr("checked", false);
+//        $("#tobu_center input").attr("checked", false);
+//        $("#tobu_north input").attr("checked", false);
+//      }
+//    });
+//
+//    /* さいたま支店 */
+//    $("#group_siten02").click(function(){
+//      if (this.checked){
+//        $("#sai_soth input").prop("checked", true);
+//        $("#sai_north input").prop("checked", true);
+//        $("#sai_east input").prop("checked", true);
+//      } else {
+//        $("#sai_soth input").attr("checked", false);
+//        $("#sai_north input").attr("checked", false);
+//        $("#sai_east input").attr("checked", false);
+//      }
+//    });
+//
+//    /* 千葉支店 */
+//    $("#group_siten03").click(function(){
+//      if(this.checked){
+//        $("#chiba_center input").prop("checked", true);
+//        $("#chiba_north input").prop("checked", true);
+//      } else{
+//        $("#chiba_center input").attr("checked", false);
+//        $("#chiba_north input").attr("checked", false);
+//      }
+//    });
+
+    // 2014/08/10 この画面では自社物のみ対象とするので他社フラグは外す
+    // /* 自社チェック */
+    // $("#jita_kbn_ji_only").change(function(){
+    //
+    //   $("#manage_type_kanri_i").prop("checked", true);
+    //   $("#manage_type_kanri_a").prop("checked", true);
+    //   $("#manage_type_kanri_b").prop("checked", true);
+    //   $("#manage_type_kanri_c").prop("checked", true);
+    //   $("#manage_type_kanri_d").prop("checked", true);
+    //   $("#manage_type_kanri_soumu").prop("checked", true);
+    //   $("#manage_type_kanri_toku").prop("checked", true);
+    //   $("#manage_type_kanri_teiki").prop("checked", true);
+    //   $("#manage_type_kanri_gyoumu").prop("checked", true);
+    //
+    //   $("#manage_type_kanri_gai").attr("checked", false);
+    //
+    // });
+    //
+    // $("#jita_kbn_ta_only").change(function(){
+    //   $("#manage_type_kanri_i").attr("checked", false);
+    //   $("#manage_type_kanri_a").attr("checked", false);
+    //   $("#manage_type_kanri_b").attr("checked", false);
+    //   $("#manage_type_kanri_c").attr("checked", false);
+    //   $("#manage_type_kanri_d").attr("checked", false);
+    //   $("#manage_type_kanri_soumu").attr("checked", false);
+    //   $("#manage_type_kanri_toku").attr("checked", false);
+    //   $("#manage_type_kanri_teiki").attr("checked", false);
+    //   $("#manage_type_kanri_gyoumu").attr("checked", false);
+    //
+    //   $("#manage_type_kanri_gai").prop("checked", true);
+    // });
+    //
+    // $("#jita_kbn_jita_both").change(function(){
+    //
+    //   $("#manage_type_kanri_i").attr("checked", false);
+    //   $("#manage_type_kanri_a").attr("checked", false);
+    //   $("#manage_type_kanri_b").attr("checked", false);
+    //   $("#manage_type_kanri_c").attr("checked", false);
+    //   $("#manage_type_kanri_d").attr("checked", false);
+    //   $("#manage_type_kanri_soumu").attr("checked", false);
+    //   $("#manage_type_kanri_toku").attr("checked", false);
+    //   $("#manage_type_kanri_teiki").attr("checked", false);
+    //   $("#manage_type_kanri_gyoumu").attr("checked", false);
+    //   $("#manage_type_kanri_gai").attr("checked", false);
+    // });
+	
+	// 検索したときにローディング状態を表示
+    $('#search-submit').click(function(){
+ 		screen_block();
+    });
+	
+  });
+
+
+  // 東武支店をクリックした時の動きを制御
+  function click_tobu(){
+
+    var shops = [];
+    shops.push($("#shop_tobu01"));
+    shops.push($("#shop_tobu02"));
+    shops.push($("#shop_tobu03"));
+    shops.push($("#shop_tobu04"));
+    shops.push($("#shop_tobu05"));
+    shops.push($("#shop_tobu06"));
+    shops.push($("#shop_tobu07"));
+    shops.push($("#shop_tobu08"));
+    shops.push($("#shop_tobu09"));
+    shops.push($("#shop_tobu10"));
+    shops.push($("#shop_tobu11"));
+    shops_change(shops);
+
+  }
+
+  // さいたま支店をクリックした時の動きを制御
+  function click_sai(){
+
+    var shops = [];
+    shops.push($("#shop_sai01"));
+    shops.push($("#shop_sai02"));
+    shops.push($("#shop_sai03"));
+    shops.push($("#shop_sai04"));
+    shops.push($("#shop_sai05"));
+    shops.push($("#shop_sai06"));
+    shops.push($("#shop_sai07"));
+    shops.push($("#shop_sai08"));
+    shops.push($("#shop_sai09"));
+    shops_change(shops);
+
+  }
+
+  // 千葉支店をクリックした時の動きを制御
+  function click_chiba(){
+
+    var shops = [];
+    shops.push($("#shop_chiba01"));
+    shops.push($("#shop_chiba02"));
+    shops.push($("#shop_chiba03"));
+    shops.push($("#shop_chiba04"));
+    shops_change(shops);
+
+  }
+
+  // 指定された営業所を選択して変換
+  function shops_change(shops){
+    var cnt = 0;
+    for(var i in shops){
+      if(shops[i].prop('checked')){
+        cnt = cnt + 1
+      }
+    }
+
+    if(cnt == 0){
+      // 1件もチェックされていなかったら全選択
+      for(var i in shops){
+        shops[i].prop('checked', true);
+      }
+
+    }else{
+      // 1件でも選択されていたら全解除
+      for(var i in shops){
+        shops[i].attr('checked', false);
+      }
+    }
+  }
+
+  // 検索条件をクリア
+  function search_init(){
+    //------------
+    // 物件名・住所
+    //------------
+    $("#biru_name").val(null);
+    $("#biru_address").val(null);
+    
+
+    //------------
+    // 営業所
+    //------------
+    $("#tobu_siten input").attr("checked", false);
+    $("#sai_siten input").attr("checked", false);
+    $("#chiba_siten input").attr("checked", false);
+
+    //------------
+    // 物件種別
+    //------------
+    $("#build_type input").attr("checked", false);
+
+    //------------
+    // 管理方式
+    //------------
+	$("#manage_type_kanri_b").prop("checked", true);
+	$("#manage_type_kanri_c").prop("checked", true);
+	$("#manage_type_kanri_d").prop("checked", true);
+	$("#manage_type_kanri_soumu").prop("checked", true);
+	$("#manage_type_kanri_toku").prop("checked", true);
+	$("#manage_type_kanri_teiki").prop("checked", true);
+	$("#manage_type_kanri_i").attr("checked", false);
+	$("#manage_type_kanri_a").attr("checked", false);
+	
+    // 2014/08/10 この画面では自社物のみ対象とするので他社フラグは外す
+    // //------------------
+    // // 自社他社(管理方式)
+    // //------------------
+    // $("#jita_kbn_ji_only").prop('checked', true);
+    // $("#jita_kbn_ji_only").change();
+  }
+  
+</script>
+
+
+<div class="row" style="margin-left:0px;">
+  <div class="col-lg-12">
+    <div class="well" style="padding:0">
+      <%= form_tag('/biruweb/managements/search_buildings') do %>
+
+        <!-- 2014/08/10 この画面では自社物のみ対象とするので他社フラグは外す -->
+		<!-- <table style="margin-top:20px;">
+			<tr>
+				<td><label class="radio inline"><%= radio_button_tag 'jita[kbn]', 'ji_only' ,@ji_only_flg %>自社のみ</label></td>
+				<td style="padding-left:10px;"><label class="radio inline"><%= radio_button_tag 'jita[kbn]', 'ta_only' ,@ta_only_flg %>他社のみ</label></td>
+				<td style="padding-left:10px;"><label class="radio inline"><%= radio_button_tag 'jita[kbn]', 'jita_both', @jita_both_flg %>両方</label></td>
+			</tr>
+		</table> -->
+			
+        <div style="padding-top:20px;padding-bottom:10px;text-align: center;">
+        	<%= hidden_field_tag 'user_id', @biru_user.id %>
+          <%= submit_tag "検索する", :class=>'btn btn-large', :id=>'search-submit'  %>
+          <button type="button" class="btn btn-default btn-sm btn3d" onClick="javascript:search_init();">クリア</button>
+        </div>
+
+        建物名&nbsp;<%= text_field_tag 'biru_name', @building_nm, :placeholder=>'建物名' %>
+        住所&nbsp;<%= text_field_tag 'biru_address', @building_ad, :placeholder=>'住所' %>
+
+        <br/>
+        <legend style="margin-bottom: 10px;">営業所<span style="font-size:x-small;padding-left:20px;">※全て未チェックは全選択</span></legend>
+
+
+        <div style="padding-top:0px;">
+          <button type="button" class="btn btn-success" style="padding:2px 15px 2px 15px;margin-right: 10px;" onClick="javascript:click_tobu();">東武</button>
+          <button type="button" class="btn btn-primary" style="padding:2px 15px 2px 15px" onClick="javascript:click_sai();">さいたま</button>
+          <button type="button" class="btn btn-warning" style="padding:2px 15px 2px 15px;margin-left: 10px;" onClick="javascript:click_chiba();">千葉</button>
+        </div>
+
+        <div id="shop_list" class="checkbox" style="padding-bottom:20px;margin-top:5px;">
+
+          <div id="tobu_siten" style="float:left;">
+            <!--<label><%#= check_box_tag('group[siten01]', 99, false, {}) %><span style="font-weight: bolder;">東武</span></label>-->
+			<table style="border:0;">
+				<tr><td><label><%= check_box_tag('shop[tobu01]', 3, @shop_checked[:tobu01], {}) %>草加</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[tobu02]', 11, @shop_checked[:tobu02], {}) %>新田</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[tobu03]', 16, @shop_checked[:tobu03], {}) %>北千住</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[tobu11]', 26, @shop_checked[:tobu11], {}) %>西新井</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[tobu09]', 23, @shop_checked[:tobu09], {}) %>竹ノ塚</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[tobu10]', 24, @shop_checked[:tobu10], {}) %>西口</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[tobu04]', 1, @shop_checked[:tobu04], {}) %>南越谷</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[tobu05]', 18, @shop_checked[:tobu05], {}) %>越谷</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[tobu06]', 8, @shop_checked[:tobu06], {}) %>北越谷</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[tobu07]', 7, @shop_checked[:tobu07], {}) %>春日部</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[tobu08]', 21, @shop_checked[:tobu08], {}) %><span style="font-size:smaller">せんげん台</span></label></td></tr>
+
+
+        </table>
+          </div>
+
+
+          <div id="sai_siten" style="padding-left:25px;float:left;">
+            <!--<label><%#= check_box_tag('group[siten02]', 99, false, {}) %><span style="font-weight: bolder;">さいたま</span></label>-->
+			
+			<table style="border:0;">
+				<tr><td><label><%= check_box_tag('shop[sai01]', 22, @shop_checked[:sai01], {}) %>戸田公園</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[sai02]', 2, @shop_checked[:sai02], {}) %>戸田</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[sai03]', 5, @shop_checked[:sai03], {}) %>武蔵浦和</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[sai04]', 13, @shop_checked[:sai04], {}) %>与野</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[sai05]', 17, @shop_checked[:sai05], {}) %>浦和</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[sai06]', 15, @shop_checked[:sai06], {}) %>川口</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[sai07]', 10, @shop_checked[:sai07], {}) %>東浦和</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[sai08]', 6, @shop_checked[:sai08], {}) %>東川口</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[sai09]', 14, @shop_checked[:sai09], {}) %>戸塚安行</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[sai10]', 28, @shop_checked[:sai10], {}) %>蕨</label></td></tr>
+			</table>
+          </div>
+
+          <div id="chiba_siten" style="padding-left:175px;">
+            <!--
+            <label><%#= check_box_tag('group[siten03]', 99, false, {}) %><span style="font-weight: bolder;">千葉</span></label>
+            -->
+			
+			<table style="border:0;">
+				<tr><td><label><%= check_box_tag('shop[chiba01]', 19, @shop_checked[:chiba01], {}) %>松戸</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[chiba02]', 4, @shop_checked[:chiba02], {}) %>北松戸</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[chiba03]', 9, @shop_checked[:chiba03], {}) %>柏</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[chiba04]', 12, @shop_checked[:chiba04], {}) %>南流山</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[chiba05]', 25, @shop_checked[:chiba05], {}) %>新八柱</label></td></tr>
+				<tr><td><label><%= check_box_tag('shop[chiba06]', 27, @shop_checked[:chiba06], {}) %>柏の葉</label></td></tr>
+			</table>
+			
+          </div>
+
+        </div>
+
+
+        <div style="padding-top:80px;">&nbsp</div>
+
+        <legend>物件種別<span style="font-size:x-small;padding-left:20px;">※全て未チェックは全選択</span></legend>
+
+        <div id="build_type" class="checkbox" style="padding-left:30px;">
+		  <table style="float: left;">
+		  	<tr><td><label><%= check_box_tag('build_type[apart]', '01020', @build_type_checked[:apart], {}) %>アパート</label></td></tr>
+		  	<tr><td><label><%= check_box_tag('build_type[man]', '01010', @build_type_checked[:man], {}) %>マンション</label></td></tr>
+		  	<tr><td><label><%= check_box_tag('build_type[bman]', '01015', @build_type_checked[:bman], {}) %>分譲M</label></td></tr>
+		  	<tr><td><label><%= check_box_tag('build_type[tenpo]', '01040', @build_type_checked[:tenpo], {}) %>店舗</label></td></tr>
+		  	<tr><td><label><%= check_box_tag('build_type[jimusyo]', '01050', @build_type_checked[:jimusyo], {}) %>事務所</label></td></tr>
+		  	<tr><td><label><%= check_box_tag('build_type[kojo]', '01055', @build_type_checked[:kojo], {}) %>工場</label></td></tr>
+		  	<tr><td><label><%= check_box_tag('build_type[soko]', '01060', @build_type_checked[:soko], {}) %>倉庫</label></td></tr>
+		  </table>
+		  
+		  <table style="margin-left:100px;width:100px;">
+            <tr><td><label><%= check_box_tag('build_type[kodate]', '01025', @build_type_checked[:kodate], {}) %>戸建て</label></td></tr>
+            <tr><td><label><%= check_box_tag('build_type[terasu]', '01030', @build_type_checked[:terasu], {}) %>テラスハウス</label></td></tr>
+            <tr><td><label><%= check_box_tag('build_type[mezo]', '01035', @build_type_checked[:mezo], {}) %>メゾネット</label></td></tr>
+            <tr><td><label><%= check_box_tag('build_type[ten_jyu]', '01045', @build_type_checked[:ten_jyu], {}) %>店舗付住宅</label></td></tr>
+            <tr><td><label><%= check_box_tag('build_type[soko_jimu]', '01065', @build_type_checked[:soko_jimu], {}) %>倉庫事務所</label></td></tr>
+            <tr><td><label><%= check_box_tag('build_type[kojo_soko]', '01070', @build_type_checked[:kojo_soko], {}) %>工場倉庫</label></td></tr>
+            <tr><td><label><%= check_box_tag('build_type[syakuti]', '01085', @build_type_checked[:syakuti], {}) %>定期借地</label></td></tr>
+          </table>
+        </div>
+
+        <br/>
+        <legend>管理方式<span style="font-size:x-small;padding-left:20px;">※全て未チェックは全選択</span></legend>
+
+        <div id="manage_type" class="checkbox"  style="padding-left:30px;">
+          <table style="float: left;">
+            <tr><td><label><%= check_box_tag('manage_type[kanri_b]', 3, @manage_type_checked[:kanri_b], {}) %>B管理</label></td></tr>
+            <tr><td><label><%= check_box_tag('manage_type[kanri_c]', 4, @manage_type_checked[:kanri_c], {}) %>C管理</label></td></tr>
+            <tr><td><label><%= check_box_tag('manage_type[kanri_d]', 6, @manage_type_checked[:kanri_d], {}) %>D管理</label></td></tr>
+            <tr><td><label><%= check_box_tag('manage_type[kanri_soumu]', 7, @manage_type_checked[:kanri_soumu], {}) %>総務君</label></td></tr>
+            <tr><td><label><%= check_box_tag('manage_type[kanri_gyoumu]', 10, @manage_type_checked[:kanri_gyoumu], {}) %>業務君</label></td></tr>
+          </table>
+          <table style="margin-left:100px;">
+            <tr><td><label><%= check_box_tag('manage_type[kanri_toku]', 8, @manage_type_checked[:kanri_toku], {}) %>特優賃</label></td></tr>
+            <tr><td><label><%= check_box_tag('manage_type[kanri_teiki]', 9, @manage_type_checked[:kanri_teiki], {}) %>定期借地</label></td></tr>
+            <tr><td><label><%= check_box_tag('manage_type[kanri_i]', 1, @manage_type_checked[:kanri_i], {}) %>一般</label></td></tr>
+            <tr><td><label><%= check_box_tag('manage_type[kanri_a]', 2, @manage_type_checked[:kanri_a], {}) %>A管理</label></td></tr>
+            <!-- <tr><td><label><%= check_box_tag('manage_type[kanri_gai]', 99, @manage_type_checked[:kanri_gai], {}) %>管理外</label></td></tr> -->
+          </table>
+		  
+        </div>
+        <div style="padding-bottom:20px;">&nbsp;</div>
+
+        <!-- <div style="padding-top:10px;padding-bottom:20px;text-align: center;">
+        	<%= hidden_field_tag 'user_id', @biru_user.id %>
+          <%= submit_tag "検索する", :class=>'btn btn-large', :id=>'search-submit'  %>
+          <button type="button" class="btn btn-default btn-sm btn3d" onClick="javascript:search_init();">クリア</button>
+        </div> -->
+
+      <% end %>
+
+    </div>
+  </div>
+</div>
+
+

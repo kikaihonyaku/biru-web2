@@ -1,0 +1,418 @@
+<script type="text/javascript">
+	
+	init_jqgrid_trust_manager();
+	
+	function nvl(value)
+	{
+		ret = "";
+		
+		if(value == null){
+			ret = "0";
+		}else
+		{
+			ret = value;
+		}
+		
+		return ret;
+	}
+
+	function formatter_rank_all(cellValue, options, rowdata, action){
+	    return "<div style='text-align:center;'><a style='text-decoration: underline;' href='/biruweb/trust_managements/search?sid=" + rowdata.biru_user_id + "' onclick='javascript:screen_block();' >" + nvl(cellValue) + "</a></div>";
+	}
+
+	function formatter_rank_c_over(cellValue, options, rowdata, action){
+	    return "<div style='text-align:center;'><a style='text-decoration: underline' href='/biruweb/trust_managements/owner_building_list?sid=" + rowdata.biru_user_id + "&rank=S,A,B,C' onclick='javascript:screen_block();'>" + nvl(cellValue) + "</a></div>";
+	}
+	
+	function formatter_rank_s(cellValue, options, rowdata, action){
+	    return "<div style='text-align:center;'><a style='text-decoration: underline' href='/biruweb/trust_managements/owner_building_list?sid=" + rowdata.biru_user_id + "&rank=S' onclick='javascript:screen_block();' >" + nvl(cellValue) + "</a></div>";
+	}
+
+	function formatter_rank_a(cellValue, options, rowdata, action){
+	    return "<div style='text-align:center;'><a style='text-decoration: underline' href='/biruweb/trust_managements/owner_building_list?sid=" + rowdata.biru_user_id + "&rank=A' onclick='javascript:screen_block();'>" + nvl(cellValue) + "</a></div>";
+	}
+	
+	function formatter_rank_b(cellValue, options, rowdata, action){
+	    return "<div style='text-align:center;'><a style='text-decoration: underline' href='/biruweb/trust_managements/owner_building_list?sid=" + rowdata.biru_user_id + "&rank=B' onclick='javascript:screen_block();'>" + nvl(cellValue) + "</a></div>";
+	}
+
+	function formatter_rank_c(cellValue, options, rowdata, action){
+	    return "<div style='text-align:center;'><a style='text-decoration: underline' href='/biruweb/trust_managements/owner_building_list?sid=" + rowdata.biru_user_id + "&rank=C' onclick='javascript:screen_block();'>" + nvl(cellValue) + "</a></div>";
+	}
+
+	function formatter_rank_d(cellValue, options, rowdata, action){
+	    return "<div style='text-align:center;'><a style='text-decoration: underline' href='/biruweb/trust_managements/owner_building_list?sid=" + rowdata.biru_user_id + "&rank=D' onclick='javascript:screen_block();'>" + nvl(cellValue) + "</a></div>";
+	}
+
+	function formatter_rank_etc(cellValue, options, rowdata, action){
+	    return "<div style='text-align:center;'><a style='text-decoration: underline' href='/biruweb/trust_managements/owner_building_list?sid=" + rowdata.biru_user_id + "&rank=W,X,Y,Z' onclick='javascript:screen_block();'>" + nvl(cellValue) + "</a></div>";
+	}
+	
+	function formatter_report(cellValue, options, rowdata, action){
+		return "<a style='text-decoration: underline' href='javascript:win_trust_report(" + rowdata.biru_user_id + "," + <%= @month %> + ");'>" + cellValue + "</a>"
+	}
+	
+	// 委託契約リストを作成
+	function init_jqgrid_trust_manager(){
+		// 列名の定義
+		var col_names = ["biru_user_id", "エリア", "担当者", "アタックリスト", "目標", "実績", "目標", "実績", "面談率", "目標", "実績", "反響", "目標", "実績", "会話","目標", "実績","AP間隔", "目標", "実績" , "目標", "実績","Ｓ","Ａ","Ｂ","Ｃ","Ｄ", "他社", "自社", "ＰＴ"];
+	
+		// 列属性の定義
+		var col_model = [
+		  {name:"biru_user_id", index:"biru_user_id", align:"left",classes:"no_class", hidden:true}
+		 ,{name:"shop_name", index:"shop_name", width:250, align:"left", classes:"no_class"}
+  		 ,{name:"biru_usr_name", index:"biru_usr_name", width:300, align:"left", classes:"no_class", formatter:formatter_report}
+ 		 ,{name:"attack_list", index:"attack_list", width:200, align:"left", classes:"no_class", hidden:true}
+		 
+ 		 ,{name:"visit_plan", index:"visit_plan", align:"right", classes:"no_class"}
+ 		 ,{name:"visit_num_all", index:"visit_num_all", align:"right", classes:"no_class"}
+		 
+ 		 ,{name:"visit_meet_plan", index:"visit_meet_plan", align:"right", classes:"no_class"}
+ 		 ,{name:"visit_num_meet", index:"visit_num_meet", align:"right", classes:"no_class"}
+ 		 ,{name:"visit_meet_par", index:"visit_meet_par", align:"right", classes:"no_class"}
+
+ 		 ,{name:"dm_plan", index:"dm_plan", align:"right", classes:"no_class"}
+ 		 ,{name:"dm_num_send", index:"dm_num_send", align:"right", classes:"no_class"}
+ 		 ,{name:"dm_num_recv", index:"dm_num_recv", align:"right", classes:"no_class"}
+
+ 		 ,{name:"tel_plan", index:"tel_plan", align:"right", classes:"no_class"}
+ 		 ,{name:"tel_num_call", index:"tel_num_call", align:"right", classes:"no_class"}
+ 		 ,{name:"tel_num_talk", index:"tel_num_talk", align:"right", classes:"no_class"}
+		 
+		 
+ 		 ,{name:"dm_to_tel_plan", index:"dm_to_tel_plan", align:"right", classes:"no_class"}
+ 		 ,{name:"dm_to_tel_result", index:"dm_to_tel_result", align:"right", classes:"no_class"}
+ 		 ,{name:"dm_to_tel_average", index:"dm_to_tel_average", align:"right", classes:"no_class"}
+
+ 		 ,{name:"suggestion_plan", index:"suggestion_plan", align:"right", classes:"no_class"}
+ 		 ,{name:"suggestion_num", index:"suggestion_num", align:"right", classes:"no_class"}
+		 
+ 		 ,{name:"trust_plan", index:"trust_plan", align:"right", classes:"no_class"}
+ 		 ,{name:"trust_num", index:"trust_num", align:"right", classes:"no_class"}
+		 
+// 		 ,{name:"rank_s", index:"rank_s", align:"right", classes:"no_class", formatter:formatter_rank_s}
+// 		 ,{name:"rank_a", index:"rank_a", align:"right", classes:"no_class", formatter:formatter_rank_a}
+// 		 ,{name:"rank_b", index:"rank_b", align:"right", classes:"no_class", formatter:formatter_rank_b}
+// 		 ,{name:"rank_c", index:"rank_c", align:"right", classes:"no_class", formatter:formatter_rank_c}
+// 		 ,{name:"rank_d", index:"rank_d", align:"right", classes:"no_class", formatter:formatter_rank_d}
+
+ 		 ,{name:"rank_s", index:"rank_s", align:"right", classes:"no_class"}
+ 		 ,{name:"rank_a", index:"rank_a", align:"right", classes:"no_class"}
+ 		 ,{name:"rank_b", index:"rank_b", align:"right", classes:"no_class"}
+ 		 ,{name:"rank_c", index:"rank_c", align:"right", classes:"no_class"}
+ 		 ,{name:"rank_d", index:"rank_d", align:"right", classes:"no_class"}
+		 
+ 		 ,{name:"apply_yourself_num", index:"apply_yourself_num", align:"right", classes:"no_class"}
+ 		 ,{name:"apply_oneself_num", index:"apply_oneself_num", align:"right", classes:"no_class"}
+ 		 ,{name:"apply_point", index:"apply_point", align:"right", classes:"no_class"}
+
+		];
+	
+
+		// その他の設定
+		jqgrid_opt = {
+			 table_name:'building_table'
+			,fotter_name:'building_pager'
+			,div_name:'div_dummy_02'
+			,caption:'<%= @month.slice(0,4) + '年' + @month.slice(4,2) + '月度' %>　受託活動報告'
+			,event_type:30
+			,shrinkFit:true
+			,multiselect:true
+		};
+		
+		// jqgrid作成
+		$(function(){
+			
+			var table_div = $('#' + jqgrid_opt.table_name);
+			var div_box = $('#' + jqgrid_opt.div_name);
+	
+			table_div.jqGrid({
+			  	data : gon.data_list,  //表示したいデータ
+			  	datatype : "local",            //データの種別 他にjsonやxmlも選べます。しかし、私はlocalが推奨です。
+			  	colNames : col_names,           //列の表示名
+			  	colModel : col_model,   //列ごとの設定
+			  	caption : jqgrid_opt.caption,    //ヘッダーのキャプション
+				
+				loadComplete : function () {  // 幅の%調整。読み込みが完了したあと指定のdivの幅と高さを%でとってきて設定
+					table_div.jqGrid('setGridWidth', div_box.width(), jqgrid_opt.shrinkFit);
+				    //table_div.jqGrid('setGridHeight', div_box.height(), jqgrid_opt.shrinkFit);
+				},
+		        onSelectRow: function(id) {
+		           // idにはリストの選択した行番号が入ってくる
+		   
+				   // if(jqgrid_opt.event_type == 1 ){
+				   // 					   link_shop_click(table_div.getRowData(id).id);
+				   // }else if(jqgrid_opt.event_type == 2){
+				   // 					   link_building_click(table_div.getRowData(id).id);
+				   // }else if(jqgrid_opt.event_type == 30){
+				   // 					   link_owner_click(table_div.getRowData(id).owner_id);
+				   // }
+		        },
+			    onSelectRow: function(id) {
+					// // クリックイベント
+					// 				    data = jQuery('#building_table').getRowData(id);
+					// 			 		screen_block();
+					//
+					// location.href = location.protocol + '//' + location.host + '/biruweb/trust_managements/' + data.attack_list
+					//
+					
+				},
+				// onCellSelect: function(rowid, iCol, cellcontent){
+				// 	alert(rowid);
+				// 	alert(iCol);
+				// 	alert(cellcontent);
+				//
+				// }
+				
+			  	//shrinkToFit : false,　　        //画面サイズに依存せず固定の大きさを表示する設定
+			});
+  
+			//   //検索追加
+			// table_div.jqGrid('navGrid',('#' + fotter_name),{
+			// 	add:false,   //おまじない
+			// 	edit:false,  //おまじない
+			// 	del:false,   //おまじない
+			// 	search:{     //検索オプション
+			// 	odata : ['equal', 'not equal', 'less', 'less or equal',
+			// 	       'greater','greater or equal', 'begins with',
+			// 	       'does not begin with','is in','is not in','ends with',
+			// 	       'does not end with','contains','does not contain']
+			// 	}   //検索の一致条件を入れられる
+			// });
+  
+			//filterバー追加
+			
+	        table_div.jqGrid('setGroupHeaders', {
+	          useColSpanStyle: true,
+	          groupHeaders:[
+	            {startColumnName: 'rank_all', numberOfColumns: 5, titleText: 'アタックリスト'},
+	            {startColumnName: 'visit_plan', numberOfColumns: 2, titleText: '訪問'},
+	            {startColumnName: 'visit_meet_plan', numberOfColumns: 3, titleText: '面談'},
+	            {startColumnName: 'dm_plan', numberOfColumns: 3, titleText: 'ダイレクトメール'},
+	            {startColumnName: 'tel_plan', numberOfColumns: 3, titleText: '電話アプローチ'},
+	            {startColumnName: 'dm_to_tel_plan', numberOfColumns: 3, titleText: 'ＤＭ後アプローチ'},
+				  
+	            {startColumnName: 'suggestion_plan', numberOfColumns: 2, titleText: '提案'},
+	            {startColumnName: 'trust_plan', numberOfColumns: 2, titleText: '受託'},
+
+				{startColumnName: 'apply_yourself_num', numberOfColumns: 3, titleText: '承認済み受託戸数'},
+				
+	          ]
+	        });
+		});
+	}
+	
+	
+	// jqgridのサイズを規定する
+	function grid_size_def(){
+	
+        $('#building_table').setGridWidth($(window).width() - 100 )
+                    .setGridHeight(200);
+
+//        $('#building_pager').setGridWidth($(window).width() - 100 )
+//                    .setGridHeight($(window).height() * 0.4 - 50);
+	
+	}
+	
+	// リサイズ時のイベント
+    $(window).bind('resize', function () {
+    	grid_size_def();
+    }).trigger('resize');
+	
+	function dropsort() {
+		document.yyyymm.submit();
+	}
+	
+	$(function () {
+		// 初期描画完了後にサイズを対応させる。
+		grid_size_def();
+	});
+	
+	
+</script>
+
+<% if flash[:notice] %>
+	<div class="alert alert-info alert-dismissible" role="alert" style="margin-bottom:0px;" id="alert-block">
+	  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	  <%= flash[:notice] %>
+	</div>
+<% end %>
+
+<% if flash[:danger] %>
+	<div class="alert alert-danger alert-dismissible" role="alert" style="margin-bottom:0px;" id="alert-block">
+	  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	  <%= flash[:danger] %>
+	</div>
+<% end %>
+
+<div style="margin:30px 40px 10px 40px;">
+	
+	<div id="div_dummy_02" style="width:100%;height:90%;">
+		
+		<div><h2>管理受託　活動報告</h2></div>
+		<div style="padding-bottom:5px;padding-top:10px;">
+			<%= form_tag({:action => :index}, {:name => 'yyyymm', :onchange=>'javascript:screen_block();'}) do %>
+				<%= select_tag(:month, options_for_select(@calender, @month),  :onchange=>"javascript:dropsort();") %>
+				<span style="padding-left:100px;text-align:right">最終更新日：<%= @data_update.update_datetime if @data_update %></span>
+			<% end %>
+		</div>
+
+		<table id="building_table"></table>
+		<div id="building_pager"></div>
+	</div>
+
+
+
+	<div style="padding-top:10px;">
+        <%= link_to "検索（一覧）",  {:action=>'search'}, :onclick=>'javascript:screen_block();',  :class=>"btn btn-primary", :style=>"color:white"  %>
+        <%= link_to "検索（地図）",  {:action=>'owner_building_list'}, :onclick=>'javascript:screen_block();',  :class=>"btn btn-primary", :style=>"color:white"  %>
+				<a data-toggle="modal" href="#modal-tack" class="btn btn-info"  style="color:white">DMタックシール</a>
+        <%= link_to "ＤＭ発行処理",  {:action=>'dm_index'}, :onclick=>'javascript:screen_block();',  :class=>"btn btn-info", :style=>"color:white"  %>
+        <%= link_to "貸主登録・編集",  {:action=>''}, :onclick=>'javascript:win_popup_owner_create();return false;',  :class=>"btn btn-info", :style=>"color:white" %>
+		
+	</div>
+	
+
+</div>
+
+	<!-- モーダルダイアログ -->
+	<div class="modal fade" id="modal-tack" tabindex="-1" role="dialog" aria-labelledby="modal-tack-label" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h4 class="modal-title" >タックシール出力</h4>
+	      </div>
+		<%= form_tag({:action=>'tack_out'}, {:method=>'post', :name=>'tack_frm' }) do %>
+			<%= hidden_field_tag 'dm_owner_list', ''  %>
+			<%= hidden_field_tag :sid,  @biru_user.id %>
+			<div class="modal-body">
+				見込みランク
+				<div style="padding-bottom:20px;padding-left:20px;padding-top:5px;">
+			       <%= check_box_tag :rank_s %>&nbsp;Ｓランク&nbsp;&nbsp;
+				   <%= check_box_tag :rank_a, {},:checked=>true %>&nbsp;Ａランク&nbsp;&nbsp;
+				   <%= check_box_tag :rank_b, {},:checked=>true %>&nbsp;Ｂランク&nbsp;&nbsp;
+				   <%= check_box_tag :rank_c, {},:checked=>true %>&nbsp;Ｃランク&nbsp;&nbsp;
+				   <%= check_box_tag :rank_d, {},:checked=>true %>&nbsp;Ｄランク&nbsp;&nbsp;
+			   </div>
+
+				出力パターン
+				<div style="padding-bottom:0px;padding-left:20px;padding-top:5px;">
+			     <%= check_box_tag :ptn_1, {},:checked=>true %>&nbsp;パターン１&nbsp;&nbsp;
+				   <%= check_box_tag :ptn_2 %>&nbsp;パターン２&nbsp;&nbsp;
+				   <%= check_box_tag :ptn_3 %>&nbsp;パターン３&nbsp;&nbsp;
+				   <%= check_box_tag :ptn_4 %>&nbsp;パターン４&nbsp;&nbsp;
+				   <%= check_box_tag :ptn_5 %>&nbsp;パターン５&nbsp;&nbsp;
+				   <%= check_box_tag :ptn_6 %>&nbsp;パターン６&nbsp;&nbsp;
+				</div>
+				<div style="padding-bottom:30px;padding-left:20px;padding-top:0px;">
+				   <%= check_box_tag :ptn_7 %>&nbsp;パターン７（ニュースレター１）&nbsp;&nbsp;
+				   <%= check_box_tag :ptn_8 %>&nbsp;パターン８（ニュースレター２）&nbsp;&nbsp;
+			   </div>
+				
+				
+				<div style="padding-bottom:20px;">
+			       <%= radio_button_tag :dm_history, 1, true,  :onclick=>"dm_msg_regist_on(true);" %>&nbsp;DM履歴を残す
+			       &nbsp;&nbsp;&nbsp;
+			       <%= radio_button_tag :dm_history, 0, false, :onclick=>"dm_msg_regist_on(false);" %>&nbsp;DM履歴を残さない
+			   </div>
+				<div>
+			       <label class="string optional control-label" for="tack_out_date">発行日</label>
+				   <%= text_field_tag 'dm_out_date', Date.today.strftime("%Y-%m-%d"), :type=>'date' , :class=>'form-control', :style=>'width:180px;' %>
+
+
+			       <label class="string optional control-label" for="dm_discription" style="margin-top:20px;">ＤＭ履歴の内容（送付するＤＭの概要など）</label>
+				   <%= text_field_tag 'dm_out_msg', '', :class=>'form-control', :style=>'width:300px;'  %>
+				   
+			       <label class="string optional control-label" for="dm_discription" style="margin-top:20px;">宛名ラベル用紙種類</label>
+				   <%= select_tag 'dm_tack_kind', options_for_select([["A-ONE 21面用", "pdf_layout_a_one_21.tlf"], ["PLUS ME-505T", "pdf_layout_plus_me505t.tlf"]]), :class=>'form-control', :style=>'width:150px;' %>
+				   
+				</div>
+			</div>
+			<div class="modal-footer">
+			<%= submit_tag 'タックシールを出力' ,:class=>"btn btn-default", :style=>"margin:0", :onclick=>"return tack_out_go();" %>
+			</div>
+		<% end %>
+
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+	<div style="text-align: center;margin-top:80px;padding-left:50px;padding-right:50px;" ><%= high_chart("graph_dm_to_tel", @graph_dm_to_tel) %></div>
+	<div style="text-align: center;margin-top:80px;padding-left:50px;padding-right:50px;" ><%= high_chart("graph_visit", @graph_visit) %></div>
+	<div style="text-align: center;margin-top:80px;padding-left:50px;padding-right:50px;" ><%= high_chart("graph_tel", @graph_tel) %></div>
+	<div style="text-align: center;margin-top:80px;padding-left:50px;padding-right:50px;" ><%= high_chart("graph_rankup", @graph_rankup) %></div>
+	
+	<script type="text/javascript">
+		function dm_msg_regist_on(msg_flg){
+			var curfrm = document.tack_frm;
+		
+			if(msg_flg == true){
+				curfrm.dm_out_date.disabled = false;
+				curfrm.dm_out_date.style.backgroundColor="";
+				curfrm.dm_out_msg.disabled = false;
+				curfrm.dm_out_msg.style.backgroundColor="";
+			}else{
+				curfrm.dm_out_date.disabled = true;
+				curfrm.dm_out_date.style.backgroundColor="gray";
+				curfrm.dm_out_msg.disabled = true;
+				curfrm.dm_out_msg.style.backgroundColor="gray";
+			}
+		
+		}
+
+		// タックシール用のpdfを出力します
+		function tack_out_go(){
+
+			// 履歴出力ラジオボックスのON/OFFを取得
+			var dm_rireki_value = 0;
+			for(var i = 0; i<document.tack_frm.dm_history.length; i++){
+				if(document.tack_frm.dm_history[i].checked == true){
+					dm_rireki_value = document.tack_frm.dm_history[i].value;
+				}
+			}
+
+			// DM発行リレキがONの時、日付とメッセージが正しく登録されているか確認
+			if(dm_rireki_value == "1"){
+				if(document.tack_frm.dm_out_date.value.length == 0){
+					alert('リレキに残す日付を設定してください。');
+					return false;
+				}
+			
+				if(document.tack_frm.dm_out_msg.value.length == 0){
+					alert('リレキに残すメッセージを設定してください。');
+					return false;
+				}
+			}
+		
+			// DM発行リレキに応じて出力
+			if(dm_rireki_value == "1"){
+				if(window.confirm('ＤＭ発行リレキに登録します。よろしいですか？\n\n※DM出力フラグがOFF・またはランクがD未満は出力対象外です')){
+				}else{
+					return false;
+				}
+			
+			}else{
+				if(window.confirm('リレキに保存されません。よろしいですか？\n\n※DM出力フラグがOFF・またはランクがD未満は出力対象外です')){
+				}else{
+					return false;
+				}
+			
+			}
+			
+			return true;
+		}
+
+		jQuery("#tack_new").trigger("click");
+	
+	
+		$('#dp2').datepicker({
+			format: 'dd/mm/yyyy',
+			language: 'ja',
+			autoclose: true,
+			clearBtn: true,
+		});
+		
+	</script>
+	

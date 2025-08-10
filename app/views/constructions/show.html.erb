@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Completion check person:</b>
+  <%= @construction.completion_check_person %>
+</p>
+
+<p>
+  <b>Completion check expected date:</b>
+  <%= @construction.completion_check_expected_date %>
+</p>
+
+<p>
+  <b>Completion check date:</b>
+  <%= @construction.completion_check_date %>
+</p>
+
+
+<%= link_to 'Edit', edit_construction_path(@construction) %> |
+<%= link_to 'Back', constructions_path %>

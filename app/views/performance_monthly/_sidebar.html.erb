@@ -1,0 +1,432 @@
+  
+<%= render :partial=>'performance_def' %> <!-- views/application/_performance_def.html.erb --> 
+
+<% content_for :sidebar_monthly do %>
+
+  <script type="text/javascript">
+    var item_data = [
+      { label: '項目', id: 6000,
+        children: [
+          {
+            label: '来店・契約', id: 6010,
+            children: [
+              { label: '新規来店客数', id: 'G-BS0001', summary:1, calc:1},
+              { label: '案内組数', id: 'G-BS0002', summary:1, calc:1},
+              { label: '再来店客数', id: 'G-BS0007', summary:1, calc:1},
+              { label: '賃貸仲介件数', id: 'G-BS0012', summary:1, calc:1},
+              { label: '自付全体件数', id: 'G-BS0003', summary:1, calc:1},
+              { label: '自社他社付件数', id: 'G-BS0009', summary:1, calc:1},
+              { label: '自社自付件数', id: 'G-BS0010', summary:1, calc:1},
+              { label: '他社自付件数', id: 'G-BS0011', summary:1, calc:1},
+              { label: '自営自営付_件数', id: 'G-BS0016', summary:1, calc:1},
+              { label: '自営他営付_件数', id: 'G-BS0017', summary:1, calc:1},
+              { label: '他営自営付_件数', id: 'G-BS0018', summary:1, calc:1},
+              { label: '他社他社付_件数', id: 'G-BS0021', summary:1, calc:1},
+              { label: '仲手・広告宣伝費', id: 'G-BS0004', summary:1, calc:1},
+              { label: '仲介手数料_獲得金額', id: 'G-BS0019', summary:1, calc:1},
+              { label: '広告宣伝費_獲得金額', id: 'G-BS0020', summary:1, calc:1},
+            ]
+          },
+          {
+            label: 'メール反響', id: 6020,
+            children: [
+              { label: 'WEB反響_全体', id: 'G-BS0013', summary:1, calc:1},
+              { label: 'WEB反響-スーモ', id: 'G-BS0101', summary:1, calc:1},
+              { label: 'WEB反響-アットホーム', id: 'G-BS0102', summary:1, calc:1},
+              { label: 'WEB反響-ホームズ', id: 'G-BS0103', summary:1, calc:1},
+              { label: 'WEB反響-マイナビ賃貸', id: 'G-BS0104', summary:1, calc:1},
+              { label: 'WEB反響-自社HP', id: 'G-BS0105', summary:1, calc:1},
+              { label: 'メール返信数', id: 'G-BS0200', summary:1, calc:1},
+              { label: '単純返信数_3h以内', id: 'G-BS0202', summary:2, calc:1},
+              { label: '稼働考慮返信数_3h以内', id: 'G-BS0203', summary:2, calc:1},
+              { label: '単純返信_返信平均時間(秒)', id: 'G-BS0204', summary:2, calc:1},
+              { label: '稼働考慮返信_返信平均時間(秒)', id: 'G-BS0205', summary:2, calc:1},
+              { label: 'WEB反響_全体_重複排除件数', id: 'G-BS0206', summary:1, calc:1},
+            ]
+          },
+
+          {
+            label: '来店反響元', id: 6030,
+            children: [
+              { label: '[WEB]当社HP_1', id: 'G-BS2111', summary:1, calc:1},
+              { label: '[WEB]Suumo_1', id: 'G-BS2121', summary:1, calc:1},
+              { label: '[WEB]Suumo_2', id: 'G-BS2122', summary:1, calc:1},
+              { label: '[WEB]at home_1', id: 'G-BS2131', summary:1, calc:1},
+              { label: '[WEB]HOMES_1', id: 'G-BS2141', summary:1, calc:1},
+              { label: '[WEB]HOMES_2', id: 'G-BS2142', summary:1, calc:1},
+              { label: '[WEB]Yahoo不動産_1', id: 'G-BS2161', summary:1, calc:1},
+              { label: '[広告]当社フリーペーパー', id: 'G-BS2211', summary:1, calc:1},
+              { label: '[広告]店頭看板', id: 'G-BS2221', summary:1, calc:1},
+              { label: '[広告]現地看板', id: 'G-BS2231', summary:1, calc:1},
+              { label: '[紹介]知人紹介', id: 'G-BS2311', summary:1, calc:1},
+              { label: '[紹介]既契約者紹介', id: 'G-BS2321', summary:1, calc:1},
+              { label: '[紹介]社員紹介', id: 'G-BS2331', summary:1, calc:1},
+              { label: '[紹介]他社紹介', id: 'G-BS2341', summary:1, calc:1},
+              { label: '[紹介]法人課紹介', id: 'G-BS2351', summary:1, calc:1},
+              { label: '[紹介]法人課紹介(NSK)', id: 'G-BS2361', summary:1, calc:1},
+              { label: '[リピート]既契約者', id: 'G-BS2411', summary:1, calc:1},
+              { label: '[リピート]社員', id: 'G-BS2421', summary:1, calc:1},
+              { label: 'その他', id: 'G-BS2900', summary:1, calc:1},
+            ]
+          },
+
+          {
+            label: '案内反響元', id: 6040,
+            children: [
+              { label: '[WEB]当社HP_1', id: 'G-BS3111', summary:1, calc:1},
+              { label: '[WEB]Suumo_1', id: 'G-BS3121', summary:1, calc:1},
+              { label: '[WEB]at home_1', id: 'G-BS3131', summary:1, calc:1},
+              { label: '[WEB]HOMES_1', id: 'G-BS3141', summary:1, calc:1},
+              { label: '[WEB]Yahoo不動産_1', id: 'G-BS3161', summary:1, calc:1},
+              { label: '[広告]当社フリーペーパー', id: 'G-BS3211', summary:1, calc:1},
+              { label: '[広告]店頭看板', id: 'G-BS3221', summary:1, calc:1},
+              { label: '[広告]現地看板', id: 'G-BS3231', summary:1, calc:1},
+              { label: '[紹介]知人紹介', id: 'G-BS3311', summary:1, calc:1},
+              { label: '[紹介]既契約者紹介', id: 'G-BS3321', summary:1, calc:1},
+              { label: '[紹介]社員紹介', id: 'G-BS3331', summary:1, calc:1},
+              { label: '[紹介]法人課紹介', id: 'G-BS3351', summary:1, calc:1},
+              { label: '[紹介]法人課紹介(NSK)', id: 'G-BS3361', summary:1, calc:1},
+              { label: '[リピート]既契約者', id: 'G-BS3411', summary:1, calc:1},
+              { label: '[リピート]社員', id: 'G-BS3421', summary:1, calc:1},
+              { label: 'その他', id: 'G-BS3900', summary:1, calc:1},
+            ]
+          },
+
+          {
+            label: '契約反響元', id: 6050,
+            children: [
+              { label: '<自社物>-[WEB]当社HP_1', id: 'G-BS4111', summary:1, calc:1},
+              { label: '<自社物>-[WEB]Suumo_1', id: 'G-BS4121', summary:1, calc:1},
+              { label: '<自社物>-[WEB]at home_1', id: 'G-BS4131', summary:1, calc:1},
+              { label: '<自社物>-[WEB]HOMES_1', id: 'G-BS4141', summary:1, calc:1},
+              { label: '<自社物>-[WEB]マイナビ賃貸_1', id: 'G-BS4151', summary:1, calc:1},
+              { label: '<自社物>-[WEB]Yahoo不動産_1', id: 'G-BS4161', summary:1, calc:1},
+              { label: '<自社物>-[広告]当社フリーペーパー', id: 'G-BS4211', summary:1, calc:1},
+              { label: '<自社物>-[広告]店頭看板', id: 'G-BS4221', summary:1, calc:1},
+              { label: '<自社物>-[広告]現地看板', id: 'G-BS4231', summary:1, calc:1},
+              { label: '<自社物>-[紹介]知人紹介', id: 'G-BS4311', summary:1, calc:1},
+              { label: '<自社物>-[紹介]既契約者紹介', id: 'G-BS4321', summary:1, calc:1},
+              { label: '<自社物>-[紹介]社員紹介', id: 'G-BS4331', summary:1, calc:1},
+              { label: '<自社物>-[紹介]他社紹介', id: 'G-BS4341', summary:1, calc:1},
+              { label: '<自社物>-[紹介]法人課紹介', id: 'G-BS4351', summary:1, calc:1},
+              { label: '<自社物>-[紹介]法人課紹介(NSK)', id: 'G-BS4361', summary:1, calc:1},
+              { label: '<自社物>-[リピート]既契約者', id: 'G-BS4411', summary:1, calc:1},
+              { label: '<自社物>-[リピート]社員', id: 'G-BS4421', summary:1, calc:1},
+              { label: '<自社物>-その他', id: 'G-BS4900', summary:1, calc:1},
+              { label: '<他社物>-[WEB]当社HP_1', id: 'G-BS5111', summary:1, calc:1},
+              { label: '<他社物>-[WEB]Suumo_1', id: 'G-BS5121', summary:1, calc:1},
+              { label: '<他社物>-[WEB]at home_1', id: 'G-BS5131', summary:1, calc:1},
+              { label: '<他社物>-[WEB]HOMES_1', id: 'G-BS5141', summary:1, calc:1},
+              { label: '<他社物>-[広告]店頭看板', id: 'G-BS5221', summary:1, calc:1},
+              { label: '<他社物>-[紹介]知人紹介', id: 'G-BS5311', summary:1, calc:1},
+              { label: '<他社物>-[紹介]既契約者紹介', id: 'G-BS5321', summary:1, calc:1},
+              { label: '<他社物>-[紹介]社員紹介', id: 'G-BS5331', summary:1, calc:1},
+              { label: '<他社物>-[紹介]法人課紹介', id: 'G-BS5351', summary:1, calc:1},
+              { label: '<他社物>-[紹介]法人課紹介(NSK)', id: 'G-BS5361', summary:1, calc:1},
+              { label: '<他社物>-[リピート]既契約者', id: 'G-BS5411', summary:1, calc:1},
+              { label: '<他社物>-その他', id: 'G-BS5900', summary:1, calc:1},
+            ]
+          },
+
+          {
+            label: '電話反響元', id: 6060,
+            children: [
+              { label: '[WEB]当社HP_1', id: 'G-BS6111', summary:1, calc:1},
+              { label: '[WEB]Suumo_1', id: 'G-BS6121', summary:1, calc:1},
+              { label: '[WEB]at home_1', id: 'G-BS6131', summary:1, calc:1},
+              { label: '[WEB]HOMES_1', id: 'G-BS6141', summary:1, calc:1},
+              { label: '[紹介]既契約者紹介', id: 'G-BS6321', summary:1, calc:1},
+              { label: '[紹介]社員紹介', id: 'G-BS6331', summary:1, calc:1},
+              { label: '[紹介]法人課紹介', id: 'G-BS6351', summary:1, calc:1},
+              { label: '[リピート]既契約者', id: 'G-BS6411', summary:1, calc:1},
+            ]
+          },
+
+          {
+            label: '管理物件', id: 6070,
+            children: [
+              { label: '管理受託戸数', id: 'G-KJ0001', summary:1, calc:1},
+              { label: '管理計上戸数', id: 'G-KJ0002', summary:1, calc:1},
+              { label: '管理解約戸数', id: 'G-KJ0003', summary:1, calc:1},
+              { label: '総管理戸数', id: 'G-KJ0004', summary:3, calc:1},
+              { label: '空室率', id: 'G-KJ0005', summary:2, calc:1},
+              { label: '空室率対象戸数', id: 'G-KJ0006', summary:1, calc:1},
+              { label: '空室率対象空室数', id: 'G-KJ0007', summary:1, calc:1},
+              { label: 'オーナー止め戸数', id: 'G-KJ0008', summary:1, calc:1},
+              { label: '未入居戸数', id: 'G-KJ0009', summary:1, calc:1},
+              { label: '入居率・空室率対象外戸数', id: 'G-KJ0010', summary:1, calc:1},
+            // { label: '管理戸数カウント対象外戸数', id: 'G-KJ0011', summary:1, calc:1},
+              { label: '空室率（自社施工)', id: 'G-KJ0012', summary:2, calc:1},
+              { label: '空室率対象戸数（自社施工）', id: 'G-KJ0013', summary:2, calc:1},
+              { label: '空室率対象空室数（自社施工）', id: 'G-KJ0014', summary:2, calc:1},
+              { label: '入居率', id: 'G-KJ0015', summary:2, calc:1},
+              { label: '入居率算出_分母日数', id: 'G-KJ0016', summary:2, calc:1},
+              { label: '入居率算出_稼働日数', id: 'G-KJ0017', summary:2, calc:1},
+              { label: '管理戸数_アパマンＢ', id: 'G-KJ0020', summary:3, calc:1},
+              { label: '管理戸数_分譲Ｂ', id: 'G-KJ0021', summary:3, calc:1},
+              { label: '管理戸数_戸建Ｂ', id: 'G-KJ0022', summary:3, calc:1},
+              { label: '管理戸数_Ｂその他', id: 'G-KJ0023', summary:3, calc:1},
+              { label: '管理戸数_サブリース', id: 'G-KJ0024', summary:3, calc:1},
+              { label: '管理戸数_業務君', id: 'G-KJ0025', summary:3, calc:1},
+              { label: '管理戸数_総務君', id: 'G-KJ0026', summary:3, calc:1},
+              { label: '管理戸数_特優賃', id: 'G-KJ0027', summary:3, calc:1},
+              { label: '管理戸数_マンション管理組合', id: 'G-KJ0028', summary:3, calc:1},
+              { label: '重点地域戸数_市場', id: 'G-KJ0050', summary:3, calc:1},
+              { label: '重点地域戸数_ビル管理', id: 'G-KJ0051', summary:3, calc:1},
+              { label: '重点地域戸数_シェア率', id: 'G-KJ0052', summary:2, calc:1},
+            ]
+          },
+
+
+          {
+            label: '工事', id: 6080,
+            children: [
+              { label: '総合計 計上済_件数', id: 'G-TK0010', summary:1, calc:1},
+              { label: '総合計 受注残_件数', id: 'G-TK0011', summary:1, calc:1},
+              { label: '総合計 売上_計上済_金額', id: 'G-TK0012', summary:1, calc:1},
+              { label: '総合計 売上_受注残_金額', id: 'G-TK0013', summary:1, calc:1},
+              { label: '総合計 粗利_計上済_金額', id: 'G-TK0014', summary:1, calc:1},
+              { label: '総合計 粗利_受注残_金額', id: 'G-TK0015', summary:1, calc:1},
+              { label: '総合計 営収払出_計上済_金額', id: 'G-TK0016', summary:1, calc:1},
+              { label: '総合計 営収払出_受注残_金額', id: 'G-TK0017', summary:1, calc:1},
+              { label: '原状回復 計上済_件数', id: 'G-TK0020', summary:1, calc:1},
+              { label: '原状回復 受注残_件数', id: 'G-TK0021', summary:1, calc:1},
+              { label: '原状回復 売上_計上済_金額', id: 'G-TK0022', summary:1, calc:1},
+              { label: '原状回復 売上_受注残_金額', id: 'G-TK0023', summary:1, calc:1},
+              { label: '原状回復 粗利_計上済_金額', id: 'G-TK0024', summary:1, calc:1},
+              { label: '原状回復 粗利_受注残_金額', id: 'G-TK0025', summary:1, calc:1},
+              { label: '原状回復 営収払出_計上済_金額', id: 'G-TK0026', summary:1, calc:1},
+              { label: '原状回復 営収払出_受注残_金額', id: 'G-TK0027', summary:1, calc:1},
+              { label: '提案工事 計上済_件数', id: 'G-TK0030', summary:1, calc:1},
+              { label: '提案工事 受注残_件数', id: 'G-TK0031', summary:1, calc:1},
+              { label: '提案工事 売上_計上済_金額', id: 'G-TK0032', summary:1, calc:1},
+              { label: '提案工事 売上_受注残_金額', id: 'G-TK0033', summary:1, calc:1},
+              { label: '提案工事 粗利_計上済_金額', id: 'G-TK0034', summary:1, calc:1},
+              { label: '提案工事 粗利_受注残_金額', id: 'G-TK0035', summary:1, calc:1},
+              { label: '提案工事 営収払出_計上済_金額', id: 'G-TK0036', summary:1, calc:1},
+              { label: '提案工事 営収払出_受注残_金額', id: 'G-TK0037', summary:1, calc:1},
+              { label: '設備メンテ 計上済_件数', id: 'G-TK0040', summary:1, calc:1},
+              { label: '設備メンテ 売上_計上済_金額', id: 'G-TK0042', summary:1, calc:1},
+              { label: '設備メンテ 粗利_計上済_金額', id: 'G-TK0044', summary:1, calc:1},
+              { label: '設備メンテ 営収払出_計上済_金額', id: 'G-TK0046', summary:1, calc:1},
+              { label: '修理工事 計上済_件数', id: 'G-TK0050', summary:1, calc:1},
+              { label: '修理工事 受注残_件数', id: 'G-TK0051', summary:1, calc:1},
+              { label: '修理工事 売上_計上済_金額', id: 'G-TK0052', summary:1, calc:1},
+              { label: '修理工事 売上_受注残_金額', id: 'G-TK0053', summary:1, calc:1},
+              { label: '修理工事 粗利_計上済_金額', id: 'G-TK0054', summary:1, calc:1},
+              { label: '修理工事 粗利_受注残_金額', id: 'G-TK0055', summary:1, calc:1},
+              { label: '修理工事 営収払出_計上済_金額', id: 'G-TK0056', summary:1, calc:1},
+              { label: '修理工事 営収払出_受注残_金額', id: 'G-TK0057', summary:1, calc:1},
+              { label: '定期メンテ 計上済_件数', id: 'G-TK0060', summary:1, calc:1},
+              { label: '定期メンテ 売上_計上済_金額', id: 'G-TK0062', summary:1, calc:1},
+              { label: '定期メンテ 粗利_計上済_金額', id: 'G-TK0064', summary:1, calc:1},
+              { label: '定期メンテ 営収払出_計上済_金額', id: 'G-TK0066', summary:1, calc:1},
+              { label: 'その他工事 計上済_件数', id: 'G-TK0070', summary:1, calc:1},
+              { label: 'その他工事 売上_計上済_金額', id: 'G-TK0072', summary:1, calc:1},
+              { label: 'その他工事 粗利_計上済_金額', id: 'G-TK0074', summary:1, calc:1},
+              { label: 'その他工事 営収払出_計上済_金額', id: 'G-TK0076', summary:1, calc:1},
+            ]
+          },
+
+          {
+            label: '定期工事', id: 6090,
+            children: [
+              { label: '対象棟数', id: 'G-TK0100', summary:1, calc:1},
+              { label: '巡回清掃_件数', id: 'G-TK0101', summary:1, calc:1},
+              { label: '巡回清掃_加入率', id: 'G-TK0102', summary:2, calc:1},
+              { label: '巡回清掃以外_件数', id: 'G-TK0103', summary:1, calc:1},
+              { label: '巡回清掃以外_加入率', id: 'G-TK0104', summary:2, calc:1},
+              { label: '浄化槽清掃', id: 'G-TK0105', summary:1, calc:1},
+              { label: '貯水槽清掃', id: 'G-TK0106', summary:1, calc:1},
+              { label: '環境衛生管理 その他', id: 'G-TK0107', summary:1, calc:1},
+              { label: 'リースマット', id: 'G-TK0108', summary:1, calc:1},
+              { label: '検査', id: 'G-TK0109', summary:1, calc:1},
+              { label: '執務管理', id: 'G-TK0110', summary:1, calc:1},
+              { label: '定期清掃', id: 'G-TK0111', summary:1, calc:1},
+              { label: '排水管清掃', id: 'G-TK0112', summary:1, calc:1},
+              { label: '植栽管理', id: 'G-TK0113', summary:1, calc:1},
+              { label: '清掃管理 その他', id: 'G-TK0114', summary:1, calc:1},
+              { label: '給水設備点検', id: 'G-TK0115', summary:1, calc:1},
+              { label: '消防設備点検', id: 'G-TK0116', summary:1, calc:1},
+              { label: '浄化槽点検', id: 'G-TK0117', summary:1, calc:1},
+              { label: 'エレベーター保守点検', id: 'G-TK0118', summary:1, calc:1},
+              { label: '設備点検 その他', id: 'G-TK0119', summary:1, calc:1},
+              { label: '防犯・警備', id: 'G-TK0120', summary:1, calc:1},
+              { label: 'その他', id: 'G-TK0121', summary:1, calc:1},
+            ]
+          },
+        ]
+      }
+    ];
+
+    $(function() {
+      
+      $('#tree-item').tree({
+          data: item_data,
+          saveState: 'c-item'
+      });
+
+      $('#tree-yyyymm').tree({
+          data: yyyymm_data,
+          saveState: 'c-yyyymm'
+      });
+
+      $('#tree-item').bind('tree.select',　
+        function(event) {
+          if (event.node) {
+            // もしも選択されたNodeが非選択対象(3000以上)だったら、選択状態を解除
+            var node = event.node;
+            var num = parseInt(node.id);
+            if(isNaN(num) == false){
+              if(num >= 6000){
+                $('#tree-item').tree('removeFromSelection', node);
+              }
+            }
+          }
+        }
+      );
+
+      $('#tree-yyyymm').bind('tree.select',　
+        function(event) {
+          if (event.node) {
+            // もしも選択されたNodeが非選択対象(3000以上)だったら、選択状態を解除
+            var node = event.node;
+            var num = parseInt(node.id);
+            if(isNaN(num) == false){
+              if(num >= 3000){
+                $('#tree-yyyymm').tree('removeFromSelection', node);
+              }
+            }
+          }
+        }
+      );
+
+    });
+
+    function disp(){
+
+      restut_status = false;
+
+      if(frm.monthly_yyyymm_from.value == ""){
+        alert('開始月度を指定してください');
+        return;
+      }
+
+      if(frm.monthly_yyyymm_to.value == ""){
+        alert('最終月度を指定してください');
+        return;
+      }
+
+      frm.yyyymm_title.value = frm.monthly_yyyymm_from.value + "〜" + frm.monthly_yyyymm_to.value
+      frm.yyyymm_type.value = "1"
+
+      frm.yyyymm_s_monthly.value = frm.monthly_yyyymm_from.value;
+      frm.yyyymm_e_monthly.value = frm.monthly_yyyymm_to.value;
+
+      frm.item.value = $('#tree-item').tree('getSelectedNode').id;
+      if(frm.item.value =='undefined' ){
+        alert('項目を指定してください');
+        return;
+      }
+
+      frm.item_summary.value = $('#tree-item').tree('getSelectedNode').summary;
+      if(frm.item_summary.value =='undefined' ){
+        alert('集計種別が未定義の項目です');
+        return;
+      }
+
+      frm.item_calc.value = $('#tree-item').tree('getSelectedNode').calc;
+      if(frm.item_calc.value =='undefined' ){
+        alert('表示単位が未定義の項目です');
+        return;
+      }
+
+      frm.dept.value = $('#tree-dept').tree('getSelectedNode').id;
+      if(frm.dept.value =='undefined' ){
+        alert('部署を指定してください');
+        return;
+      }
+
+      frm.dept_list.value = $('#tree-dept').tree('getSelectedNode').dept_list
+      if(frm.dept_list.value =='undefined' ){
+        alert('dept_listが未定義です');
+        return;
+      }
+
+      frm.graph_name.value = $('#tree-dept').tree('getSelectedNode').graph_name
+      if(frm.graph_name.value =='undefined' ){
+        alert('graph_nameが未定義です');
+        return;
+      }
+
+
+      restut_status = true;
+      frm.submit();
+    }
+
+  </script>
+
+	<style type="text/css">
+
+		/* リキッドレイアウトを使って左固定バーと共にmainは可変100%に */
+		div#top-wrapper{
+			width:95%;
+		}
+
+		div#top-contents{
+			width: 100%;
+			float: right;
+		}
+
+		div#top-contents-main{
+			margin-left: 330px;
+		}
+
+		div#top-sidebar{
+			width: 300px;
+			margin-right: -300px;
+			float: left;
+		}
+	</style>
+
+    <div id="sidebar" style="padding-left:10px;padding-right:0px;">
+      <div id="myTabContent_search" class="tab-content">
+        <div class="tab-pane fade active in" id="tab_month" style="padding:0;margin:0;margin-top:20px;">
+
+          <%= form_tag performance_monthly_display_path ,:name=>"frm" do %>
+            <%= hidden_field_tag 'yyyymm_s', '' %>
+            <%= hidden_field_tag 'yyyymm_e', '' %>
+            <%= hidden_field_tag 'yyyymm_s_monthly', '' %>
+            <%= hidden_field_tag 'yyyymm_e_monthly', '' %>
+            <%= hidden_field_tag 'yyyymm_title', '' %>
+            <%= hidden_field_tag 'yyyymm_type', '' %>
+            <%= hidden_field_tag 'item', '' %>
+            <%= hidden_field_tag 'item_summary', '' %>
+            <%= hidden_field_tag 'item_calc', '' %>
+            <%= hidden_field_tag 'dept', '' %>
+            <%= hidden_field_tag 'dept_list', '' %>
+            <%= hidden_field_tag 'graph_name', '' %>
+
+            <ul class="nav nav-list well" >
+              <div style="text-align: center;">
+                <%= button_tag "グラフ表示" ,:type=>'button', :style=>'margin-bottom:15px;margin-top:0px;', :id=>'graph-submit-top', :onClick=>"javascript:disp();" %>
+              </div>
+
+              <div id="tree-yyyymm"></div>
+              <div>
+                <label style="width:100%;text-align:center;"><%= text_field_tag 'monthly_yyyymm_from', @yyyymm_s_monthly, :class=>'ympicker', :style=>'width:80px;text-align:center;' %>&nbsp;～&nbsp;<%= text_field_tag 'monthly_yyyymm_to', @yyyymm_e_monthly, :class=>'ympicker', :style=>'width:80px;text-align:center;' %></label>
+              </div>
+
+              <div id="tree-dept"></div>
+              <div id="tree-item"></div>
+
+              <div style="text-align: center;">
+                <%= button_tag "グラフ表示" ,:type=>'button', :style=>'margin-top:20px;', :id=>'graph-submit-bottom', :onClick=>"javascript:disp();" %>
+              </div>
+            </ul>
+          <% end %>
+
+        </div>
+      </div>
+    </div>
+<% end %>

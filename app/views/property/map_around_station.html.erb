@@ -1,0 +1,258 @@
+<% content_for :header do %>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&v=3&language=ja&libraries=visualization&client=gme-chuobuildingkanri"></script>
+	<script type="text/javascript">
+		//-------------------
+		// グローバル変数定義
+		//-------------------
+		var convert_shop = [];
+		var layer;
+	    var fusion_biru = '1sVm3zXEgch73gFQY2BFxQWzSOgTI4R8iYioIqlGE'; // ビル管理
+		
+		
+		function circle_clicked(circle){
+		
+			// IDの発番
+			var circle_id = Math.floor( Math.random() * 99999 ) ;
+
+	  		//----------------------------
+			// 吹き出しの作成
+			//----------------------------
+			var table_html = "" 
+			table_html += '<caption><b>' + circle.circle_name + '</b></caption>&nbsp;&nbsp;半径' + Math.round(circle.getRadius()) + 'メートル'
+			table_html += '<table style="line-height: 1.33em; border-collapse: collapse;" >'
+			table_html += '<tbody>'
+			table_html += '<tr>'
+			table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center" width="50px;" ></td>'
+			table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center" width="80px;">ビル管理</td>'
+			table_html += '</tr>'
+			table_html += '<tr>'
+			table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center" >戸数</td>'
+			table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" id="shop_biru_ko_' + circle.getRadius() + "_" + circle_id + '"></td>'
+			table_html += '</tr>'
+			table_html += '<tr>'
+			table_html += '<td style="padding:5px; background-color:#edf5f9;border:1px solid #42B4ED;font-weight: bold; text-align:center;" >棟数</td>'
+			table_html += '<td style="border: 1px solid #42B4ED;padding:5px;text-align:center;" valign="middle;" id="shop_biru_tou_' + circle.getRadius() + "_" + circle_id + '"></td>'
+			table_html += '</tr>'
+			table_html += '</table>'
+		
+		
+			var latlng = circle.getCenter()
+			var marker = new google.maps.Marker({
+	           position : latlng
+	          ,map : mapCanvas
+			  ,draggable: true	// ドラッグ可能にする
+			  ,icon: '/assets/marker_shadow.png' // todo windowsではbiruwebを付けること
+			});
+  
+			var infoWnd_circle = new google.maps.InfoWindow();
+			infoWnd_circle.setContent(table_html);
+			infoWnd_circle.setPosition(circle.getCenter());
+			infoWnd_circle.open(mapCanvas, marker);
+
+			//----------------------------
+			// 円の範囲の件数データを取得
+			//----------------------------
+	
+			// ビル管理物件
+			var sql = "SELECT COUNT('住所') AS CNT, SUM('戸数') AS SUMMARY FROM " + fusion_biru + " WHERE ST_INTERSECTS('住所', CIRCLE(LATLNG(" + latlng.lat() + ", " + latlng.lng() + "), " + circle.getRadius() + "))";
+			getFusionTableData(sql, 'shop_biru_tou_' + circle.getRadius() + "_"  + circle_id , 'shop_biru_ko_' + circle.getRadius() + "_"  + circle_id);
+	  }	
+		
+
+		function initialize(){
+
+		    // 地図・ストリートビューを作成します。
+			mapCanvas = new google.maps.Map(document.getElementById("map_canvas"), {scaleControl: true ,minZoom:2});
+			mapCanvas.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+			
+		    // infoウィンドウを１つだけ作成
+		    infoWnd = new google.maps.InfoWindow();
+
+		    // 初期表示位置を調整
+		    var bounds = new google.maps.LatLngBounds();
+			
+			// 駅オブジェクトを作成
+		    station_arr = {}; // varを消してグローバル化
+		    station_circle01_arr = {}; // varを消してグローバル化
+		    station_circle02_arr = {}; // varを消してグローバル化
+		    station_circle03_arr = {}; // varを消してグローバル化
+
+		    gon.stations.forEach(function(station){
+
+		      pos = new google.maps.LatLng(station.latitude, station.longitude);
+		      bounds.extend(pos);
+
+		      station_arr[station.id] = createMarker({
+		        position : pos
+		        ,map : mapCanvas
+		        ,animation: google.maps.Animation.DROP
+		        ,icon : station.icon
+		        ,html : station.line_name + '<br><div><b>' + station.name + '</b></div>'
+		      });
+
+			  /*---------------*/
+		      /* 営業所の円を作成 */
+			  /*---------------*/
+			  
+			  // 2000メートル
+		      station_circle03_arr[station.id] = create_circle(2000, mapCanvas, pos);
+			  station_circle03_arr[station.id].set("visible",true);
+			  station_circle03_arr[station.id].circle_name = '【' + station.name + '】'
+			  station_circle03_arr[station.id].circle_id = station.id
+		      google.maps.event.addListener( station_circle03_arr[station.id] , 'click' , function(){
+				  circle_clicked(station_circle03_arr[station.id] );
+			  });
+			  
+
+			  // 指定半径内にどのくらいあるか確認
+			  // var circle = station_circle03_arr[station.id];
+			  // var latlng = circle.getCenter();
+			  // var sql = "SELECT IHTTCD FROM " + fusion_biru + " WHERE ST_INTERSECTS('住所', CIRCLE(LATLNG(" + latlng.lat() + ", " + latlng.lng() + "), " + circle.getRadius() + "))";
+			  // dips_circle_ttcd(sql, 2000)
+			  			  
+			  
+			  
+			  // 1200メートル
+		      station_circle02_arr[station.id] = create_circle(1200, mapCanvas, pos);
+			  station_circle02_arr[station.id].set("visible",true);
+			  station_circle02_arr[station.id].circle_name = '【' + station.name + '】'
+			  station_circle02_arr[station.id].circle_id = station.id
+		      google.maps.event.addListener( station_circle02_arr[station.id] , 'click' , function(){
+				  circle_clicked(station_circle02_arr[station.id] );
+			  });
+			  
+			  
+			  // 指定半径内にどれくらいあるか確認
+			  // var circle = station_circle02_arr[station.id];
+			  // var latlng = circle.getCenter();
+			  // var sql = "SELECT IHTTCD FROM " + fusion_biru + " WHERE ST_INTERSECTS('住所', CIRCLE(LATLNG(" + latlng.lat() + ", " + latlng.lng() + "), " + circle.getRadius() + "))";
+			  // dips_circle_ttcd(sql, 1200)
+			  
+			  
+			  // 1000メートル
+		      station_circle01_arr[station.id] = create_circle(1000, mapCanvas, pos);
+			  station_circle01_arr[station.id].set("visible",true);
+			  station_circle01_arr[station.id].circle_name = '【' + station.name + '】'
+			   
+			  station_circle01_arr[station.id].circle_id = station.id
+		      google.maps.event.addListener( station_circle01_arr[station.id] , 'click' , function(){
+				  circle_clicked(station_circle01_arr[station.id] );
+			  });
+
+
+			  // 指定半径内にどれくらいあるか確認
+			  // var circle = station_circle01_arr[station.id];
+			  // var latlng = circle.getCenter();
+			  // var sql = "SELECT IHTTCD FROM " + fusion_biru + " WHERE ST_INTERSECTS('住所', CIRCLE(LATLNG(" + latlng.lat() + ", " + latlng.lng() + "), " + circle.getRadius() + "))";
+			  // dips_circle_ttcd(sql, 1000)
+			  
+	  
+			});
+
+
+		    mapCanvas.fitBounds(bounds);
+			
+			  
+	       // (3) Fusion Tables Layerの作成
+			biru_building_layer = new google.maps.FusionTablesLayer({
+				query: {
+					select: '住所',
+					from: fusion_biru
+			
+				},
+	          map : mapCanvas,
+		  	});
+	
+		    google.maps.event.addListener(biru_building_layer, 'click', function(e) {
+
+				var table_html = "";
+				table_html += e.row['郵便番号'].value + '<br/>';
+				table_html += e.row['住所'].value + '<br/>';
+				table_html += e.row['TTSNM'].value + '<br/>';
+				table_html += "戸数：" + e.row['戸数'].value + '戸<br/>';
+				table_html += "管理方式：" + e.row['IKNM'].value + '<br/>';
+		
+				e.infoWindowHtml = table_html;
+			});
+			
+			//--------------------
+			// SQLで営業所別に集計
+			//--------------------
+			sql = "SELECT EIGYONM AS '営業所', COUNT('住所') AS '棟数', SUM('戸数') AS '戸数', SUM('最寄レベル１') AS '半径1Km以内', SUM('最寄レベル２') AS '半径1.2Km以内', SUM('最寄レベル３') AS '半径2Km以内', SUM('最寄レベル４') AS '半径2Kmより遠い'  FROM " + fusion_biru + " GROUP BY EIGYONM "
+
+		    var queryUrlHead = 'https://www.googleapis.com/fusiontables/v1/query?sql=';
+		    var queryUrlTail = '&key=AIzaSyCFmLUX03pHtnUN_wP2fh9rNKoOnzrCcTs';
+		    var queryurl = encodeURI(queryUrlHead + sql + queryUrlTail);
+
+			// ↓　コールバック処理で、functionを拡張 var jqxhr = $.get(queryurl, dataHandler, "jsonp");
+		    var jqxhr = $.get(queryurl, function(resp){ 
+	
+			    var result = document.getElementById('aaaaa');
+	
+			    var htmlTable = document.createElement('table');
+			    htmlTable.border = 1;
+
+			    var tableRow = document.createElement('tr');
+			    for (var i = 0; i < resp.columns.length; i++) {
+			        var tableHeader = document.createElement('th');
+			        var header = document.createTextNode(resp.columns[i]);
+			        tableHeader.appendChild(header);
+			        tableRow.appendChild(tableHeader);
+
+			    }
+			    htmlTable.appendChild(tableRow);
+			    for (var i = 0; i < resp.rows.length; i++) {
+			        var tableRow = document.createElement('tr');
+			        for (var j = 0; j < resp.rows[i].length; j++) {
+			            var tableData = document.createElement('td');
+			            var content = document.createTextNode(resp.rows[i][j]);
+			            tableData.appendChild(content);
+			            tableRow.appendChild(tableData);
+			        }
+			        htmlTable.appendChild(tableRow);
+			    }
+			    result.appendChild(htmlTable);
+	
+			 }, "jsonp");
+
+			
+
+		}
+
+		google.maps.event.addDomListener(window, "load", initialize);
+	</script>
+
+	<style type="text/css">
+		html,  body{
+		  margin: 0;
+		  padding: 0;
+		  width: 100%;
+		  height: 100%;
+		}
+
+		#map_canvas{
+		  position: fixed;
+		  width:100%;
+		  height:100%;
+		  top:0px;
+		  left:0;
+		}
+
+		#top-menu{
+		  padding:0;
+		  margin:0;
+		}
+
+		a{
+		  text-decoration:underline;	
+		}
+
+	</style>
+
+<% end %>
+
+
+
+
+<div id="aaaaa"  style="width:20%;float:left;height:90%"></div>
+<div id="map_canvas" style="width: 80%;float:right;"></div>

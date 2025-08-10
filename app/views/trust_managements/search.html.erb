@@ -1,0 +1,102 @@
+<div style="margin-top:20px;margin-right:20px;text-align:right;">
+	<%= link_to "一覧へ戻る",  {:action=>'index'}, :onclick=>'javascript:screen_block();', :style=>'text-decoration: underline;' %>
+</div>
+<div class="panel panel-default" style="margin:20px;margin-top:5px;">
+  <div class="panel-heading">
+    <h3 class="panel-title"><i class="fa fa-search"></i>検索条件</h3>
+  </div>
+  <div class="panel-body">
+
+	<%= form_tag({:action=>'search'}, html: { method: :get, class: 'form-horizontal', role: 'form' }) do %>
+
+		<%= render 'search_template' %>
+
+		<div class="row" style="padding-top:10px;">
+			<div class="col-sm-12 text-center">
+			  <button class="btn btn-default btn-primary" type="submit" onClick="javascript:screen_block();"><i class="fa fa-search"></i> 指定した条件で検索する</button>
+			</div>
+		</div>
+	<% end %>
+
+  </div>
+</div>
+
+<% content_for :slick_grid do %>
+	<%#= stylesheet_link_tag('slick-default-theme') %>
+	<%#= javascript_include_tag('slick.core') %>
+	<%#= javascript_include_tag('slick.grid') %>
+<% end %>
+
+<script>
+
+	function formatter(row, cell, value, columnDef, dataContext) {
+	    return value;
+	}
+
+  var grid;
+  var columns = [
+    {id: "building_name_link", name: "建物名", field: "building_name_link", minWidth: 150, formatter: formatter},
+    {id: "building_adress", name: "建物住所", field: "building_address", minWidth: 150},
+    {id: "building_selective_type", name: "重点地域", field: "building_selective_type", minWidth: 50},
+    {id: "building_proprietary_company", name: "現管理会社", field: "building_proprietary_company", minWidth: 150},
+    {id: "occur_sources_name", name: "反響元", field: "occur_sources_name", minWidth: 50},
+    {id: "attack_states_code", name: "ランク", field: "attack_states_code", minWidth: 20},
+    {id: "shop_name", name: "営業所", field: "shop_name", minWidth: 80},
+    {id: "owner_name_link", name: "貸主名", field: "owner_name_link", minWidth: 200, formatter: formatter},
+    {id: "owner_tel", name: "電話番号", field: "owner_tel", minWidth: 150},
+    {id: "owner_memo", name: "貸主メモ", field: "owner_memo", minWidth: 200},
+    {id: "owner_address", name: "貸主住所", field: "owner_address", minWidth: 300},
+    {id: "biru_user_name", name: "担当者", field: "biru_user_name", minWidth: 200}
+  ];
+
+  var options = {
+    enableCellNavigation: true,
+    enableColumnReorder: false,
+	  forceFitColumns: false
+	  
+  };
+
+  $(function () {
+
+    grid = new Slick.Grid("#myGrid", gon.trust_manages, columns, options);
+  })
+</script>
+  
+<div style="margin:20px;">
+	<div id="myGrid" style="width:100%;height:500px;border: 1px solid gray;outline: 0;"></div>
+</div>
+
+<!--
+  
+<div style="margin:20px;">
+
+  <table class="table table-list ">
+  <thead>
+    <tr>
+      <th>貸主名</th>
+      <th>貸主住所</th>
+      <th>建物名</th>
+      <th>建物住所</th>
+      <th>見込みランク</th>
+      <th>管理営業所</th>
+      <th>受託担当者</th>
+    </tr>
+  </thead>
+  
+  <%# @trust_manages.each do |trust| %>
+  <tbody>
+  <tr>
+    <td><a href="javascript:win_owner(<%#= trust["owner_id"] %>);" style="text-decoration:underline"><%#= trust["owner_name"] %></a></td>
+    <td><%#= trust["owner_address"] %></td>
+    <td><a href="javascript:win_building(<%#= trust["building_id"] %>);" style="text-decoration:underline"><%#= trust["building_name"] %></a></td>
+    <td><%#= trust["building_address"] %></td>
+    <td><%#= trust["attack_states_code"] %></td>
+    <td><%#= trust["shop_name"] %></td>
+    <td><%#= trust["biru_user_name"] %></td>
+  </tr>
+  </tbody>
+<%# end %>
+</table>
+
+</div> 2015.10.28 コメントアウトする場所が間違っていたので移動
+-->

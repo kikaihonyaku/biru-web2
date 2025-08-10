@@ -1,0 +1,34 @@
+
+<%= render :partial=>'sidebar' %>
+
+<div class="well" style="margin-top:20px;margin-left:0px;">
+
+	<h1>業績確認</h1>
+    <p>ビル管理の各種数値を集計＋グラフで表示します。</p>
+	
+	<p style="border-bottom: 1px dashed;padding-top:10px;padding-top:10px;margin-bottom:40px;"></p>
+	
+
+	<h3>１．期間を指定</h3>
+	<div style="margin-left:50px;margin-bottom:30px;">
+		開始・終了年月を yyyy/mm の形で入力します。（yyyymmでも可）<br/>
+		例：2017/04 ～ 2018/03  &nbsp;&nbsp;(または 201704 ～ 201803）
+	</div>
+	
+	<h3>２．部署を指定</h3>
+	<div style="margin-left:50px;margin-bottom:30px;">
+		集計したい部署を選択します。<br/>
+		※エリア名を選択すると、配下の営業所をまとめてグラフ化します。
+	</div>
+
+	<h3>３．項目を指定</h3>
+	<div style="margin-left:50px;margin-bottom:30px;">
+		集計したい項目を選択します。
+	</div>
+
+	<h3>４．グラフ表示ボタンを押下</h3>
+	<div style="margin-left:50px;margin-bottom:30px;">
+		指定した条件で集計結果が表示されます。
+	</div>
+
+</div>

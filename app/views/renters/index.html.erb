@@ -1,0 +1,124 @@
+<% if @sakimono_flg %>
+	<%= stylesheet_link_tag('jquery-themes/pepper-grinder/jquery.ui.theme') %>
+	<% title = 'レンターズ掲載状況（先物）' %>
+	<% sakimono_value = "1" %>
+	<% sakimono_param = "sakimono=true&" %>
+<% else %>
+	<%#= stylesheet_link_tag('jquery-themes/start/jquery-ui') %>
+	<% title = 'レンターズ掲載状況' %>
+	<% sakimono_value = "0" %>
+	<% sakimono_param = "" %>
+<% end %>
+
+<script type="text/javascript">
+	
+	init_jqgrid();
+	
+	function formatter_link(cellValue, options, rowdata, action){
+
+		// 地図遷移用URL
+		var map_url = location.protocol + '//' + location.host + '/biruweb/renters/map?<%= sakimono_param %>stcd=' + rowdata.url
+
+		// Excel出力用URL
+		// カンマ区切りのパラメータを「stores=xxx&stores=yyy&・・・」の形にする
+		var arr = rowdata.url.split(",");
+		var excel_param = "";
+		for(var i=0; i<arr.length; i++){
+			excel_param += '&stores=' + arr[i]
+		}
+		
+		return "<a style='text-decoration: underline' href='" + map_url  + "'>地図</a>&nbsp;|&nbsp;<a style='text-decoration: underline' href='http://pzazzzs031/ReportServer/Pages/ReportViewer.aspx?%2frenters_summary&rs:Command=Render&rs:Format=EXCEL&rc:Parameters=false&report_sakimono=<%= sakimono_value %>" + excel_param  + "' target='_blank' >EXCEL</a>"
+	}
+
+	function init_jqgrid(){
+		// 列名の定義
+		var col_names = ["支店", "営業所", "レンターズ物件掲載数", "SUUMO 10枚以上", "SUUMO 20枚フルセット", "非表示", "リンク"];
+	
+		// 列属性の定義
+		var col_model = [
+	  	  {name:"group_name", index:"group_name", align:"center",classes:"no_class"}
+		 ,{name:"store_name", index:"store_name", align:"center",classes:"no_class"}
+		 ,{name:"summary", index:"summary", align:"center",classes:"no_class",summaryType:'sum', summaryTpl : '合計 : {0}'}
+		 ,{name:"suumo_ten", index:"suumo_ten", align:"center",classes:"no_class",summaryType:'sum', summaryTpl : '合計 : {0}'}
+		 ,{name:"suumo_full", index:"suumo_full", align:"center",classes:"no_class",summaryType:'sum', summaryTpl : '合計 : {0}'}
+ 		 ,{name:"url", index:"map_link", width:200, align:"center", classes:"no_class", hidden:true}
+ 		 //,{name:"url", index:"map_link", width:200, align:"center", classes:"no_class", formatter: 'link'}
+ 		 ,{name:"link_url", index:"link_url", align:"center", classes:"no_class", formatter:formatter_link}
+		];
+	
+
+		// その他の設定
+		jqgrid_opt = {
+			 table_name:'building_table'
+			,fotter_name:'building_pager'
+			,div_name:'div_dummy_02'
+			,caption:'<%= title %>'
+			,event_type:30
+			,shrinkFit:true
+			,multiselect:true
+		};
+		
+		// jqgrid作成
+		$(function(){
+			
+			var table_div = $('#' + jqgrid_opt.table_name);
+			var div_box = $('#' + jqgrid_opt.div_name);
+	
+			table_div.jqGrid({
+			  	data : gon.data_list,  //表示したいデータ
+			  	datatype : "local",            //データの種別 他にjsonやxmlも選べます。しかし、私はlocalが推奨です。
+			  	colNames : col_names,           //列の表示名
+			  	colModel : col_model,   //列ごとの設定
+			  	caption : jqgrid_opt.caption,    //ヘッダーのキャプション
+			  	rowNum : 100,                   //一ページに表示する行数
+				height : 800,                  //高さ
+			  	shrinkToFit : true,　　        //画面サイズに依存せず固定の大きさを表示する設定
+				pager : 'building_pager',
+				viewrecords: true,
+				grouping:true,                    //グルーピングon
+				groupingView : {                  //グルーピング設定
+					groupField : ['group_name'],     //グループする列指
+			　　　　        groupSummary : [true]
+				},
+			
+			    onSelectRow: function(id) {
+					// クリックイベント
+				    data = jQuery('#building_table').getRowData(id);
+					//alert(location.href);
+					//alert(location.host);
+			 		screen_block();
+					location.href = location.protocol + '//' + location.host + '/biruweb/renters/map?<%= sakimono_param %>stcd=' + data.url
+				}
+				
+			});
+			
+			
+		});
+
+		
+		
+		
+	}
+</script>
+
+<div style="padding:50px 80px 10px 80px;">最終更新日：<span style="font-size:18px;"><%= @data_update.update_datetime %></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;次回更新予定日：<span style="font-size:18px;"><%= @data_update.next_start_date %></span>
+	<div id="div_dummy_02" style="width:100%;height:90%;">
+		<table id="building_table"></table>
+		<div id = "building_pager"></div>
+	</div>
+	※リストの行をクリックすると明細を表示します。
+	
+</div>
+
+<!--
+<div style="margin:50px">
+	
+	<h3>レンターズ連動</h3> 
+	<%= form_tag({:action=>'update_all'}) do %>
+	
+		
+		<%= submit_tag '同期' %>&nbsp;&nbsp;<%= collection_select :batch, :value, @batch_list, :batch_cd, :batch_cd %>&nbsp;&nbsp;最新更新開始：<%= @data_update.start_datetime %>&nbsp;最新更新日時：<%= @data_update.update_datetime %>  更新者：<%= @data_update.biru_user.name if @data_update.biru_user %>
+	<% end %>
+	
+</div>
+-->

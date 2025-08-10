@@ -1,0 +1,246 @@
+<script type="text/javascript">
+
+// 表示なし(1)・ゴミ置き場(2)・募集図面(3)をクリックしたときに反応
+function click_radio(num){
+	
+	if(num == 1){
+		 $("#c01").css("display", "none");
+		 $("#c02").css("display", "none");
+		 
+	}else if(num == 2){
+		 $("#c01").css("display", "block");
+		 $("#c02").css("display", "none");
+		
+	}else if(num == 3){
+		 $("#c01").css("display", "none");
+		 $("#c02").css("display", "block");
+		
+	}else{
+		alert('不明');
+	}
+}
+
+</script>
+  <legend style="padding:20px;padding-botom:10px;"><%= @building.name %></legend>
+<table>
+	<tr>
+		<td style="vertical-align:top;padding-left:20px;">
+			<div style="border-width:3px; border-style:solid; border-color:silver;">
+			  <!-- <div id="pop_map_canvas" style="width: 420px;height:298px;"></div> -->
+			  <div id="pop_map_canvas" style="width: 480px;height:350px;"></div>
+			</div>
+  		
+			<div id="c01" style="visibility: visible;display:none; ">
+		   	 <div style="position:absolute; left:60px; top:120px; "><%= image_tag('cursor_left_up.png') %></div>
+		   	 <div style="position:absolute; left:60px; top:363px; "><%= image_tag('cursor_left_down.png') %></div>
+		   	 <div style="position:absolute; left:450px; top:120px; "><%= image_tag('cursor_right_up.png') %></div>
+		   	 <div style="position:absolute; left:348px; top:355px; "><%= image_tag('cursor_right_down_880.png') %></div>
+			</div>
+		 
+			<div id="c02" style="visibility: visible;display:none; ">
+		   	 <div style="position:absolute; left:60px; top:120px; "><%= image_tag('cursor_left_up.png') %></div>
+		   	 <div style="position:absolute; left:60px; top:363px; "><%= image_tag('cursor_left_down.png') %></div>
+		   	 <div style="position:absolute; left:450px; top:120px; "><%= image_tag('cursor_right_up.png') %></div>
+		   	 <div style="position:absolute; left:348px; top:355px; "><%= image_tag('cursor_right_down_880.png') %></div>
+			</div>
+			<%= form_for(@building, :url=>{:action=>'popup_building_update_etc', :controller=>'managements', :id=>@building}, :html=>{:class=>"form-horizontal"}) do |f|%>
+			
+				<div style="padding:5px;">※クリックでゴミ置き場作成。ドラッグで移動することができます。</div>
+				<div style="clear:both;">
+					<%= f.text_area :memo,  :size => "5x3", :class=>"form-control", :placeholder=>'メモ'  %>
+				</div>
+			
+				<div style="padding-top:10px;text-align:center;float:left;">
+					<%= f.submit 'メモ欄 更新', :class=>"btn btn-primary" %>
+				</div>
+				<div class="btn-group" data-toggle="buttons-radio" style="padding-top:5px;padding-left:20px;float:right;">
+					<button type="button" class="btn btn-default" onClick="javascript:click_radio(1);">表示なし</button>
+					<button type="button" class="btn btn-default" onClick="javascript:click_radio(2);">ゴミ置き場</button>
+					<button type="button" class="btn btn-default" onClick="javascript:click_radio(3);">募集図面</button>
+				</div>
+
+		    <% end %>
+		</td>
+		<td style="vertical-align:top;padding-left:20px;padding-right:20px;">
+
+			<div class="table-responsive panel panel-default">
+				<table class="table table-bordered">
+					<thead>
+						<tr class="active">
+							<% if @building.code %>
+								<td colspan="2" style="font-weight:bold">物件基本情報（<a href="" onClick="javascript:alert('管理物件の編集は賃貸システムへ行ってください');return false;" >編集</a>）</td>
+							<% else %>
+								<td colspan="2" style="font-weight:bold">物件基本情報（<a data-toggle="modal" href="#modal-building-update"  >編集</a>）</td>
+							<% end%>
+							
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<% if @building.code %>
+								<td style="text-align:right;">建物CD</td>
+								<td><%= @building.code %></td>
+							<% else %>
+								<td style="text-align:right;font-size:12px;">見込み建物CD</td>
+								<td><%= @building.attack_code %></td>
+							<% end%>
+						</tr>
+				
+						<tr>
+							<td style="text-align:right;">住所</td>
+							<td><%= @building.address %></td>
+						</tr>
+						<% if @building.shop %>
+							<tr>
+								<td style="text-align:right;">管理店舗</td>
+								<td><%= @building.shop.name %></td>
+							</tr>
+						<% end %>
+
+						<% if @building.build_type %>
+							<tr>
+								<td style="text-align:right;">建物種別</td>
+								<td><%= @building.build_type.name %></td>
+							</tr>
+						<% end %>				
+						
+						<% if @building.attack_code %>
+							<tr>
+								<td style="text-align:right;">現管理会社</td>
+								<td><%= @building.proprietary_company %></td>
+							</tr>
+							<tr>
+								<td style="text-align:right;">重点地域</td>
+								<td><%= @building.selective_disp %></td>
+							</tr>
+							<tr>
+								<td style="text-align:right;">反響元</td>
+								<td><%= @building.occur_source.name if @building.occur_source %></td>
+							</tr>
+						<% end%>
+						
+					</tbody>
+				</table>
+			</div>
+			
+			<% if @trust %>
+				<div class="table-responsive panel panel-default">
+					<table class="table table-bordered">
+							<% if @trust.owner.code %>
+								<thead>
+									<tr class="active">
+										<td colspan="2" style="font-weight:bold">管理委託契約（<a href="" onClick="javascript:alert('この機能はまだ使えません');return false;" >編集</a>）</td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="text-align:right;">管理委託CD</td>
+										<td><%= @trust.code + "  ( " + @trust.manage_type.name + " )" %></td>
+									</tr>
+									<tr>
+										<td style="text-align:right;">貸主CD</td>
+										<td><a href="javascript:win_owner(<%= @trust.owner.id %>);"><%= @trust.owner.code + "  ( " + @trust.owner.name + " 様 )" %></a></td>
+									</tr>
+								</tbody>
+							<% else %>
+								<thead>
+									<tr class="active">
+										<td colspan="2" style="font-weight:bold">アタック管理情報</td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="text-align:right;font-size:12px;">見込み貸主CD</td>
+										<td><a href="javascript:win_owner(<%= @trust.owner.id %>);"><%= @trust.owner.attack_code + "  ( " + @trust.owner.name + " 様 )" %></a></td>
+									</tr>
+									<tr>
+										<td style="text-align:right;font-size:12px;">状態</td>
+										<% if @trust.attack_state %>
+											<td><%= @trust.attack_state.code + "  ( " + @trust.attack_state.name + ")" %></td>
+										<% else %>
+											<td>未設定</td>
+										<% end %>
+									</tr>
+								</tbody>
+							<% end %>
+						
+					</table>
+				</div>
+			<% end %>
+			
+			<!-- モーダルダイアログ(建物更新) -->
+			<div class="modal fade" id="modal-building-update" tabindex="-1" role="dialog" aria-labelledby="modal-building-update-label" aria-hidden="true">
+			  <div class="modal-dialog">
+			    <div class="modal-content">
+
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			        <h4 class="modal-title" id="myModalLabel">建物更新</h4>
+			      </div>
+
+					<%= simple_form_for :building, :url=>{:action => :popup_building_update, :id=>@building.id}, :html=>{ :class=> 'form-horizontal' } do |f| %>
+						<div class="modal-body">
+							<%= f.input :biru_user_id, :as => :hidden, :input_html => {:value => @biru_user.id } %>
+							<%= f.input :name, label: '建物名',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+							<%= f.input :postcode, label: '郵便番号',  :input_html => {:class=>'form-control', :style=>'width:100px;'} %>
+							<%= f.input :address, label: '住所',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+							<%= f.input :shop_id, label: '営業所', collection: Shop.find(:all), prompt: "--", :input_html => {:class=>'form-control' } %>
+							<%= f.input :room_num, label: '部屋数',  :input_html => {:class=>'form-control', :style=>'width:100px;'} %>
+							
+							<% if @building.attack_code  %>
+								<%= f.input :proprietary_company, label: '現管理会社',  :input_html => {:class=>'form-control', :style=>'width:200px;'} %>
+								<%= f.input :occur_source_id, label: '反響元', collection: OccurSource.find(:all), prompt: "--", :input_html => {:class=>'form-control' } %>
+							<% end %>
+
+						</div>
+						<div class="modal-footer">
+							<%= f.submit '更新', :class=>"btn btn-default", :style=>"margin:0" %>
+						</div>
+					<% end %>
+
+			    </div><!-- /.modal-content -->
+			  </div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+						
+			<div class="table-responsive panel panel-default">
+				<table class="table table-bordered table-condensed">
+			      <thead>
+			        <tr>
+			          <th class="active">号室</th>
+			          <th class="active">状態</th>
+			          <th class="active">間取り</th>
+			          <th class="active">管理方式</th>
+			          <th class="active">管理開始日</th>
+			          <th class="active">管理終了日</th>
+			        </tr>
+			      </thead>
+			      <tbody>
+			        <% @building.rooms.each do |room| %>
+							<% room_manage_date = room.get_manage_date  %>
+			        <tr>
+			          <td><%= room.name %></td>
+
+			          <% if room.free_state %>
+			            <td><span class="label label-important">空き</span></td>
+			          <% else %>
+			            <td><span class="label label-success">入居中</span></td>
+			          <% end %>
+
+			          <td><%= room.room_layout.name if room.room_layout %></td>
+			          <td><%= room.manage_type.name if room.manage_type %></td>
+			          <td><%= room_manage_date[0] %></td>
+			          <td><%= room_manage_date[1] %></td>
+			        </tr>
+			        <% end %>
+			      </tbody>
+			    </table>
+			</div>
+			
+		</td>
+	</tr>
+</table>
+
+</div>
+
+
+

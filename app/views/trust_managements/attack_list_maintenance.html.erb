@@ -1,0 +1,334 @@
+<script type="text/javascript">
+
+	init_jqgrid_owners();
+
+	init_jqgrid_buildings();
+
+	init_jqgrid_trusts();
+
+	// 貸主一覧表を作成
+	function init_jqgrid_owners(){
+		
+		// 列名の定義
+		var grid_name = ["id", "コード", "貸主名", "住所"];
+
+		// 列属性の定義
+		var grid_model = [
+		  {name:"id", index:"id", width:10, align:"right", classes:"no_class", hidden:true}
+		 ,{name:"code", index:"code", width:100, align:"center", classes:"no_class"}
+		 ,{name:"name", index:"name", width:300, align:"left", classes:"no_class"}
+		 ,{name:"address", index:"address", width:300, align:"left", classes:"no_class"}
+		];
+
+		// その他の設定
+		var jqgrid_opt = {
+			 table_name:'owner_table'
+			,fotter_name:'owner_pager'
+			,div_name:'owner_div'
+			,caption:'貸主一覧'
+			,event_type:99
+			,shrinkFit:true
+			,multiselect:false
+		};
+
+		$(function(){
+			jqgrid_create(grid_name, grid_model, gon.owners, jqgrid_opt);	
+		});
+	}
+	
+	
+	// 物件一覧表を作成
+	function init_jqgrid_buildings(){
+		
+		// 列名の定義
+		var grid_name = ["id", "コード", "建物名", "住所", "営業所"];
+
+		// 列属性の定義
+		var grid_model = [
+		  {name:"id", index:"id", width:10, align:"right", classes:"no_class", hidden:true}
+		 ,{name:"code", index:"code", width:100, align:"center", classes:"no_class"}
+		 ,{name:"name", index:"name", width:300, align:"left", classes:"no_class"}
+		 ,{name:"address", index:"address", width:300, align:"left", classes:"no_class"}
+		 ,{name:"shop_name", index:"shop_name", width:200, align:"left", classes:"no_class"}
+		];
+
+		// その他の設定
+		var jqgrid_opt = {
+			 table_name:'building_table'
+			,fotter_name:'building_pager'
+			,div_name:'building_div'
+			,caption:'物件一覧'
+			,event_type:99
+			,shrinkFit:true
+			,multiselect:true
+		};
+
+		$(function(){
+			jqgrid_create(grid_name, grid_model, gon.buildings, jqgrid_opt);	
+		});
+	}
+	
+	
+	// 委託契約リストを作成
+	function init_jqgrid_trusts(){
+		// 列名の定義
+		//var grid_name = ["trust_id", "owner_id", "見込貸主CD", "貸主名", "住所", "貸主備考", "building_id", "見込建物CD", "建物名", "住所", "建物備考", "営業所", "担当者"];
+		var grid_name = ["trust_id", "owner_id", "見込貸主CD", "貸主名", "住所", "貸主備考", "building_id", "見込建物CD", "建物名", "住所", "建物備考", "現 管理会社", "営業所", "担当者"];
+		
+		// 列属性の定義
+		var grid_model = [
+		  {name:"trust_id", index:"trust_id", align:"right", classes:"no_class", hidden:true}
+		 ,{name:"owner_id", index:"owner_id", align:"right", classes:"no_class", hidden:true}
+		 ,{name:"owner_code", index:"owner_code", width:200, align:"center", classes:"no_class"}
+		 ,{name:"owner_name", index:"owner_name", width:400, align:"left", classes:"no_class"}
+		 ,{name:"owner_address", index:"owner_address", width:300, align:"left", classes:"no_class"}
+		 ,{name:"owner_memo", index:"owner_memo", width:400, align:"left", classes:"no_class"}
+		 ,{name:"building_id", index:"building_id", align:"right", classes:"no_class", hidden:true}
+		 ,{name:"building_code", index:"building_code", width:200, align:"center", classes:"no_class"}
+		 ,{name:"building_name", index:"building_name", width:400, align:"left", classes:"no_class"}
+		 ,{name:"building_address", index:"building_address", width:300, align:"left", classes:"no_class"}
+		 ,{name:"building_memo", index:"building_memo", width:400, align:"left", classes:"no_class"}
+		 ,{name:"proprietary_company", index:"proprietary_company", width:200, align:"left", classes:"no_class"}
+		 ,{name:"shop_name", index:"shop_memo", align:"left", classes:"no_class"}
+		 ,{name:"user_name", index:"user_memo", align:"left", classes:"no_class"}
+		];
+		
+		// データの作成
+		var grid_data = [];
+		cnt = 1;
+		gon.trusts.forEach(function(trust_manage){
+			var rec = {};
+			
+			rec['trust_id'] = trust_manage.trust_id
+			rec['owner_id'] = trust_manage.owner_id
+			rec['owner_code'] = trust_manage.owner_attack_code
+					
+			if(trust_manage.owner_dm_delivery == 't'){
+				rec['owner_dm_delivery'] = '○'
+			}else{
+				rec['owner_dm_delivery'] = '×'
+			}
+			
+			rec['owner_name'] = trust_manage.owner_name
+			rec['owner_address'] = trust_manage.owner_address
+			rec['owner_memo'] = trust_manage.owner_memo
+			rec['building_id'] = trust_manage.building_id
+			rec['building_code'] = trust_manage.building_attack_code
+			rec['building_name'] = trust_manage.building_name
+			rec['building_address'] = trust_manage.building_address
+			rec['building_memo'] = trust_manage.building_memo
+			rec['proprietary_company'] = trust_manage.building_proprietary_company
+			
+			rec['shop_name'] = trust_manage.shop_name
+			rec['user_name'] = trust_manage.biru_user_name
+		
+			grid_data.push(rec);
+			
+		});
+		
+		// その他の設定
+		var jqgrid_opt = {
+			 table_name:'trust_table'
+			,fotter_name:'trust_pager'
+			,div_name:'trust_div'
+			,caption:'アタックリスト'
+			,event_type:99
+			,shrinkFit:true
+			,multiselect:true
+		};
+			
+		
+		$(function(){
+			jqgrid_create(grid_name, grid_model, grid_data, jqgrid_opt);
+		});
+	}
+	
+	
+	
+	// 登録チェック
+	function create_trust(){
+		
+		//--------------------------
+		// 貸主の現在の選択行を取得
+		//--------------------------
+		var owner_row = $("#owner_table").jqGrid('getGridParam', 'selrow');
+		var owner_row_data = $('#owner_table').getRowData()
+
+		// 行IDを取得
+		var owner_ids = $("#owner_table").jqGrid('getDataIDs');
+		for(var owner_i=0; owner_i< owner_ids.length; owner_i++){
+			if(owner_row == owner_ids[owner_i]){
+				break; //発見
+			}
+		}
+
+		if( owner_i < owner_ids.length ){
+			document.create_trust_form.owner_id.value = owner_row_data[owner_i].id
+			
+		} else {
+			alert("紐付ける貸主を選択してください。");
+			return false;
+		}
+		
+		//--------------------------
+		// 物件の現在の選択行を取得
+		//--------------------------
+		var building_list = "";
+		var building_row_data = $('#building_table').getRowData()
+		var arr = jQuery("#building_table").getGridParam('selarrrow');
+		if(arr.length == 0 ){
+			alert('紐付ける物件を選択してください。');
+			return false;
+		}
+		
+		for(var i = 0 in arr){
+			
+			if(building_list == ""){
+				building_list = $('#building_table').getRowData(arr[i]).id;
+			}
+			else{
+				building_list = building_list + ',' + $('#building_table').getRowData(arr[i]).id;
+			}
+			
+		}
+
+		document.create_trust_form.building_ids.value = building_list
+		document.create_trust_form.submit();
+		
+		return false;
+	}
+	
+</script>
+
+<% if flash[:notice] %>
+	<div class="alert alert-info alert-dismissible" role="alert" style="margin-bottom:0px;" id="alert-block">
+	  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	  <%= flash[:notice] %>
+	</div>
+<% end %>
+
+<% if flash[:danger] %>
+	<div class="alert alert-danger alert-dismissible" role="alert" style="margin-bottom:0px;" id="alert-block">
+	  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	  <%= flash[:danger] %>
+	</div>
+<% end %>
+
+
+<h3 style="padding-left:20px;">アタックリスト メンテナンス</h3>
+<div style="padding-left:20px;padding-top:10px;padding-bottom:10px;">
+<h5>手順①　貸主一覧から貸主を選択&nbsp;&nbsp;※一覧に無い場合は貸主新規登録をする</h5>
+<h5>手順②　建物一覧から建物を選択&nbsp;&nbsp;※一覧に無い場合は建物新規登録をする</h5>
+<h5>手順③　「▼貸主と物件の紐付けを作成▼」をクリック</h5>
+<h5>手順④　前ページの地図一覧画面を再読み込み</h5>
+	
+</div>
+
+<div style="margin-bottom:10px;margin-left:20px">
+	<a data-toggle="modal" href="#modal-owner-new" class="btn btn-info btn-large">貸主新規登録</a>
+	<a data-toggle="modal" href="#modal-building-new" class="btn btn-info btn-large">建物新規登録</a>
+</div>
+
+<div id="owner_div" style="float:left;width:50%;height:40%;padding:0px 10px 10px 10px;margin-top:0px;">
+	<table id="owner_table"></table>
+	<div id = "owner_pager"></div>
+</div>
+
+<div id="building_div" style="float:left;;width:50%;height:40%;padding:0px 10px 10px 10px;">
+	<table id="building_table"></table>
+	<div id = "building_pager"></div>
+</div>
+
+
+<div style="clear:both;text-align:center;padding-top:20px;">
+	<%= form_tag( {:action=>'attack_list_add'}, {:name=>'create_trust_form'}) do %>
+		<%= hidden_field_tag :sid, @biru_trust_user.id %>
+		<%= hidden_field_tag :owner_id, '' %>
+		<%= hidden_field_tag :building_ids, '' %>
+		
+		<%= submit_tag '▼ 貸主と物件の紐付けを作成 ▼', {:class=>'btn', :onClick=>'javascript:create_trust();return false;'} %>
+	<% end %>
+</div>
+
+<div id="trust_div" style="width:100%;height:40%;padding:20px 10px 10px 10px;">
+	<table id="trust_table"></table>
+	<div id = "trust_pager"></div>
+</div>
+
+<div style="padding-left:10px;padding-top:10px;">
+	<%= button_tag '委託契約との紐付けを解除', {:class=>'btn', :onClick=>'javascript:alert("この機能はまだ未実装です");return false;'} %>
+</div>
+
+
+<!-- モーダルダイアログ -->
+<div class="modal fade" id="modal-owner-new" tabindex="-1" role="dialog" aria-labelledby="modal-owner-new-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	<%#= simple_form_for :trust, :url=>{:controller => :managements, :action => :popup_owner_trust_update }, :html=>{class: 'form-horizontal'} do |f| %>
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="myModalLabel">貸主新規作成</h4>
+      </div>
+
+	<%= simple_form_for :owner, :url=>{:action => :owner_regist} do |f| %>
+		<div class="modal-body">
+			<%= f.input :biru_user_id, :as => :hidden, :input_html => {:value => @biru_trust_user.id } %>
+			<%= f.input :name, label: '貸主名',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+			<%= f.input :kana, label: 'カナ',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+			<%= f.input :honorific_title, label: '敬称',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+			<%= f.input :postcode, label: '郵便番号',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+			<%= f.input :address, label: '住所',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+			<%= f.input :tel, label: '電話番号',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+			<%= f.input :memo, label: '備考',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+			<%#= f.input :dm_delivery, label: 'DM発送', :as=>:radio_buttons, collections: [['あり', 1],['なし',0]],  :input_html => {:class=>'form-control', :style=>'width:20px;'} %>
+
+
+			
+			
+			<%#= f.input :approach_date, label:'日付', placeholder: 'yyyy/mm/dd', :input_html => {:type => 'date', :style=>'width:180px;', :class=>'form-control' } %>
+			<%#= f.input :approach_kind_id, label: '種別', collection: ApproachKind.find(:all), prompt: "--", :input_html => {:class=>'form-control' } %>
+			<%#= f.input :content, label: '内容', placeholder: 'アプローチ内容をいれてください', :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+	   
+		</div>
+		<div class="modal-footer">
+			<%= f.submit '登録', :class=>"btn btn-default", :style=>"margin:0" %>
+		</div>
+	<% end %>
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+<!-- モーダルダイアログ -->
+<div class="modal fade" id="modal-building-new" tabindex="-1" role="dialog" aria-labelledby="modal-building-new-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="myModalLabel">建物新規作成</h4>
+      </div>
+
+	<%= simple_form_for :building, :url=>{:action => :building_regist} do |f| %>
+		<div class="modal-body">
+			<%= f.input :biru_user_id, :as => :hidden, :input_html => {:value => @biru_trust_user.id } %>
+			<%= f.input :name, label: '建物名',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+			<%= f.input :address, label: '住所',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+			<%= f.input :shop_id, label: '営業所', collection: Shop.find(:all), prompt: "--", :input_html => {:class=>'form-control' } %>
+			<%= f.input :room_num, label: '部屋数',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+			<%#= f.input :build_type_id, label: '建物種別', collection: BuildType.find(:all), prompt: "--", :input_html => {:class=>'form-control' } %>
+			<%= f.input :memo, label: '備考',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+
+	   
+		</div>
+		<div class="modal-footer">
+			<%= f.submit '登録', :class=>"btn btn-default", :style=>"margin:0" %>
+		</div>
+	<% end %>
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

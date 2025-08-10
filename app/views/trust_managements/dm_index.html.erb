@@ -1,0 +1,204 @@
+<script type="text/javascript">
+
+    init_jqgrid_dm();
+
+    dm_report_url = "http://pzazzzs031/ReportServer/Pages/ReportViewer.aspx?%2f%e5%8f%97%e8%a8%97%e6%94%af%e6%8f%b4_%ef%bc%a4%ef%bc%ad%e7%99%ba%e9%80%81%e5%85%88%e3%83%aa%e3%82%b9%e3%83%88&rs:Command=Render"
+
+	function formatter_report(cellValue, options, rowdata, action){
+		return "<a style='text-decoration: underline' data-toggle='modal' href='#modal-tack-" + rowdata.biru_user_id + "'>" + cellValue + "</a>"
+	}
+
+	function formatter_dm01(cellValue, options, rowdata, action){
+		return "<a style='text-decoration: underline' href='" + dm_report_url + "&biru_user_id=" + rowdata.biru_user_id + "&ptn1=1'>" + cellValue + "</a>"
+	}
+
+	function formatter_dm02(cellValue, options, rowdata, action){
+		return "<a style='text-decoration: underline' href='" + dm_report_url + "&biru_user_id=" + rowdata.biru_user_id + "&ptn2=2'>" + cellValue + "</a>"
+	}
+
+	function formatter_dm03(cellValue, options, rowdata, action){
+		return "<a style='text-decoration: underline' href='" + dm_report_url + "&biru_user_id=" + rowdata.biru_user_id + "&ptn3=2'>" + cellValue + "</a>"
+	}
+
+	function formatter_dm04(cellValue, options, rowdata, action){
+		return "<a style='text-decoration: underline' href='" + dm_report_url + "&biru_user_id=" + rowdata.biru_user_id + "&ptn4=2'>" + cellValue + "</a>"
+	}
+
+	function formatter_dm05(cellValue, options, rowdata, action){
+		return "<a style='text-decoration: underline' href='" + dm_report_url + "&biru_user_id=" + rowdata.biru_user_id + "&ptn5=2'>" + cellValue + "</a>"
+	}
+
+	function formatter_dm06(cellValue, options, rowdata, action){
+		return "<a style='text-decoration: underline' href='" + dm_report_url + "&biru_user_id=" + rowdata.biru_user_id + "&ptn6=2'>" + cellValue + "</a>"
+	}
+
+	function formatter_dm07(cellValue, options, rowdata, action){
+		return "<a style='text-decoration: underline' href='" + dm_report_url + "&biru_user_id=" + rowdata.biru_user_id + "&ptn7=2'>" + cellValue + "</a>"
+	}
+
+	function formatter_dm08(cellValue, options, rowdata, action){
+		return "<a style='text-decoration: underline' href='" + dm_report_url + "&biru_user_id=" + rowdata.biru_user_id + "&ptn8=2'>" + cellValue + "</a>"
+	}
+
+
+    function init_jqgrid_dm(){
+
+		// 列名の定義
+		var col_names = ["biru_user_id", "エリア", "担当者", "ＤＭ１", "ＤＭ２", "ＤＭ３", "ＤＭ４", "ＤＭ５", "ＤＭ６", "ニュースレター１", "ニュースレター２"];
+
+        // 列属性の定義
+		var col_model = [
+		  {name:"biru_user_id", index:"biru_user_id", align:"left",classes:"no_class", hidden:true}
+		 ,{name:"area_name", index:"area_name", width:250, align:"left", classes:"no_class"}
+  		 ,{name:"biru_user_name", index:"biru_user_name", width:300, align:"left", classes:"no_class", formatter:formatter_report}
+ 		 ,{name:"dm01", index:"dm01", align:"right", classes:"no_class", formatter:formatter_dm01 }
+ 		 ,{name:"dm02", index:"dm02", align:"right", classes:"no_class", formatter:formatter_dm02 }
+ 		 ,{name:"dm03", index:"dm03", align:"right", classes:"no_class", formatter:formatter_dm03 }
+ 		 ,{name:"dm04", index:"dm04", align:"right", classes:"no_class", formatter:formatter_dm04 }
+ 		 ,{name:"dm05", index:"dm05", align:"right", classes:"no_class", formatter:formatter_dm05 }
+ 		 ,{name:"dm06", index:"dm06", align:"right", classes:"no_class", formatter:formatter_dm06 }
+ 		 ,{name:"dm07", index:"dm07", align:"right", classes:"no_class", formatter:formatter_dm07 }
+ 		 ,{name:"dm08", index:"dm08", align:"right", classes:"no_class", formatter:formatter_dm08 }
+
+        ];
+
+		// その他の設定
+		jqgrid_opt = {
+			 table_name:'building_table'
+			,fotter_name:'building_pager'
+			,div_name:'div_dummy_02'
+			,caption:'ＤＭ発行パターンリスト'
+			,event_type:30
+			,shrinkFit:true
+			,multiselect:true
+		};
+
+        $(function(){
+
+			var table_div = $('#' + jqgrid_opt.table_name);
+			var div_box = $('#' + jqgrid_opt.div_name);
+	
+			table_div.jqGrid({
+			  	data : gon.data_list,  //表示したいデータ
+			  	datatype : "local",            //データの種別 他にjsonやxmlも選べます。しかし、私はlocalが推奨です。
+			  	colNames : col_names,           //列の表示名
+			  	colModel : col_model,   //列ごとの設定
+			  	caption : jqgrid_opt.caption,    //ヘッダーのキャプション
+				
+				loadComplete : function () {  // 幅の%調整。読み込みが完了したあと指定のdivの幅と高さを%でとってきて設定
+					table_div.jqGrid('setGridWidth', div_box.width(), jqgrid_opt.shrinkFit);
+				},
+		        onSelectRow: function(id) {
+		        },
+			    onSelectRow: function(id) {
+				},
+			  	//shrinkToFit : false,　　        //画面サイズに依存せず固定の大きさを表示する設定
+			});
+  		});
+
+        // jqgridのサイズを規定する
+        function grid_size_def(){
+            $('#building_table').setGridWidth($(window).width() - 100 ).setGridHeight(200);
+        }
+        
+        // リサイズ時のイベント
+        $(window).bind('resize', function () {
+            grid_size_def();
+        }).trigger('resize');
+        
+        $(function () {
+            // 初期描画完了後にサイズを対応させる。
+            grid_size_def();
+        });
+    }
+
+    $('#dp2').datepicker({
+        format: 'dd/mm/yyyy',
+        language: 'ja',
+        autoclose: true,
+        clearBtn: true,
+    });
+</script>
+
+<div style="margin:30px 40px 10px 40px;">
+	
+	<div id="div_dummy_02" style="width:100%;height:90%;">
+		
+		<div><h2>ダイレクトメール発行管理</h2></div>
+
+        <%= link_to "一覧へ戻る",  {:action=>'index'}, :onclick=>'javascript:screen_block();' %>
+		<table id="building_table"></table>
+		<div id="building_pager"></div>
+        <div style="text-align:left">ＤＭ発行『有り』に指定　かつ　所有物件の見込みランクが『Ｓ・Ａ・Ｂ・Ｃ・Ｄ』の家主が表示されています。</div>
+	</div>
+</div>
+
+<% @user_list.each do |dm_rec| %>
+    <div class="modal fade" id="modal-tack-<%= dm_rec['biru_user_id'] %>" tabindex="-1" role="dialog" aria-labelledby="modal-tack-label<%= dm_rec['biru_user_id'] %>" aria-hidden="true">
+    
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" ><%= dm_rec['biru_user_name'] %> さん</h4>
+                </div>
+
+                <% form_name = "tack_frm_" + dm_rec['biru_user_id'].to_s %>
+                <%= form_tag({:action=>'dm_out'}, {:method=>'post', :name=>form_name }) do %>
+                    <%#= hidden_field_tag 'dm_owner_list', ''  %>
+                    <%= hidden_field_tag :biru_user_id, dm_rec['biru_user_id'] %>
+                    <div class="modal-body">
+
+                        出力パターン
+                        <div style="padding-bottom:20px;">
+                            <div><%= radio_button_tag :dm_ptn, 1, true  %>&nbsp;パターン１&nbsp;&nbsp;<%= dm_rec['dm01'] %>件</div>
+                            <div><%= radio_button_tag :dm_ptn, 2, false %>&nbsp;パターン２&nbsp;&nbsp;<%= dm_rec['dm02'] %>件</div>
+                            <div><%= radio_button_tag :dm_ptn, 3, false %>&nbsp;パターン３&nbsp;&nbsp;<%= dm_rec['dm03'] %>件</div>
+                            <div><%= radio_button_tag :dm_ptn, 4, false %>&nbsp;パターン４&nbsp;&nbsp;<%= dm_rec['dm04'] %>件</div>
+                            <div><%= radio_button_tag :dm_ptn, 5, false %>&nbsp;パターン５&nbsp;&nbsp;<%= dm_rec['dm05'] %>件</div>
+                            <div><%= radio_button_tag :dm_ptn, 6, false %>&nbsp;パターン６&nbsp;&nbsp;<%= dm_rec['dm06'] %>件</div>
+                            <div><%= radio_button_tag :dm_ptn, 7, false %>&nbsp;ニュースレター１&nbsp;&nbsp;<%= dm_rec['dm07'] %>件</div>
+                            <div><%= radio_button_tag :dm_ptn, 8, false %>&nbsp;ニュースレター２&nbsp;&nbsp;<%= dm_rec['dm08'] %>件</div>
+                        </div>
+                        <div>
+                            <label class="string optional control-label" for="tack_out_date">発行日</label>
+                            <%= text_field_tag 'dm_out_date', Date.today.strftime("%Y-%m-%d"), :type=>'date' , :class=>'form-control', :style=>'width:180px;' %>
+                            <label class="string optional control-label" for="dm_discription" style="margin-top:20px;">ＤＭ履歴の内容（送付するＤＭの概要など）</label>
+                            <%= text_field_tag 'dm_out_msg', '', :class=>'form-control', :style=>'width:300px;'  %>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <%= submit_tag 'ＤＭ履歴を登録' ,:class=>"btn btn-default", :style=>"margin:0", :onclick=>"return tack_out_go(document.forms." + form_name + ");"  %>
+                    </div>
+                <% end %>
+
+            </div><!-- modal-content -->
+        </div><!-- modal-dialog -->
+    </div> <!-- modal -->
+
+<% end %>
+
+<script type="text/javascript">
+    function tack_out_go(obj){
+
+        if(obj.dm_out_date.value.length == 0){
+            alert('リレキに残す日付を設定してください。');
+            return false;
+        }
+    
+        if(obj.dm_out_msg.value.length == 0){
+            alert('リレキに残すメッセージを設定してください。');
+            return false;
+        }
+    
+        if(window.confirm('ＤＭ発行リレキに登録します。よろしいですか？')){
+        }else{
+            return false;
+        }
+    
+        return true;
+    }
+
+</script>

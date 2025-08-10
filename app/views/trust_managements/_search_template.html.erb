@@ -1,0 +1,246 @@
+		<!-- 1行目 -->
+		<div class="row">
+			  <div class="form-group">
+  			  <label class="col-sm-1 control-label" for="">ランク</label>
+			    <div class="col-sm-11">
+			      <div>
+							<label><%= check_box_tag :rank_z, true, @search_param[:rank_z] %>&nbsp;&nbsp;Z</label>
+							&nbsp;
+							<label><%= check_box_tag :rank_s, true, @search_param[:rank_s] %>&nbsp;&nbsp;S</label>
+							&nbsp;
+							<label><%= check_box_tag :rank_a, true, @search_param[:rank_a] %>&nbsp;&nbsp;A</label>
+							&nbsp;
+							<label><%= check_box_tag :rank_b, true, @search_param[:rank_b] %>&nbsp;&nbsp;B</label>
+							&nbsp;
+							<label><%= check_box_tag :rank_c, true, @search_param[:rank_c] %>&nbsp;&nbsp;C</label>
+							&nbsp;
+							<label><%= check_box_tag :rank_d, true, @search_param[:rank_d] %>&nbsp;&nbsp;D</label>
+							&nbsp;
+							<label><%= check_box_tag :rank_wxy, true, @search_param[:rank_wxy] %>&nbsp;&nbsp;W〜Y</label>
+							&nbsp;
+				  	</div>
+			    </div>
+			  </div>
+		</div>
+			
+		<!-- 2行目 -->
+		<div class="row">
+	    <div class="col-sm-6">
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label" for="">貸主名</label>
+			    <div class="col-sm-10">
+			      <%= text_field_tag :owner_name, @search_param[:owner_name] %>
+			    </div>
+			  </div>
+			</div>
+
+	    <div class="col-sm-6">
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label" for="">貸主住所</label>
+			    <div class="col-sm-10">
+			      <%= text_field_tag :owner_address, @search_param[:owner_address] %>
+			    </div>
+			  </div>
+			</div>
+			
+		</div>
+
+		<!-- 3行目 -->
+		<div class="row">
+	    <div class="col-sm-6">
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label" for="">物件名</label>
+			    <div class="col-sm-10">
+			      <%= text_field_tag :building_name, @search_param[:building_name] %>
+			    </div>
+			  </div>
+			</div>
+
+	    <div class="col-sm-6">
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label" for="">物件住所</label>
+			    <div class="col-sm-10">
+			      <%= text_field_tag :building_address, @search_param[:building_address] %>
+			    </div>
+			    </div>
+			  </div>
+
+			</div>
+
+		<!-- 4行目 -->
+		<div class="row">
+	    <div class="col-sm-6">
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label" for="">管理営業所</label>
+			    <div class="col-sm-10">
+			      <%= select_tag :shop_id, options_from_collection_for_select(@shops, :id, :name, @search_param[:shop_id]), :prompt=>'指定なし' %>
+			    </div>
+			  </div>
+			</div>
+				
+	    <div class="col-sm-6">
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label" for="">受託担当者</label>
+			    <div class="col-sm-10">
+			      <%= select_tag :user_id, options_from_collection_for_select(@biru_users, :id, :name, @search_param[:user_id]), :prompt=>'指定なし' %>
+			    </div>
+			  </div>
+			    </div>
+			  </div>
+
+		<!-- 5行目 -->
+		<div class="row">
+	    <div class="col-sm-6">
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label" for="">貸主備考</label>
+			    <div class="col-sm-10">
+			      <%= text_field_tag :owner_memo, @search_param[:owner_memo] %>
+			    </div>
+			  </div>
+			</div>
+			  
+	    <div class="col-sm-6">
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label" for="">物件備考</label>
+			    <div class="col-sm-10">
+			      <%= text_field_tag :building_memo, @search_param[:building_memo] %>
+			    </div>
+			  </div>
+			    </div>
+			  </div>
+		  
+		<!-- 6行目 -->
+		<div class="row">
+	    <div class="col-sm-6">
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label" for="">現管理会社</label>
+			    <div class="col-sm-10">
+			      <%= text_field_tag :building_proprietary_company, @search_param[:building_proprietary_company] %>
+			    </div>
+			  </div>
+			</div>
+			  
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-2 control-label" for="">絞り込み</label>
+					<div class="col-sm-10">
+						<div>
+							<label><%= check_box_tag :selective_first, true, @search_param[:selective_first] %>&nbsp;&nbsp;重点地域</label>
+							&nbsp;
+							<label><%= check_box_tag :selective_second, true, @search_param[:selective_second] %>&nbsp;&nbsp;準重点地域</label>
+							&nbsp;
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- 7行目 -->
+		<div class="row">
+	    <div class="col-sm-6">
+				&nbsp;
+			</div>
+			  
+			<div class="col-sm-6">
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label" for="">反響種別</label>
+			    <div class="col-sm-10">
+			      <%= select_tag :occur_source_id, options_from_collection_for_select(OccurSource.find(:all), :id, :name, @search_param[:occur_source_id]), :prompt=>'指定なし' %>
+			    </div>
+			  </div>
+			</div>
+		</div>
+
+		<div class="row">
+			
+			<div class="col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-1" for="">訪問リレキ</label>
+					<div class="col-sm-11">
+									<label><%= radio_button_tag 'history_visit', 'all' ,@history_visit[:all]  %>&nbsp;すべて</label>&nbsp;&nbsp;
+									<label><%= radio_button_tag 'history_visit', 'exist', @history_visit[:exist] %>&nbsp;履歴あり</label>&nbsp;&nbsp;
+										（&nbsp;&nbsp;<%= text_field_tag 'history_visit_from', @history_visit_from, :size=>10, :style=>'text-align:center;', :class=>'date' %>&nbsp;〜&nbsp;<%= text_field_tag 'history_visit_to', @history_visit_to, :size=>10, :style=>'text-align:center;' %>&nbsp;&nbsp;）
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="row">
+			
+			<div class="col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-1" for="">ＤＭリレキ</label>
+					<div class="col-sm-11">
+									<label><%= radio_button_tag 'history_dm', 'all' ,@history_dm[:all]  %>&nbsp;すべて</label>&nbsp;&nbsp;
+									<label><%= radio_button_tag 'history_dm', 'exist', @history_dm[:exist] %>&nbsp;履歴あり</label>&nbsp;&nbsp;
+						（&nbsp;&nbsp;<%= text_field_tag 'history_dm_from', @history_dm_from, :size=>10, :style=>'text-align:center;' %>&nbsp;〜&nbsp;<%= text_field_tag 'history_dm_to', @history_dm_to, :size=>10, :style=>'text-align:center;' %>&nbsp;&nbsp;）
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		<div class="row">
+			
+			<div class="col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-1" for="">電話リレキ</label>
+					<div class="col-sm-11">
+									<label><%= radio_button_tag 'history_tel', 'all' ,@history_tel[:all]  %>&nbsp;すべて</label>&nbsp;&nbsp;
+									<label><%= radio_button_tag 'history_tel', 'exist', @history_tel[:exist] %>&nbsp;履歴あり</label>&nbsp;&nbsp;
+									（&nbsp;&nbsp;<%= text_field_tag 'history_tel_from', @history_tel_from, :size=>10, :style=>'text-align:center;' %>&nbsp;〜&nbsp;<%= text_field_tag 'history_tel_to', @history_tel_to, :size=>10, :style=>'text-align:center;' %>&nbsp;&nbsp;）
+					</div>
+				</div>
+			</div>
+			
+			</div>
+			
+
+<script type="text/javascript">
+$('#history_visit_from').datepicker({
+	format: "yyyy/mm/dd",
+	language: "ja",
+	autoclose: true,
+	orientation: "top auto"
+});
+
+$('#history_visit_to').datepicker({
+	format: "yyyy/mm/dd",
+	language: "ja",
+	autoclose: true,
+	orientation: "top auto"
+});
+
+
+$('#history_dm_from').datepicker({
+	format: "yyyy/mm/dd",
+	language: "ja",
+	autoclose: true,
+	orientation: "top auto"
+});
+
+$('#history_dm_to').datepicker({
+	format: "yyyy/mm/dd",
+	language: "ja",
+	autoclose: true,
+	orientation: "top auto"
+});
+
+$('#history_tel_from').datepicker({
+	format: "yyyy/mm/dd",
+	language: "ja",
+	autoclose: true,
+	orientation: "top auto"
+});
+
+$('#history_tel_to').datepicker({
+	format: "yyyy/mm/dd",
+	language: "ja",
+	autoclose: true,
+	orientation: "top auto"
+});
+
+</script>
+
+		

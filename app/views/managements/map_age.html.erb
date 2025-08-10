@@ -1,0 +1,480 @@
+<% content_for :header do %>
+<script type='text/javascript' src='http://maps.googleapis.com/maps/api/js?sensor=false&v=3&language=ja&libraries=visualization&key=AIzaSyCFmLUX03pHtnUN_wP2fh9rNKoOnzrCcTs&client=gme-chuobuildingkanri'></script>
+<script type='text/javascript'>
+
+
+  
+// 営業所マーカーの表示／非表示
+function disp_shops(flg){
+  for(var item in shop_arr){
+    shop_arr[item].set("visible", flg);
+  };
+}
+
+// 市場物件layler
+function disp_market_building_layer(flg){
+	if(flg){
+		market_building_layer.setMap(mapCanvas);
+	}else{
+		market_building_layer.setMap(null);
+	}
+}
+
+// ビル管理　物件layler(ｘｘ)
+function disp_biru_building_layer_01(flg){
+	if(flg){ biru_building_layer_01.setMap(mapCanvas); }else{biru_building_layer_01.setMap(null);}
+}
+// ビル管理　物件layler(ｘｘ)
+function disp_biru_building_layer_02(flg){
+	if(flg){ biru_building_layer_02.setMap(mapCanvas); }else{biru_building_layer_02.setMap(null);}
+}
+// ビル管理　物件layler(ｘｘ)
+function disp_biru_building_layer_03(flg){
+	if(flg){ biru_building_layer_03.setMap(mapCanvas); }else{biru_building_layer_03.setMap(null);}
+}
+// ビル管理　物件layler(ｘｘ)
+function disp_biru_building_layer_04(flg){
+	if(flg){ biru_building_layer_04.setMap(mapCanvas); }else{biru_building_layer_04.setMap(null);}
+}
+// ビル管理　物件layler(ｘｘ)
+function disp_biru_building_layer_05(flg){
+	if(flg){ biru_building_layer_05.setMap(mapCanvas); }else{biru_building_layer_05.setMap(null);}
+}
+// ビル管理　物件layler(ｘｘ)
+function disp_biru_building_layer_06(flg){
+	if(flg){ biru_building_layer_06.setMap(mapCanvas); }else{biru_building_layer_06.setMap(null);}
+}
+// ビル管理　物件layler(ｘｘ)
+function disp_biru_building_layer_07(flg){
+	if(flg){ biru_building_layer_07.setMap(mapCanvas); }else{biru_building_layer_07.setMap(null);}
+}
+// ビル管理　物件layler(ｘｘ)
+function disp_biru_building_layer_08(flg){
+	if(flg){ biru_building_layer_08.setMap(mapCanvas); }else{biru_building_layer_08.setMap(null);}
+}
+// ビル管理　物件layler(ｘｘ)
+function disp_biru_building_layer_09(flg){
+	if(flg){ biru_building_layer_09.setMap(mapCanvas); }else{biru_building_layer_09.setMap(null);}
+}
+// ビル管理　物件layler(ｘｘ)
+function disp_biru_building_layer_10(flg){
+	if(flg){ biru_building_layer_10.setMap(mapCanvas); }else{biru_building_layer_10.setMap(null);}
+}
+
+
+// 地図の初期設定を行います。
+function init_map(){
+  
+  /* 地図を作成 */
+  var mapDiv = document.getElementById('map_canvas');
+  mapCanvas = new google.maps.Map(mapDiv, {
+  // 画面左上の地図レイアウト（写真とか文字なしとか）　不要になったため削除　2016.03.22 del-start
+  // mapTypeControlOptions: {
+  // 	        mapTypeIds: [google.maps.MapTypeId.ROADMAP,'noText', 'map_style','noText2', 'noRoad']
+  // },
+  // 画面左上の地図レイアウト（写真とか文字なしとか）　不要になったため削除　2016.03.22 del-end
+    scaleControl: true
+    ,minZoom:2
+  });
+
+  // 市場シェア率
+  mapCanvas.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(new GoogleMessageControll(mapCanvas));
+  mapCanvas.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(new StreetViewControll(mapCanvas));
+  mapCanvas.controls[google.maps.ControlPosition.RIGHT_CENTER].push(new MarketControll(mapCanvas));
+  mapCanvas.controls[google.maps.ControlPosition.RIGHT_CENTER].push(new DispControll(mapCanvas, true));
+
+  /*----------------------------------------------------------------------*/
+  /* ストリートビューオブジェクトを作成 （これはcreate markerを呼び出す前に定義する。）*/
+  /*----------------------------------------------------------------------*/
+  panoramaOptions = {
+    position:mapCanvas.getCenter(),
+    pov:{heading: 180,pitch:0,zoom:0},
+    //enableCloseButton: true,
+    addressControlOptions: {
+        position: google.maps.ControlPosition.BOTTOM
+    }
+  };
+  panorama = new  google.maps.StreetViewPanorama(document.getElementById('panowide'), panoramaOptions);
+
+  mapCanvas.setStreetView(panorama);
+  google.maps.event.addListener(panorama, 'position_changed', function()
+  {
+    var positionPegman = panorama.getPosition();
+
+    // ストリートビューが表示されていなかったら表示
+    if( document.getElementById('panowide').style.display == 'none' ){
+      view_disp(true, positionPegman.latitude, positionPegman.longitude);
+    }
+
+    //ペグマン位置変更イベント
+    mapCanvas.panTo(positionPegman);
+  });
+
+  // infoウィンドウを１つだけ作成
+  infoWnd = new google.maps.InfoWindow();
+
+  return mapCanvas;
+}
+
+// ビル管理の物件
+function create_biru_building_layer(fusion_table){
+
+		var market_query = {
+      select: '\'*\'', 
+      from: fusion_table
+    };
+    
+		var market_styles = [{
+      markerOptions: {
+        iconName: 'measle_white'
+      }
+    },{
+      where: '\'建物_築年数\' >= 0 and \'建物_築年数\' <= 10',
+      markerOptions: {
+        iconName: 'small_yellow'
+      }
+    }, {
+      where: '\'建物_築年数\' > 10 and \'建物_築年数\' <= 20',
+      markerOptions: {
+        iconName: 'small_green'
+      }
+    }, {
+      where: '\'建物_築年数\' > 20 and \'建物_築年数\' <= 30',
+      markerOptions: {
+        iconName: 'small_blue'
+      }
+    }, {
+      where: '\'建物_築年数\' > 30 and \'建物_築年数\' <= 40',
+      markerOptions: {
+        iconName: 'small_purple'
+      }
+    }, {
+      where: '\'建物_築年数\' > 40 ',
+      markerOptions: {
+        iconName: 'measle_red'
+      }
+    }];
+
+
+
+  var fusion_layer = new google.maps.FusionTablesLayer({
+    query: market_query
+    ,styles: market_styles
+    ,options: {
+      styleId: 2,
+      templateId: 2
+    }
+    
+  });
+
+  return fusion_layer;
+
+
+/*
+  var biru_building_layer = new google.maps.FusionTablesLayer({
+    query: {
+      select: '\'物件住所\'', 
+      from: fusion_table
+    },
+    styles: [{
+      markerOptions: {
+        iconName: 'measle_white'
+      }
+    },{
+      where: '\'建物_築年数\' >= 0 and \'建物_築年数\' <= 10',
+      markerOptions: {
+        iconName: 'small_yellow'
+      }
+    }, {
+      where: '\'建物_築年数\' > 10 and \'建物_築年数\' <= 20',
+      markerOptions: {
+        iconName: 'small_green'
+      }
+    }, {
+      where: '\'建物_築年数\' > 20 and \'建物_築年数\' <= 30',
+      markerOptions: {
+        iconName: 'small_blue'
+      }
+    }, {
+      where: '\'建物_築年数\' > 30 and \'建物_築年数\' <= 40',
+      markerOptions: {
+        iconName: 'small_purple'
+      }
+    }, {
+      where: '\'建物_築年数\' > 40 ',
+      markerOptions: {
+        iconName: 'measle_red'
+      }
+    }]
+  });
+
+  return biru_building_layer;
+
+  */
+
+}
+
+
+
+function MarketControll(map) {
+
+  var controlDiv = document.createElement('div');
+  controlDiv.index = 1;
+  controlDiv.style.padding = '5px';
+  controlDiv.style.marginRight = '10px';
+
+  // Set CSS for the control border.
+  var controlUI = document.createElement('div');
+  controlUI.style.backgroundColor = 'white';
+  controlUI.style.borderStyle = 'solid';
+  controlUI.style.borderWidth = '1px';
+  controlUI.style.borderColor = '#717b87';
+  controlUI.style.cursor = 'pointer';
+  controlUI.style.textAlign = 'center';
+  controlUI.style.boxShadow = '0px 2px 4px rgba(0,0,0,0.4)';
+  controlUI.style.height = '200px';
+  controlUI.style.width = '200px';
+  controlUI.style.top = '10px';
+  controlDiv.appendChild(controlUI);
+
+  var divA = document.createElement('div');
+  divA.style.position = 'absolute';
+  divA.style.top = '20px';
+  divA.style.left = '15px';
+
+  var strTable = ""
+  strTable = strTable + '<label style="font-size:medium">&nbsp;&nbsp;築年数</label>'
+  strTable = strTable + '<hr style="border:none;border-top:dashed 1px #CCCCCC;height:1px;color:#FFFFFF;margin:0;padding:0;margin-bottom:10px;margin-right:15px;">'
+  strTable = strTable + '<table class="brwsr1" style="font-size: 12px;border-collapse: separate;border-spacing: 0px 1px;width:150px;margin-top:15px;margin-left:10px;">'
+  strTable = strTable + '    <tbody>'
+  strTable = strTable + '     <tr>'
+  strTable = strTable + '       <td style="text-align:left;height:20px;width:25px;"><img alt="Marker_blue" src="/biruweb/assets/google_icon_small_yellow.png" /></td>'
+  strTable = strTable + '       <td style="text-align:left;height:5px;font-size:medium;">新築 ～ １０年</td>'
+  strTable = strTable + '     </tr>'
+  strTable = strTable + '     <tr>'
+  strTable = strTable + '       <td style="text-align:left;height:20px;width:25px;"><img alt="Marker_yellow" src="/biruweb/assets/google_icon_small_green.png" /></td>'
+  strTable = strTable + '       <td style="font-size:medium;">１１ ～ ２０年</td>'
+  strTable = strTable + '     </tr>'
+  strTable = strTable + '     <tr>'
+  strTable = strTable + '       <td style="text-align:left;height:20px;width:25px;"><img alt="Marker_purple" src="/biruweb/assets/google_icon_small_blue.png" /></td>'
+  strTable = strTable + '       <td style="font-size:medium;">２１ ～ ３０年</td>'
+  strTable = strTable + '     </tr>'
+  strTable = strTable + '     <tr>'
+  strTable = strTable + '       <td style="text-align:left;height:20px;width:25px;"><img alt="Marker_red" src="/biruweb/assets/google_icon_small_purple.png" /></td>'
+  strTable = strTable + '       <td style="font-size:medium;">３１ ～ ４０年</td>'
+  strTable = strTable + '     </tr>'
+  strTable = strTable + '     <tr>'
+  strTable = strTable + '       <td style="text-align:left;height:20px;width:25px;"><img alt="Marker_orange" src="/biruweb/assets/google_icon_small_red.png" /></td>'
+  strTable = strTable + '       <td style="font-size:medium;">４１年以上</td>'
+  strTable = strTable + '     </tr>'
+  strTable = strTable + '    </tbody>'
+  strTable = strTable + '</table>'
+
+  divA.innerHTML = strTable
+  controlDiv.appendChild(divA);
+
+  return controlDiv;
+    
+}
+  
+function DispControll(map, market_flg) {
+
+    var controlDiv = document.createElement('div');
+    controlDiv.index = 1;
+    controlDiv.style.padding = '5px';
+    controlDiv.style.marginRight = '10px';
+
+    // Set CSS for the control border.
+    var controlUI = document.createElement('div');
+    controlUI.style.backgroundColor = 'white';
+    controlUI.style.borderStyle = 'solid';
+    controlUI.style.borderWidth = '1px';
+    controlUI.style.borderColor = '#717b87';
+    controlUI.style.cursor = 'pointer';
+    controlUI.style.textAlign = 'center';
+    controlUI.style.boxShadow = '0px 2px 4px rgba(0,0,0,0.4)';
+    controlUI.style.height = '150px';
+    controlUI.style.width = '200px';
+    controlUI.style.top = '10px';
+    controlDiv.appendChild(controlUI);
+
+    var divA = document.createElement('div');
+    divA.style.position = 'absolute';
+    divA.style.top = '20px';
+    divA.style.left = '15px';
+
+    var strTable = ""
+  
+    /*
+1zakiL5fm2OLwxsxUYVVf30EryjxRPcyc6C9SYbUK アパート
+14NtN-uc67WxeTJ49Yfj8UimXx0PuKpFLSgcaVNjt マンション
+1Yk7hyqTdHuonDGvMXYM3cjT7GSRE43yMOx28mhGZ 戸建て貸家　
+1XBHZERj01MLwtabkv2xQ4fzmtvpHVECA53WuZmvl 分譲マンション
+1UXvLNcZBf5Sd1EZfzY_JI9fX6zbWXboxwNUsuumQ テラスハウス
+1nJfKAhFECZ0pdYpAVQA_9ghvvv0IogbDC6L9URKv メゾネット
+1TG61W6L2PYPcQ5lO-xb_wTLxliPmBgrVLcb2U-V- 店舗
+1E92ZHvpl9VYiUwmM2ZmHBMfCeE9tprc-mrJKtrmu 店舗付住宅
+1psqMftVxSzyiJU7_AASWeuff40KSnFjZotB006H3 事務所
+1xbL6Sb0hKyamJSw24dxXcvReRBJfiXaI7PC9IvhJ 工場_工場倉庫_倉庫_倉庫事務所
+    
+    */
+    strTable = strTable + '<label style="font-size:small;"><input type="checkbox" id="biruBuilding01"  onClick="javascript:disp_biru_building_layer_01(biruBuilding01.checked);" />&nbsp;&nbsp;アパート</label>'
+    strTable = strTable + '<label style="font-size:small;"><input type="checkbox" id="biruBuilding02"  onClick="javascript:disp_biru_building_layer_02(biruBuilding02.checked);" />&nbsp;&nbsp;マンション</label>'
+    strTable = strTable + '<label style="font-size:small;"><input type="checkbox" id="biruBuilding03"  onClick="javascript:disp_biru_building_layer_03(biruBuilding03.checked);" />&nbsp;&nbsp;戸建て貸家</label>'
+    strTable = strTable + '<label style="font-size:small;"><input type="checkbox" id="biruBuilding04"  onClick="javascript:disp_biru_building_layer_04(biruBuilding04.checked);" />&nbsp;&nbsp;分譲マンション</label>'
+    strTable = strTable + '<label style="font-size:small;"><input type="checkbox" id="biruBuilding05"  onClick="javascript:disp_biru_building_layer_05(biruBuilding05.checked);" />&nbsp;&nbsp;テラスハウス</label>'
+    strTable = strTable + '<label style="font-size:small;"><input type="checkbox" id="biruBuilding06"  onClick="javascript:disp_biru_building_layer_06(biruBuilding06.checked);" />&nbsp;&nbsp;メゾネット</label>'
+    strTable = strTable + '<label style="font-size:small;"><input type="checkbox" id="biruBuilding07"  onClick="javascript:disp_biru_building_layer_07(biruBuilding07.checked);" />&nbsp;&nbsp;店舗</label>'
+    strTable = strTable + '<label style="font-size:small;"><input type="checkbox" id="biruBuilding08"  onClick="javascript:disp_biru_building_layer_08(biruBuilding08.checked);" />&nbsp;&nbsp;店舗付住宅</label>'
+    strTable = strTable + '<label style="font-size:small;"><input type="checkbox" id="biruBuilding09"  onClick="javascript:disp_biru_building_layer_09(biruBuilding09.checked);" />&nbsp;&nbsp;事務所</label>'
+    strTable = strTable + '<label style="font-size:small;"><input type="checkbox" id="biruBuilding10"  onClick="javascript:disp_biru_building_layer_10(biruBuilding10.checked);" />&nbsp;&nbsp;工場・倉庫</label>'
+    
+    
+
+    strTable = strTable + '<label style="font-size:small;margin-bottom:0px;padding-bottom:0px;clear:both;"><input type="checkbox" id="shopChk" onClick="javascript:disp_shops(shopChk.checked);" checked/>&nbsp;&nbsp;営業所マーカー</label>'
+	
+    strTable = strTable + '</div>'  
+    divA.innerHTML = strTable
+    controlDiv.appendChild(divA);
+
+    return controlDiv;
+   
+}      
+  
+  //-------------------
+  // グローバル変数定義
+  //-------------------
+  var convert_shop = [];
+  // var fusion_biru = '1tLcIYXtP4uOJ2BqK1frOoVpxJ3WockTO4nvgzGLK'; // ビル管理 20160727
+  // var fusion_biru = '1eRkwNFmli9xWcfdPr88u02bNpu2qimhcG1GhQRRr'; // ビル管理 201711
+
+  var fusion_biru = '1jgxyFAOJ7TAC35MBem35zlvwET34FPWR-z6G5Yft'; // ビル管理 20180211
+  var fusion_market = '13h6SQEaVApez8BvDC7bQIl8OOhu0LUpzXQUitPHy'; // マーケット
+  
+  function initialize(){
+    
+    // 初期化処理
+    init_process();
+
+    // 初期表示は非表示
+    init_display();
+
+    // 地図・ストリートビューを作成します。
+    init_map();
+
+    // 初期表示位置を調整
+    var bounds = new google.maps.LatLngBounds();
+    
+    /* 営業所の情報を表示する */
+    shop_arr = {}; // varを消してグローバル化
+
+    gon.shops.forEach(function(shop){
+
+      pos = new google.maps.LatLng(shop.latitude, shop.longitude);
+      bounds.extend(pos);
+
+      shop_arr[shop.id] = createMarker({
+        position : pos
+        ,map : mapCanvas
+        ,animation: google.maps.Animation.DROP
+        ,icon : shop.icon
+        ,info_msg : shop.name
+        ,html : info_msg_shop(shop)
+      });
+
+	});
+
+  mapCanvas.fitBounds(bounds);
+
+  // 物件fusionテーブルの表示(本当はqueryのwhere句で区別できたらよかったが、１つのfusion tableを複数展開ができなかったので、物件種別ごとに複数のfusionテーブルを用意した)
+  /*
+1zakiL5fm2OLwxsxUYVVf30EryjxRPcyc6C9SYbUK アパート
+14NtN-uc67WxeTJ49Yfj8UimXx0PuKpFLSgcaVNjt マンション
+1Yk7hyqTdHuonDGvMXYM3cjT7GSRE43yMOx28mhGZ 戸建て貸家　
+1XBHZERj01MLwtabkv2xQ4fzmtvpHVECA53WuZmvl 分譲マンション
+1UXvLNcZBf5Sd1EZfzY_JI9fX6zbWXboxwNUsuumQ テラスハウス
+1nJfKAhFECZ0pdYpAVQA_9ghvvv0IogbDC6L9URKv メゾネット
+1TG61W6L2PYPcQ5lO-xb_wTLxliPmBgrVLcb2U-V- 店舗
+1E92ZHvpl9VYiUwmM2ZmHBMfCeE9tprc-mrJKtrmu 店舗付住宅
+1psqMftVxSzyiJU7_AASWeuff40KSnFjZotB006H3 事務所
+1xbL6Sb0hKyamJSw24dxXcvReRBJfiXaI7PC9IvhJ 工場_工場倉庫_倉庫_倉庫事務所
+  
+  */
+  biru_building_layer_01 = create_biru_building_layer('1zakiL5fm2OLwxsxUYVVf30EryjxRPcyc6C9SYbUK')
+  biru_building_layer_02 = create_biru_building_layer('14NtN-uc67WxeTJ49Yfj8UimXx0PuKpFLSgcaVNjt')
+  biru_building_layer_03 = create_biru_building_layer('1Yk7hyqTdHuonDGvMXYM3cjT7GSRE43yMOx28mhGZ')
+  biru_building_layer_04 = create_biru_building_layer('1XBHZERj01MLwtabkv2xQ4fzmtvpHVECA53WuZmvl')
+  biru_building_layer_05 = create_biru_building_layer('1UXvLNcZBf5Sd1EZfzY_JI9fX6zbWXboxwNUsuumQ')
+  biru_building_layer_06 = create_biru_building_layer('1nJfKAhFECZ0pdYpAVQA_9ghvvv0IogbDC6L9URKv')
+  biru_building_layer_07 = create_biru_building_layer('1TG61W6L2PYPcQ5lO-xb_wTLxliPmBgrVLcb2U-V-')
+  biru_building_layer_08 = create_biru_building_layer('1E92ZHvpl9VYiUwmM2ZmHBMfCeE9tprc-mrJKtrmu')
+  biru_building_layer_09 = create_biru_building_layer('1psqMftVxSzyiJU7_AASWeuff40KSnFjZotB006H3')
+  biru_building_layer_10 = create_biru_building_layer('1xbL6Sb0hKyamJSw24dxXcvReRBJfiXaI7PC9IvhJ')
+	
+	/* 地図をダブルクリックした時、円を作成 */
+	google.maps.event.addListener( mapCanvas , 'dblclick' , function(e){
+		
+	    var myCircle = new google.maps.Circle({
+	      map : mapCanvas
+	      ,center : e.latLng
+	      ,strokeColor: 'green' /* ストロークの色 */
+	      ,strokeOpacity: 0.9 /* ストロークの透明度 */
+	      ,strokeWeight: 1 /* ストロークの幅 */
+	      ,fillColor: 'green' /* フィルの色 */
+	      ,fillOpacity: 0.1 /* フィルの透明度 */
+	  	  ,draggable: true  /* ドラッグ可能 */
+	  	  ,editable: true  /* 編集可能 */
+	    });
+
+	    myCircle.setRadius(1000); // メートル単位で指定
+
+		myCircle.circle_name = ''
+		google.maps.event.addListener( myCircle, 'click' , function(){
+		circle_clicked(myCircle);
+		
+  	  });
+	});
+
+
+
+  } // end initialize
+
+  google.maps.event.addDomListener(window, 'load', initialize);
+
+
+</script>
+
+  <style type='text/css'>
+    html, body{
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #map_canvas{
+      position: fixed;
+      width:100%;
+      height:100%;
+      top:0px;
+      left:0;
+    }
+
+    #top-menu{
+      padding:0;
+      margin:0;
+    }
+	
+	a{
+	  text-decoration:underline;	
+	}
+	
+  </style>
+
+<% end %>
+
+<div id='map_canvas' style='width: 100%;height:100%;'></div>
+<div id='panowide' style='width: 100%; height: 0px;margin-top: 5px;'></div>
+
+
+

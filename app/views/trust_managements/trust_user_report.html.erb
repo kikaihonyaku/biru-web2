@@ -1,0 +1,1189 @@
+<% content_for :header do %>
+  <style type="text/css" media="all">
+	
+	a{
+	  text-decoration:underline;	
+	}
+
+  </style>
+  
+	<style type="text/css" media="print">
+	<!--
+		.print-none{
+			display:none;
+		}
+		
+		.print-float{
+			float:left;
+		}
+
+		.print-result{
+			width:100%;
+		}
+
+		.print-chart{
+			width:100%;
+		}
+		
+	-->
+	</style>  
+  
+
+	<style type="text/css" media="screen">
+	<!--
+		.print-result{
+			width:50%;
+		}
+
+		.print-chart{
+			width:48%;
+			float:left;
+		}
+
+		.print-only{
+			display:none;
+		}
+
+	-->
+	</style>
+	  
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&v=3&language=ja&libraries=visualization&client=gme-chuobuildingkanri"></script>
+<script type="text/javascript">
+
+
+
+	// 建物リンクをクリックした時の動きを定義します。（ランク用マップ） ※jqgrid_create内使用の同名メソッドをオーバーライド
+	function link_building_click(num, lat, lng)
+	{
+	  //mapCanvas.setZoom(18);
+	  mapCanvasRank.setZoom(15);
+	  google.maps.event.trigger(build_arr[num], "click");
+	}
+	
+	
+	// 貸主リンクをクリックした時の動きを定義します。(アプローチ用マップ)　※jqgrid_create内使用の同名メソッドをオーバーライド
+	function link_owner_click(num, lat, lng)
+	{
+	  //mapCanvas.setZoom(18);
+	  mapCanvasApproach.setZoom(15);
+	  google.maps.event.trigger(owner_arr[num], "click");
+	}
+
+
+//-------------------
+// グローバル変数定義
+//-------------------
+var convert_shop = [];
+  
+// 初期化処理
+function initialize(){
+	
+    // infoウィンドウを１つだけ作成
+    infoWnd = new google.maps.InfoWindow();
+	
+	//----------------------------------------------
+	// ランク用マップ
+	//----------------------------------------------
+
+	// 表示用のmapCanvasを作成(ランク用)
+    var mapDivRank = document.getElementById("map_canvas_rank");
+    mapCanvasRank = new google.maps.Map(mapDivRank, {
+		 scaleControl: true
+		,zoom: 19
+		,minZoom: 2
+    });
+	
+    // 初期表示位置を調整
+    var boundsRank = new google.maps.LatLngBounds();
+	
+	// 見込みランク物件を表示
+    /* 建物オブジェクトを作成 */
+    build_arr = {}; // グローバル
+    kyori_text = ""
+    var pos;
+    var idx = 0;
+    var biru_latlngs = [];
+    var populations = [];
+
+    var buildings = gon.rank_buildings
+    for(var i in buildings){
+        pos = new google.maps.LatLng(buildings[i].latitude, buildings[i].longitude);
+
+		boundsRank.extend(pos);
+
+        build_arr[buildings[i].id] = createMarker_trust_report({
+          position : pos
+          ,map : mapCanvasRank
+          ,icon : buildings[i].icon
+		  ,html : '<div style="font-size:10px;"><a href="javascript:win_owner(' + gon.rank_buildings[i].owner_id + ');">' + gon.rank_buildings[i].name + '</a></div>'
+          ,visible : true
+		  ,draggable: false
+        }, false);
+
+        biru_latlngs[idx] = pos;
+        idx = idx + 1;
+    }
+
+    mapCanvasRank.fitBounds(boundsRank);
+	
+
+	//----------------------------------------------
+	// 行動履歴用マップ
+	//----------------------------------------------
+
+	// 表示用のmapCanvasを作成（行動履歴用）
+    var mapDivApproach = document.getElementById("map_canvas_approach");
+    mapCanvasApproach = new google.maps.Map(mapDivApproach, {
+		 scaleControl: true
+		,zoom: 19
+		,minZoom: 2
+    });
+	
+    // 初期表示位置を調整
+    var boundsApproach = new google.maps.LatLngBounds();
+
+	// 訪問リレキ・DMリレキ・TELリレキを表示
+    owner_arr = {}; // varを外してグローバル化
+    for(var i in gon.approach_owners){
+      pos = new google.maps.LatLng(gon.approach_owners[i].latitude, gon.approach_owners[i].longitude);
+      boundsApproach.extend(pos);
+
+      owner_arr[gon.approach_owners[i].id] = createMarker_trust_report({
+        position : pos
+        ,map : mapCanvasApproach
+        ,icon : gon.approach_owners[i].icon
+        ,html : '<div style="font-size:10px;"><a href="javascript:win_owner(' + gon.approach_owners[i].id + ');">' + gon.approach_owners[i].name + '</a></div>'
+        ,visible : true
+	  　,draggable: false
+      }, false);
+    }
+
+    mapCanvasApproach.fitBounds(boundsApproach);
+
+}  // end initialize
+
+	
+google.maps.event.addDomListener(window, "load", initialize);
+
+
+// 建物のInfoBoxを登録する。
+function info_msg_biru_trust_report(biru, owners){
+  var inner_text = "";
+  var vhtml;
+  
+  for(var j in owners){
+    inner_text = inner_text +
+      '<li style="font-size:5px;">' +
+      '  <a href="javascript:link_owner_click(' + owners[j].id + ',' + owners[j].latitude + ',' + owners[j].longitude + ')">' + owners[j].name + '</a></td>' +
+      '</li>'
+  }
+
+  vhtml = '<div style="font-size:7px;padding:0px;margin:0px;"><a href="javascript:win_building(' + biru.id + ');">' + biru.name + '</a></div>' +
+    '<!-- <div style="font-size:5px;margin-left:5px;margin-top:5px;"><label><input type="checkbox" onclick="this.blur();this.focus();" onchange="building_trust_disp(' + biru.id  + ', this.checked);" />&nbsp;貸主へリンク</label></div> -->' +
+    '<!-- <ul style="padding:0px;margin-left:5px;margin-top:0px;padding-top:0px;">' + inner_text  + '</ul> -->';
+
+  return vhtml;
+
+}
+
+
+function createMarker_trust_report(opts, open_flg){
+  var marker = new google.maps.Marker(opts);
+
+  var i_wind = new google.maps.InfoWindow(); //唯一のinfoWnd
+  
+  if(open_flg == true){
+	  i_wind.setContent(opts.html);
+	  i_wind.open(opts.map, marker);
+  }
+
+  google.maps.event.addListener(marker, "click", function(){
+    // write_build(opts.info_msg);
+
+    i_wind.close();
+    i_wind.setContent(opts.html);
+    i_wind.open(opts.map, marker);
+
+    marker.set("visible", true);
+
+  });
+
+  return marker;
+}
+
+</script>
+
+
+
+<script type="text/javascript">
+
+	var notice_disp;
+	notice_disp = false;
+
+	// 行動履歴一覧を表示します。
+	init_data_jqgrid_approach();
+	
+	// ランク一覧を表示します。
+	init_data_jqgrid_rank();
+	
+	// resize
+    $(window).bind('resize', function () {
+        // $('#building_table_approach').setGridWidth($(window).width() * 0.45 )
+        // $('#building_pager_approach').setGridWidth($(window).width() * 0.45 )
+
+        // $('#building_table_rank').setGridWidth($(window).width() * 0.45 )
+        // $('#building_pager_rank').setGridWidth($(window).width() * 0.45 )
+		
+
+		// 画面の変更でリサイズする
+        $('#building_table_approach').trigger("reloadGrid");
+        $('#building_table_rank').trigger("reloadGrid");
+
+
+    }).trigger('resize');
+	
+
+	function init_data_jqgrid_approach(){
+		// 列名の定義
+ 		var grid_name_approach = [
+			  "貸主ID",
+			  "アプローチ種別",
+			  "アプローチ日",
+			  "貸主名",
+			  "内容",
+		];
+		
+		
+		// 列属性の定義
+		var grid_model_approach = [
+		  {name:"owner_id",  index:"owner_id",  align:"right",  classes:"no_class",  hidden:true,frozen:true}
+   		 , {name:"approach_kind",  index:"approach_kind",  width:50,  align:"center",  classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: "<%= @combo_approach_kinds %>" }}
+  		 , {name:"approach_date",  index:"approach_date",  width:50,  align:"center",  classes:"no_class"}
+  		 , {name:"owner_name",  index:"owner_name",  width:100,  align:"center",  classes:"no_class"}
+  		 , {name:"approach_content",  index:"approach_content",  width:400,   align:"left",  classes:"no_class"}
+		];
+
+		// その他の設定
+		var jqgrid_opt_approach = {
+			 table_name:'building_table_approach'
+			, fotter_name:'building_pager_approach'
+			, div_name:'div_dummy_approach'
+			, event_type:30
+			, shrinkFit:true
+			, multiselect:false
+		};
+		
+		$(function(){
+			jqgrid_create(grid_name_approach,  grid_model_approach,  gon.grid_data_approach,  jqgrid_opt_approach);
+			
+			// 非表示を解除
+ 			jQuery("#building_table_approach").navGrid('#building_pager_approach',{ edit:false,add:false,del:false,search:false }).navButtonAdd('#building_pager_approach',{
+ 			        caption:"", position:"first", onClickButton: function(){
+					 
+ 						// マーカー非表示を解除
+ 						for(var item in owner_arr){
+ 						    owner_arr[item].set("visible", true);
+ 						 };
+						 
+   						for(var item in build_arr){
+   						    build_arr[item].set("visible", true);
+   						 };
+ 						 
+					 
+ 					 }
+ 				 });
+				 
+			
+			// フィルタにあるものだけ絞り込み
+			jQuery("#building_table_approach").navGrid('#building_pager_approach',{ edit:false,add:false,del:false,search:false }).navButtonAdd('#building_pager_approach',{
+			        caption:"", position:"first", onClickButton: function(){
+						map_disp_approach();
+					 }
+				 });
+		});
+	 }
+	 
+
+ 	function init_data_jqgrid_rank(){
+ 		// 列名の定義
+  		var grid_name_rank = [
+ 			  "建物ID",
+ 			  "先月ランク",
+ 			  "今月ランク",
+ 			  "変更",
+			  "最終変更月",
+			  "重点",
+ 			  "物件名",
+ 			  "構造",
+ 			  "戸数",
+			  "今月アプローチ件数",
+ 		];
+		
+ 		// 列属性の定義
+ 		var grid_model_rank = [
+ 		  {name:"building_id",  index:"building_id",  align:"right",  classes:"no_class",  hidden:true,frozen:true}
+    		 , {name:"attack_state_last_month",  index:"attack_state_last_month",  width:20,  align:"center",  classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: "<%= @combo_rank %>" }}
+    		 , {name:"attack_state_this_month",  index:"attack_state_this_month",  width:20,  align:"center",  classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: "<%= @combo_rank %>" }}
+   		 , {name:"change_status",  index:"change_status",  width:40,  align:"center",  classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: "<%= ":;ランクアップ:ランクアップ;変更なし:変更なし;ランクダウン:ランクダウン;不明:不明" %>" }}
+ 	   	, {name:"change_month",  index:"change_month",  width:40,  align:"left",  classes:"no_class"}
+ 	   	, {name:"selective_type",  index:"selective_type",  width:10,  align:"center",  classes:"no_class"}
+   		 , {name:"building_name",  index:"building_name",  width:100,  align:"left",  classes:"no_class"}
+   		 , {name:"build_type",  index:"build_type",  width:20,  align:"center",  classes:"no_class"}
+   		 , {name:"room_num",  index:"room_num",  width:20,  align:"right",  classes:"no_class"}
+   		 , {name:"approach_cnt",  index:"approach_cnt",  width:20,  align:"right",  classes:"no_class"}
+ 		];
+
+ 		// その他の設定
+ 		var jqgrid_opt_rank = {
+ 			 table_name:'building_table_rank'
+ 			, fotter_name:'building_pager_rank'
+ 			, div_name:'div_dummy_rank'
+ 			, event_type:32
+ 			, shrinkFit:true
+ 			, multiselect:false
+ 		};
+		
+ 		$(function(){
+			
+ 			jqgrid_create(grid_name_rank,  grid_model_rank,  gon.grid_data_rank,  jqgrid_opt_rank);
+			
+ 			// 非表示を解除
+  			jQuery("#building_table_rank").navGrid('#building_pager_rank',{ edit:false,add:false,del:false,search:false }).navButtonAdd('#building_pager_rank',{
+  			        caption:"", position:"first", onClickButton: function(){
+					 
+						// マーカー非表示を解除
+						for(var item in owner_arr){
+						    owner_arr[item].set("visible", true);
+						 };
+						 
+						for(var item in build_arr){
+						    build_arr[item].set("visible", true);
+						 };
+					 
+  					 }
+  				 });
+				 
+			
+ 			// フィルタにあるものだけ絞り込み
+ 			jQuery("#building_table_rank").navGrid('#building_pager_rank',{ edit:false,add:false,del:false,search:false }).navButtonAdd('#building_pager_rank',{
+ 			        caption:"", position:"first", onClickButton: function(){
+						map_disp_rank();
+ 					 }
+ 				 });
+				 
+				 
+ 		});
+ 	 }
+	 
+	 function map_disp_approach(){
+	 	// マーカー非表示
+	 	for(var item in owner_arr){
+	 	    owner_arr[item].set("visible", false);
+	 	 };
+	 
+	 	for(var item in build_arr){
+	 	    build_arr[item].set("visible", false);
+	 	 };
+	 
+	 	 //var bounds = new google.maps.LatLngBounds();
+	 	 var table_div = $('#building_table_approach');
+	 	 var row_data = table_div.getRowData();
+	 
+	 	 for(var j in  row_data){
+		
+	 		 owner = owner_arr[row_data[j].owner_id];
+	 		 if(owner != null){
+	 			 owner.set("visible", true);
+			 
+	 		 }
+		 
+	 	 }
+	 }
+	 
+	 function map_disp_rank(){
+		for(var item in owner_arr){
+		    owner_arr[item].set("visible", false);
+		 };
+		 
+		for(var item in build_arr){
+		    build_arr[item].set("visible", false);
+		 };
+		 
+		 //var bounds = new google.maps.LatLngBounds();
+		 var table_div = $('#building_table_rank');
+		 var row_data = table_div.getRowData();
+		 
+		 for(var j in  row_data){
+			
+			 building = build_arr[row_data[j].building_id];
+			 if(building != null){
+				 building.set("visible", true);
+				 
+			 }
+			 
+		 }
+	 }
+	 
+	 
+</script>
+
+
+
+<% end %>
+<div style="padding-left:20px;">
+	<h3><%=  '管理受託月報 ' + @month[0,4] + '年' + @month[4,2] + '月度（' + @biru_trust_user.name + "さん）" %><span style="font-size:15px;margin-left:60px;"><span class="print-none">最終更新日：<%= @data_update.update_datetime if @data_update %></span></span><span style="font-size:15px;margin-left:50px;" class="print-none"><%= link_to "＜＜前月", {:action=>'trust_user_report', :month=>@month_prev, :sid=>@biru_trust_user.id.to_s }, :style=>"text-decoration:none;", :onclick=>"javascript:screen_block();" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to "翌月＞＞", {:action=>'trust_user_report', :month=>@month_next, :sid=>@biru_trust_user.id.to_s }, :style=>"text-decoration:none;", :onclick=>"javascript:screen_block();" %></span></h3>
+
+	<hr style="margin-bottom:0px;margin-top:0px;border-top:1px solid black">
+
+	<!-- ★ランク -->
+	<h4 class="print-none" style="margin-top:40px;">■&nbsp;受託活動 実績状況（ランクＣ以上 ＋ ランクが変動したもの 及び　受託成約になったもの）</h4>
+	<div style="border-width:3px; border-style:solid; border-color:silver;width:45%;float:left;margin-right:20px;float:left;margin-bottom:20px;" class="print-none">
+		<div id="map_canvas_rank" style="width:100%;height:480px;border-color:blue"></div>
+	</div>
+
+	<div style="float:left;margin-bottom:0px;" class="report-list-width print-result print-none">
+		<table class="table  table-bordered">
+			<thead>
+				<tr class="biru-back-color-blue">
+					<td style="font-weight:bold;"></td>
+					<td style="font-weight:bold;text-align:center;width:28%;">見込みランク</td>
+					<td style="font-weight:bold;text-align:center;width:18%;">目標</td>
+					<td style="font-weight:bold;text-align:center;width:18%;">件数</td>
+					<td style="font-weight:bold;text-align:center;width:18%;">前月増減</td>
+					<td style="font-weight:bold;text-align:center;width:18%;">アプローチ</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="text-align:center;"><%= image_tag('marker_orange.png') %></td>
+					<td style="text-align:left;">S：当月度の契約予定</td>
+					<td style="text-align:center;">2</td>
+					<td style="text-align:center;"><%= @report.rank_s %></td>
+					<td style="text-align:center;"><%= fluctuate_disp(@report.fluctuate_s) %></td>
+					<td style="text-align:center;"><%= @report.approach_cnt_s %></td>
+				</tr>
+				<tr>
+					<td style="text-align:center;"><%= image_tag('marker_green.png') %></td>
+					<td style="text-align:left;">A：来月度以降の契約予定</td>
+					<td style="text-align:center;">6</td>
+					<td style="text-align:center;"><%= @report.rank_a %></td>
+					<td style="text-align:center;"><%= fluctuate_disp(@report.fluctuate_a) %></td>
+					<td style="text-align:center;"><%= @report.approach_cnt_a %></td>
+				</tr>
+				<tr>
+					<td style="text-align:center;"><%= image_tag('marker_purple.png') %></td>
+					<td style="text-align:left;">B：提案可能もしくは提案中</td>
+					<td style="text-align:center;">36</td>
+					<td style="text-align:center;"><%= @report.rank_b %></td>
+					<td style="text-align:center;"><%= fluctuate_disp(@report.fluctuate_b) %></td>
+					<td style="text-align:center;"><%= @report.approach_cnt_b %></td>
+				</tr>
+				<tr>
+					<td style="text-align:center;"><%= image_tag('marker_red.png') %></td>
+					<td style="text-align:left;">C：権者に物件ヒアリング</td>
+					<td style="text-align:center;">76</td>
+					<td style="text-align:center;"><%= @report.rank_c %></td>
+					<td style="text-align:center;"><%= fluctuate_disp(@report.fluctuate_c) %></td>
+					<td style="text-align:center;"><%= @report.approach_cnt_c %></td>
+				</tr>
+				<tr>
+					<td style="text-align:center;"><%= image_tag('marker_white.png') %></td>
+					<td style="text-align:left;">Z：成約済</td>
+					<td style="text-align:center;">-</td>
+					<td style="text-align:center;"><%= @report.rank_z %></td>
+					<td style="text-align:center;"><%= fluctuate_disp(@report.fluctuate_z) %></td>
+					<td style="text-align:center;"><%= @report.approach_cnt_z %></td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+
+	<div style="float:left;margin-bottom:0px;" class="report-list-width print-result print-none">
+		<table class="table  table-bordered">
+			<thead>
+				<tr class="biru-back-color-blue">
+					<td style="font-weight:bold;text-align:center;">申請ID</td>
+					<td style="font-weight:bold;text-align:center;">受託物件</td>
+					<td style="font-weight:bold;text-align:center;">管理営業所</td>
+					<td style="font-weight:bold;text-align:center;">受託経緯コメント</td>
+					<td style="font-weight:bold;text-align:center;width:12%;">戸数</td>
+					<td style="font-weight:bold;text-align:center;width:12%;">ポイント</td>
+				</tr>
+			</thead>
+			<tbody>
+				<% @report.trust_attack_month_report_results.each do | result | %>
+
+					<%
+						trust_num = 0
+						trust_num += result.yourself_num if result.yourself_num
+						trust_num += result.oneself_num if result.oneself_num
+					%>
+					<tr>
+						<td style="text-align:center;"><a data-toggle="modal" href="#modalTrustGet_<%= result.trust_apply_code.to_s %>" ><%= result.trust_apply_code %></a></td>
+						<td style="text-align:left;"><%= result.building_name %></td>
+						<td style="text-align:left;"><%= result.shop_name %></td>
+						<td style="text-align:left;"><%= result.comment %></td>
+						<td style="text-align:center;"><%= trust_num %>戸<%= '[他]' if result.yourself_num && result.yourself_num > 0 %><%= '[自]' if result.oneself_num && result.oneself_num > 0 %></td>
+						<td style="text-align:center;"><%= result.point %>pt</td>
+
+						<div class="modal fade" id="modalTrustGet_<%= result.trust_apply_code.to_s %>" tabindex="-1" role="dialog" aria-labelledby="modalTrustGetLabel_<%= result.trust_apply_code.to_s %>" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+								<%= simple_form_for :trust, :url=>{:controller => :trust_managements, :action => :trust_user_report_apply_comment_update }, :html=>{class: 'form-horizontal'} do |f| %>
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+										<h4 class="modal-title" id="myModalLabel"><%= result.building_name %></h4>
+									</div>
+									<div class="modal-body">
+
+										<%= f.input :id, :as => :hidden, :input_html => {:value => result.id.to_s } %>
+										<div>受託経緯コメント</div>
+										<%= f.text_area :comment, :label=>'受託経緯', :as => :text, :rows => 2, style: "width:100%;" ,:class =>"required", :required=>"required", :input_html => {  :style => 'margin-left:0px;padding-left:0px;'} %>
+									</div>
+
+									<div class="modal-footer">
+										<%= f.submit '更　新', :class => 'btn btn-primary' %>
+										<button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+									</div>
+									
+								<% end %>
+								</div>
+							</div>
+						</div>
+						
+					</tr>
+				<% end %>
+
+				<%
+					trust_num = 0
+					trust_num += @report.apply_yourself_num if @report.apply_yourself_num
+					trust_num += @report.apply_oneself_num if @report.apply_oneself_num
+				%>
+
+				<tr>
+					<td style="text-align:right;" colspan="4">合計</td>
+					<td style="text-align:center;"><%= trust_num %>戸</td>
+					<td style="text-align:center;"><%= @report.apply_point %>pt</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div id="div_dummy_rank" style="height:130px;width:98%;margin-top:135px;clear:both;"  class="print-none">
+		<table id="building_table_rank"></table>
+		<div id = "building_pager_rank"></div>
+	</div>
+	
+	<hr style="margin-top:100px;margin-bottom:100px;" class="print-none">
+		
+	<!-- ★今月の行動実績 -->
+	<h4 style="margin-top:40px;"  class="print-none">■&nbsp;オーナーアプローチ実績（面談・提案・DM反響・TEL会話）</h4>
+	<div style="border-width:3px; border-style:solid; border-color:silver;width:45%;float:left;margin-right:20px;float:left;margin-bottom:20px;" class="print-none">
+		<div id="map_canvas_approach" style="width:100%;height:480px;border-color:blue"></div>
+	</div>
+	<div style="float:left;margin-bottom:0px;" class="report-list-width print-result print-none">
+			<table class="table table-bordered">
+				<thead>
+					<tr class="biru-back-color-blue">
+					<td style="font-weight:bold;"></td>
+					<td style="font-weight:bold;text-align:center;width:30%;">今月度の行動</td>
+					<td style="font-weight:bold;text-align:center;width:12%;">計画</td>
+					<td style="font-weight:bold;text-align:center;width:12%;">実績</td>
+					<td style="font-weight:bold;text-align:center;width:12%;">達成率</td>
+					<td style="font-weight:bold;text-align:center;width:12%;">有効率</td>
+					<td style="font-weight:bold;text-align:center;"><a data-toggle="modal" href="#myModal"  >翌月度計画</a></td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align:center;"><%= image_tag('marker_btn_blue.png') %></td>
+					<td style="text-align:center;">訪問（面談）</td>
+						<td style="text-align:center;"><%= if @report.visit_plan then @report.visit_plan else '-' end %></td>
+						<td style="text-align:center;"><%= @report.visit_num_all %>&nbsp;&nbsp;(<%= @report.visit_num_meet %>)</td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.visit_plan, @report.visit_num_all) %></td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.visit_num_all, @report.visit_num_meet) %></td>
+						<td style="text-align:center;"><%= if @biru_user_monthly_next.trust_plan_visit then @biru_user_monthly_next.trust_plan_visit else '-' end %></td>
+					
+					</tr>
+					<tr>
+						<td style="text-align:center;"><%= image_tag('marker_btn_green.png') %></td>
+					<td style="text-align:center;">ＤＭ（反響）</td>
+						<td style="text-align:center;"><%= if @report.dm_plan then @report.dm_plan else '-' end %></td>
+						<td style="text-align:center;"><%= @report.dm_num_send %>&nbsp;&nbsp;(<%= @report.dm_num_recv %>)</td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.dm_plan, @report.dm_num_send) %></td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.dm_num_send, @report.dm_num_recv) %></td>
+						<td style="text-align:center;"><%= if @biru_user_monthly_next.trust_plan_dm then @biru_user_monthly_next.trust_plan_dm else '-' end %></td>
+					
+					</tr>
+					<tr>
+						<td style="text-align:center;"><%= image_tag('marker_btn_orange.png') %></td>
+					<td style="text-align:center;">ＴＥＬ（会話）</td>
+						<td style="text-align:center;"><%= if @report.tel_plan then @report.tel_plan else '-' end %></td>
+						<td style="text-align:center;"><%= @report.tel_num_call %>&nbsp;&nbsp;(<%= @report.tel_num_talk %>)</td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.tel_plan, @report.tel_num_call) %></td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.tel_num_call, @report.tel_num_talk) %></td>
+						<td style="text-align:center;"><%= if @biru_user_monthly_next.trust_plan_tel then @biru_user_monthly_next.trust_plan_tel else '-' end %></td>
+					
+					</tr>
+					<tr>
+						<td style="text-align:center;">-</td>
+						<td style="text-align:center;">ＤＭ後アプローチ</td>
+						<td style="text-align:center;"><%= if @report.dm_to_tel_plan then @report.dm_to_tel_plan else '-' end %></td>
+						<td style="text-align:center;"><%= @report.dm_to_tel_result %></td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.dm_to_tel_plan, @report.dm_to_tel_result) %></td>
+						<td style="text-align:center;"><%= @report.dm_to_tel_average.round(1).to_s + '%' if @report.dm_to_tel_average %></td>
+						<td style="text-align:center;">-</td>
+					</tr>
+					<tr>
+						<td style="text-align:center;"><%= image_tag('marker_btn_red.png') %></td>
+						<td style="text-align:center;">提案</td>
+						<td style="text-align:center;"><%= if @report.suggestion_plan then @report.suggestion_plan else '-' end %></td>
+						<td style="text-align:center;"><%= @report.suggestion_num %></td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.suggestion_plan, @report.suggestion_num) %></td>
+						<td style="text-align:center;">-</td>
+						<td style="text-align:center;"><%= if @biru_user_monthly_next.trust_plan_suggestion then @biru_user_monthly_next.trust_plan_suggestion else '-' end %></td>
+					</tr>
+					<tr>
+						<td style="text-align:center;"><%= image_tag('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=Z|00FF00|000000', :size=>"18x25")%></td>
+						<td style="text-align:center;">他社受託（自社受託）</td>
+						<td style="text-align:center;"><%= if @report.trust_plan then @report.trust_plan else '-' end %></td>
+						<td style="text-align:center;"><%= @report.trust_num %>&nbsp;&nbsp;(<%= @report.trust_num_jisya %>)</td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.trust_plan, @report.trust_num) %></td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.trust_num, @report.trust_num_jisya) %></td>
+						<td style="text-align:center;"><%= if @biru_user_monthly_next.trust_plan_contract then @biru_user_monthly_next.trust_plan_contract else '-' end %></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	
+	<div id="div_dummy_approach" style="height:130px;width:98%;clear:both;" class="print-none" >
+		<table id="building_table_approach"></table>
+		<div id = "building_pager_approach"></div>
+	</div>
+
+	<!-- 行動履歴 グラフ表示 -->
+	<div style="text-align: center;margin-top:150px;" class="print-none">
+		<div class="print-chart"><%= high_chart("graph_visit_detail", @graph_visit_detail) %></div>
+		<div class="print-chart"><%= high_chart("graph_tel_detail", @graph_tel_detail) %></div>
+	</div>
+
+	<!-- できたこと・できなかったこと・今後の方針 -->
+	<div style="clear:both;padding-top:10px;margin-right:10px;" class="print-none">
+		<div class="row">
+			<div class="col-lg-6">
+				<h4><a data-toggle="modal" href="#myModalUserComment">担当者コメント</a><span style="font-size:15px;margin-left:10px;"><%= "(" + @report.comment_user_updated_user.name + " : " + @report.comment_user_updated_at.to_s + ")" if @report.comment_user_updated_user %></span></h4>
+				<div class="well">
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-lg-12">
+							<div style="font-weight: bold;text-decoration: underline">できたこと</div>
+							<div><%= simple_format(@report.comment_user_could) %></div>
+						</div>
+					</div>
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-lg-12">
+							<div style="font-weight: bold;text-decoration: underline">できなかったこと</div>
+							<div><%= simple_format(@report.comment_user_not_could) %></div>
+						</div>
+					</div>
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-lg-12">
+							<div style="font-weight: bold;text-decoration: underline">今後の方針＆受託見込物件</div>
+							<div><%= simple_format(@report.comment_user_plan) %></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6">
+
+				<h4><a data-toggle="modal" href="#myModalBossComment">上司コメント</a><span style="font-size:15px;margin-left:10px;"><%= "(" + @report.comment_boss_updated_user.name + " : " + @report.comment_boss_updated_at.to_s + ")" if @report.comment_boss_updated_user %></span></h4>
+				<div class="well">
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-lg-12">
+							<div style="font-weight: bold;text-decoration: underline">できたこと</div>
+							<div><%= simple_format(@report.comment_boss_could) %></div>
+						</div>
+					</div>
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-lg-12">
+							<div style="font-weight: bold;text-decoration: underline">できなかったこと</div>
+							<div><%= simple_format(@report.comment_boss_not_could) %></div>
+						</div>
+					</div>
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-lg-12">
+							<div style="font-weight: bold;text-decoration: underline">今後の方針</div>
+							<div><%= simple_format(@report.comment_boss_plan) %></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!--  印刷用フィールド -->
+	<div style="margin-bottom:0px;clear:both;" class="report-list-width print-result print-only">
+
+		<div style="margin-bottom:30px;padding-top:10px;width:100%;"  class="report-list-width">
+			<div style="text-decoration:underline"><h4>獲得実績</h4></div>
+			<table class="table  table-bordered">
+				<thead>
+					<tr style="background-color: #bde9ba;">
+						<td style="font-weight:bold;text-align:center;">申請ID</td>
+						<td style="font-weight:bold;text-align:center;">受託物件</td>
+						<td style="font-weight:bold;text-align:center;">管理営業所</td>
+						<td style="font-weight:bold;text-align:center;50%">コメント</td>
+						<td style="font-weight:bold;text-align:center;width:10%;">戸数</td>
+						<td style="font-weight:bold;text-align:center;width:10%;">ポイント</td>
+					</tr>
+				</thead>
+				<tbody>
+					<% @report.trust_attack_month_report_results.each do | result | %>
+
+						<%
+							yourself_num = 0
+							oneself_num = 0
+							yourself_num = result.yourself_num if result.yourself_num
+							oneself_num = result.oneself_num if result.oneself_num
+						%>
+						<tr>
+							<td style="text-align:center;"><%= result.trust_apply_code %></td>
+							<td style="text-align:left;"><%= result.building_name %></td>
+							<td style="text-align:left;"><%= result.shop_name %></td>
+							<td style="text-align:left;"><%= result.comment %></td>
+							<td style="text-align:center;"><%= yourself_num + oneself_num %>戸<%= '[他]' if yourself_num > 0 %><%= '[自]' if oneself_num > 0 %> </td>
+							<td style="text-align:center;"><%= result.point %>pt</td>
+						</tr>
+					<% end %>
+
+					<%
+						apply_yourself_num = 0
+						apply_oneself_num = 0
+						apply_yourself_num = @report.apply_yourself_num if @report.apply_yourself_num
+						apply_oneself_num = @report.apply_oneself_num if @report.apply_oneself_num
+					%>
+
+					<tr>
+						<td style="text-align:right;" colspan="4">合計</td>
+						<td style="text-align:center;"><%= apply_yourself_num  + apply_oneself_num %>戸</td>
+						<td style="text-align:center;"><%= @report.apply_point %>pt</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+			
+		<div style="width:60%;;float:left;">
+			<div style="text-decoration:underline"><h4>行動実績</h4></div>
+			<table class="table table-bordered">
+				<thead>
+					<tr style="background-color: #bde9ba;">
+						<td style="font-weight:bold;text-align:center;">今月度の行動</td>
+						<td style="font-weight:bold;text-align:center;">計画</td>
+						<td style="font-weight:bold;text-align:center;">実績</td>
+						<td style="font-weight:bold;text-align:center;">達成率</td>
+						<td style="font-weight:bold;text-align:center;">有効率</td>
+						<td style="font-weight:bold;text-align:center;">翌月度計画</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align:center;">訪問（面談）</td>
+						<td style="text-align:center;"><%= if @report.visit_plan then @report.visit_plan else '-' end %></td>
+						<td style="text-align:center;"><%= @report.visit_num_all %>&nbsp;&nbsp;(<%= @report.visit_num_meet %>)</td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.visit_plan, @report.visit_num_all) %></td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.visit_num_all, @report.visit_num_meet) %></td>
+						<td style="text-align:center;"><%= if @biru_user_monthly_next.trust_plan_visit then @biru_user_monthly_next.trust_plan_visit else '-' end %></td>
+					
+					</tr>
+					<tr>
+						<td style="text-align:center;">ＤＭ（反響）</td>
+						<td style="text-align:center;"><%= if @report.dm_plan then @report.dm_plan else '-' end %></td>
+						<td style="text-align:center;"><%= @report.dm_num_send %>&nbsp;&nbsp;(<%= @report.dm_num_recv %>)</td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.dm_plan, @report.dm_num_send) %></td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.dm_num_send, @report.dm_num_recv) %></td>
+						<td style="text-align:center;"><%= if @biru_user_monthly_next.trust_plan_dm then @biru_user_monthly_next.trust_plan_dm else '-' end %></td>
+					
+					</tr>
+					<tr>
+						<td style="text-align:center;">ＴＥＬ（会話）</td>
+						<td style="text-align:center;"><%= if @report.tel_plan then @report.tel_plan else '-' end %></td>
+						<td style="text-align:center;"><%= @report.tel_num_call %>&nbsp;&nbsp;(<%= @report.tel_num_talk %>)</td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.tel_plan, @report.tel_num_call) %></td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.tel_num_call, @report.tel_num_talk) %></td>
+						<td style="text-align:center;"><%= if @biru_user_monthly_next.trust_plan_tel then @biru_user_monthly_next.trust_plan_tel else '-' end %></td>
+					
+					</tr>
+					<tr>
+						<td style="text-align:center;">ＤＭ後アプローチ</td>
+						<td style="text-align:center;"><%= if @report.dm_to_tel_plan then @report.dm_to_tel_plan else '-' end %></td>
+						<td style="text-align:center;"><%= @report.dm_to_tel_result %></td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.dm_to_tel_plan, @report.dm_to_tel_result) %></td>
+						<td style="text-align:center;"><%= @report.dm_to_tel_average.round(1).to_s + '%' if @report.dm_to_tel_average %></td>
+						<td style="text-align:center;">-</td>
+					</tr>
+					<tr>
+						<td style="text-align:center;">提案</td>
+						<td style="text-align:center;"><%= if @report.suggestion_plan then @report.suggestion_plan else '-' end %></td>
+						<td style="text-align:center;"><%= @report.suggestion_num %></td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.suggestion_plan, @report.suggestion_num) %></td>
+						<td style="text-align:center;">-</td>
+						<td style="text-align:center;"><%= if @biru_user_monthly_next.trust_plan_suggestion then @biru_user_monthly_next.trust_plan_suggestion else '-' end %></td>
+					</tr>
+					<tr>
+						<td style="text-align:center;">他社受託（自社）</td>
+						<td style="text-align:center;"><%= if @report.trust_plan then @report.trust_plan else '-' end %></td>
+						<td style="text-align:center;"><%= @report.trust_num %>&nbsp;&nbsp;(<%= @report.trust_num_jisya %>)</td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.trust_plan, @report.trust_num) %></td>
+						<td style="text-align:center;"><%= disp_growth_rate(@report.trust_num, @report.trust_num_jisya) %></td>
+						<td style="text-align:center;"><%= if @biru_user_monthly_next.trust_plan_contract then @biru_user_monthly_next.trust_plan_contract else '-' end %></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	
+		<div style="width:40%;float:left;padding-left:20px;">
+			<div style="text-decoration:underline"><h4>現在の状況</h4></div>
+			<table class="table  table-bordered">
+				<thead>
+					<tr style="background-color: #bde9ba;">
+						<td style="font-weight:bold;text-align:center;">ランク</td>
+						<td style="font-weight:bold;text-align:center;">目標</td>
+						<td style="font-weight:bold;text-align:center;">件数</td>
+						<td style="font-weight:bold;text-align:center;">前月増減</td>
+						<td style="font-weight:bold;text-align:center;">ｱﾌﾟﾛｰﾁ</td>
+					</tr>
+				</thead>
+				<tbody>
+						<tr>
+						<td style="text-align:left;">S：当月度の契約予定</td>
+						<td style="text-align:center;">2</td>
+						<td style="text-align:center;"><%= @report.rank_s %></td>
+						<td style="text-align:center;"><%= fluctuate_disp(@report.fluctuate_s) %></td>
+						<td style="text-align:center;"><%= @report.approach_cnt_s %></td>
+					</tr>
+					<tr>
+						<td style="text-align:left;">A：来月度以降の契約予定</td>
+						<td style="text-align:center;">6</td>
+						<td style="text-align:center;"><%= @report.rank_a %></td>
+						<td style="text-align:center;"><%= fluctuate_disp(@report.fluctuate_a) %></td>
+						<td style="text-align:center;"><%= @report.approach_cnt_a %></td>
+					</tr>
+					<tr>
+						<td style="text-align:left;">B：提案可能もしくは提案中</td>
+						<td style="text-align:center;">36</td>
+						<td style="text-align:center;"><%= @report.rank_b %></td>
+						<td style="text-align:center;"><%= fluctuate_disp(@report.fluctuate_b) %></td>
+						<td style="text-align:center;"><%= @report.approach_cnt_b %></td>
+					</tr>
+					<tr>
+						<td style="text-align:left;">C：権者にヒアリング</td>
+						<td style="text-align:center;">76</td>
+						<td style="text-align:center;"><%= @report.rank_c %></td>
+						<td style="text-align:center;"><%= fluctuate_disp(@report.fluctuate_c) %></td>
+						<td style="text-align:center;"><%= @report.approach_cnt_c %></td>
+						</tr>
+					<tr>
+						<td style="text-align:left;">Z：成約済</td>
+						<td style="text-align:center;">-</td>
+						<td style="text-align:center;"><%= @report.rank_z %></td>
+						<td style="text-align:center;"><%= fluctuate_disp(@report.fluctuate_z) %></td>
+						<td style="text-align:center;"><%= @report.approach_cnt_z %></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	<!-- できたこと・できなかったこと・今後の方針 -->
+	<div style="clear:both;padding-top:10px;margin-right:10px;">
+		<div class="row">
+			<div class="col-sm-12" style="text-decoration:underline"><h4>担当者コメント</h4></div>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-6">
+				<h4>今月<span style="font-size:15px;margin-left:10px;"><%= "(" + @report.comment_user_updated_user.name + " : " + @report.comment_user_updated_at.to_s + ")" if @report.comment_user_updated_user %></span></h4>
+				<div class="well">
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-sm-12">
+							<div style="font-weight: bold;text-decoration: underline">できたこと</div>
+							<div><%= simple_format(@report.comment_user_could) %></div>
+						</div>
+					</div>
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-sm-12">
+							<div style="font-weight: bold;text-decoration: underline">できなかったこと</div>
+							<div><%= simple_format(@report.comment_user_not_could) %></div>
+						</div>
+					</div>
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-sm-12">
+							<div style="font-weight: bold;text-decoration: underline">今後の方針＆受託見込物件</div>
+							<div><%= simple_format(@report.comment_user_plan) %></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<h4>前月<span style="font-size:15px;margin-left:10px;"><%= "(" + @report_prev.comment_user_updated_user.name + " : " + @report_prev.comment_user_updated_at.to_s + ")" if @report_prev.comment_user_updated_user %></span></h4>
+				<div class="well">
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-sm-12">
+							<div style="font-weight: bold;text-decoration: underline">できたこと</div>
+							<div><%= simple_format(@report_prev.comment_user_could) %></div>
+						</div>
+					</div>
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-sm-12">
+							<div style="font-weight: bold;text-decoration: underline">できなかったこと</div>
+							<div><%= simple_format(@report_prev.comment_user_not_could) %></div>
+						</div>
+					</div>
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-sm-12">
+							<div style="font-weight: bold;text-decoration: underline">今後の方針＆受託見込物件</div>
+							<div><%= simple_format(@report_prev.comment_user_plan) %></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div> <!-- row -->
+
+		<div class="row">
+			<div class="col-sm-12" style="text-decoration:underline"><h4>上司コメント</h4></div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<span style="font-size:15px;margin-left:10px;"><%= "今月 (" + @report.comment_boss_updated_user.name + " : " + @report.comment_boss_updated_at.to_s + ")" if @report.comment_boss_updated_user %></span>
+				<div class="well">
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-sm-12">
+							<div style="font-weight: bold;text-decoration: underline">できたこと</div>
+							<div><%= simple_format(@report.comment_boss_could) %></div>
+						</div>
+					</div>
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-sm-12">
+							<div style="font-weight: bold;text-decoration: underline">できなかったこと</div>
+							<div><%= simple_format(@report.comment_boss_not_could) %></div>
+						</div>
+					</div>
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-sm-12">
+							<div style="font-weight: bold;text-decoration: underline">今後の方針</div>
+							<div><%= simple_format(@report.comment_boss_plan) %></div>
+						</div>
+					</div>
+				</div><!-- wall -->
+			</div><!-- col-sm-6 -->
+		
+			<div class="col-sm-6">
+				<span style="font-size:15px;margin-left:10px;"><%= "前月 (" + @report_prev.comment_boss_updated_user.name + " : " + @report_prev.comment_boss_updated_at.to_s + ")" if @report_prev.comment_boss_updated_user %></span>
+				<div class="well">
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-sm-12">
+							<div style="font-weight: bold;text-decoration: underline">できたこと</div>
+							<div><%= simple_format(@report_prev.comment_boss_could) %></div>
+						</div>
+					</div>
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-sm-12">
+							<div style="font-weight: bold;text-decoration: underline">できなかったこと</div>
+							<div><%= simple_format(@report_prev.comment_boss_not_could) %></div>
+						</div>
+					</div>
+					<div class="row" style="padding-bottom:10px;">
+						<div class="col-sm-12">
+							<div style="font-weight: bold;text-decoration: underline">今後の方針</div>
+							<div><%= simple_format(@report_prev.comment_boss_plan) %></div>
+						</div>
+					</div>
+				</div> <!-- wall -->
+			</div><!-- col-sm-6 -->
+		</div> <!-- row -->
+		
+	</div>
+<!-- </div> -->
+
+	<div style="margin-bottom:30px;padding-top:10px;width:100%;page-break-before:always"  class="report-list-width">
+		<div style="text-decoration:underline"><h4>受託見込（Aランク・Sランク）</h4></div>
+		<table class="table  table-bordered">
+			<thead>
+				<tr style="background-color: #bde9ba;">
+					<td style="font-weight:bold;text-align:center;">見込みランク</td>
+					<td style="font-weight:bold;text-align:center;">物件名</td>
+					<td style="font-weight:bold;text-align:center;">管理営業所</td>
+					<td style="font-weight:bold;text-align:center;">戸数</td>
+					<td style="font-weight:bold;text-align:center;">家主名</td>
+				</tr>
+			</thead>
+			<tbody>
+					
+				<% expect_num = 0 %>
+				<% @trust_expect_buildings.each do | rec | %>
+
+					<tr>
+						<td style="text-align:center;"><%= rec.attack_state_this_month.code %></td>
+						<td style="text-align:left;"><%= rec.building_name %></td>
+						<td style="text-align:left;"><%= rec.building.shop.name if rec.building.shop %></td>
+						<td style="text-align:center;"><%= rec.building.room_num %>戸</td>
+						<td style="text-align:center;"><%= rec.owner.name %></td>
+					</tr>
+					<% expect_num = expect_num + rec.building.room_num if rec.building.room_num %>
+
+				<% end %>
+				<tr>
+					<td style="text-align:right;" colspan="4">合計</td>
+					<td style="text-align:center;"><%= expect_num %>戸</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div style="margin-bottom:30px;padding-top:10px;width:100%;"  class="report-list-width">
+		<div style="text-decoration:underline"><h4>受託見込（Ｂランク）</h4></div>
+		<table class="table  table-bordered">
+			<thead>
+				<tr style="background-color: #bde9ba;">
+					<td style="font-weight:bold;text-align:center;">見込みランク</td>
+					<td style="font-weight:bold;text-align:center;">物件名</td>
+					<td style="font-weight:bold;text-align:center;">管理営業所</td>
+					<td style="font-weight:bold;text-align:center;">戸数</td>
+					<td style="font-weight:bold;text-align:center;">家主名</td>
+				</tr>
+			</thead>
+			<tbody>
+				<% expect_num = 0 %>
+				<% @trust_expect_buildings_b.each do | rec | %>
+	
+					<tr>
+						<td style="text-align:center;"><%= rec.attack_state_this_month.code %></td>
+						<td style="text-align:left;"><%= rec.building_name %></td>
+						<td style="text-align:left;"><%= rec.building.shop.name if rec.building.shop %></td>
+						<td style="text-align:center;"><%= rec.building.room_num %>戸</td>
+						<td style="text-align:center;"><%= rec.owner.name %></td>
+					</tr>
+
+					<% expect_num = expect_num + rec.building.room_num if rec.building.room_num %>
+				<% end %>
+				<tr>
+					<td style="text-align:right;" colspan="4">合計</td>
+					<td style="text-align:center;"><%= expect_num %>戸</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+		
+	</div>
+
+</div>
+
+<!-- モーダルダイアログ -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	<%= simple_form_for @biru_user_monthly_next, :url=>{:action => :biru_user_trust_update } do |f| %>
+		
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="myModalLabel"><%= @month_next[0,4] + "年" + @month_next[4,2] + "月の計画編集" %></h4>
+      </div>
+	  
+      <div class="modal-body">
+		  	
+			<%= f.input :id, :as => :hidden, :input_html => {:value => @biru_user_monthly_next.id } %>
+			<%= f.input :biru_user_id, :as => :hidden, :input_html => {:value => @report.biru_user_id } %>
+			<%= f.input :month, :as => :hidden, :input_html => {:value => @month_next} %>
+			
+		  	<%= f.input :trust_plan_visit, :label=>'訪問件数' %>
+		  	<%= f.input :trust_plan_dm, :label=>'ＤＭ発送件数' %>
+		  	<%= f.input :trust_plan_tel, :label=>'電話アプローチ件数' %>
+		  	<%= f.input :trust_plan_suggestion, :label=>'提案件数' %>
+		  	<%= f.input :trust_plan_contract, :label=>'受託戸数' %>
+
+			<%#= f.input :id, :as => :hidden, :input_html => {:value => @trust.id } %>
+			<%#= f.input :attack_state_id, collection: AttackState.all %>
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+        <%= f.submit '登録', :class => 'btn btn-primary' %>
+      </div>
+	<% end %>
+	  
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!-- 担当者コメント -->
+<div class="modal fade" id="myModalUserComment" tabindex="-1" role="dialog" aria-labelledby="myModalUserCommentLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	<%= simple_form_for @report, :url=>{:action => :trust_user_report_user_comments } do |f| %>
+		
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="myModalUserCommentLabel">担当者コメント</h4>
+      </div>
+	  
+      <div class="modal-body">
+		  	
+			<%= f.input :id, :as => :hidden, :input_html => {:value => @report.id } %>
+			<%= f.input :biru_user_id, :as => :hidden, :input_html => {:value => @report.biru_user_id } %>
+
+			<div style="font-weight: bold;margin-top:10px;">できたこと</div>
+			<%= f.text_area :comment_user_could, :label=>'できたこと', :as => :text, :rows => 4, style: "width:100%;" ,:class =>"required", :required=>"required", :input_html => {  :style => 'margin-left:0px;padding-left:0px;'} %>
+			
+			<div style="font-weight: bold;margin-top:10px;">できなかったこと</div>
+			<%= f.text_area :comment_user_not_could, :label=>'できなかったこと', :as => :text, :rows => 4, style: "width:100%;" ,:class =>"required", :required=>"required", :input_html => {  :style => 'margin-left:0px;padding-left:0px;'}  %>
+			
+			<div style="font-weight: bold;margin-top:10px;">今後の方針＆受託見込物件</div>
+			<%= f.text_area :comment_user_plan, :label=>'今後の方針', :as => :text, :rows => 4, style: "width:100%;" ,:class =>"required", :required=>"required", :input_html => {  :style => 'margin-left:0px;padding-left:0px;'}  %>
+
+      </div>
+      <div class="modal-footer">
+		<%= f.submit '登　録', :class => 'btn btn-primary' %>
+		<button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+      </div>
+	<% end %>
+	  
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- 上司コメント -->
+<div class="modal fade" id="myModalBossComment" tabindex="-1" role="dialog" aria-labelledby="myModalBossCommentLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	<%= simple_form_for @report, :url=>{:action => :trust_user_report_boss_comments } do |f| %>
+		
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="myModalUserCommentLabel">上司コメント</h4>
+      </div>
+	  
+      <div class="modal-body">
+		  	
+			<%= f.input :id, :as => :hidden, :input_html => {:value => @report.id } %>
+			<%= f.input :biru_user_id, :as => :hidden, :input_html => {:value => @report.biru_user_id } %>
+
+			<div style="font-weight: bold;margin-top:10px;">できたこと</div>
+			<%= f.text_area :comment_boss_could, :label=>'できたこと', :as => :text, :rows => 4, style: "width:100%;" ,:class =>"required", :required=>"required", :input_html => {  :style => 'margin-left:0px;padding-left:0px;'} %>
+			
+			<div style="font-weight: bold;margin-top:10px;">できなかったこと</div>
+			<%= f.text_area :comment_boss_not_could, :label=>'できなかったこと', :as => :text, :rows => 4, style: "width:100%;" ,:class =>"required", :required=>"required", :input_html => {  :style => 'margin-left:0px;padding-left:0px;'}  %>
+			
+			<div style="font-weight: bold;margin-top:10px;">今後の方針</div>
+			<%= f.text_area :comment_boss_plan, :label=>'今後の方針', :as => :text, :rows => 4, style: "width:100%;" ,:class =>"required", :required=>"required", :input_html => {  :style => 'margin-left:0px;padding-left:0px;'}  %>
+
+      </div>
+      <div class="modal-footer">
+		<%= f.submit '登　録', :class => 'btn btn-primary' %>
+		<button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+      </div>
+	<% end %>
+	  
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+

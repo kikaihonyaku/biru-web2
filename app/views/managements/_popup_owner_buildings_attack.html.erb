@@ -1,0 +1,181 @@
+<table class="table table-bordered table-condensed" style="padding-bottom:0px;margin-bottom:3px;">
+<thead>
+  <tr>
+    <th class="active biru-back-color-blue">建物名</th>
+    <th class="active biru-back-color-blue">住所</th>
+    <th class="active  biru-back-color-blue" style="text-align:center;">現管理会社</th>
+    <th class="active biru-back-color-blue" style="text-align:center;">管轄営業所</th>
+    <th class="active biru-back-color-blue" style="text-align:center;">重点</th>
+    <th class="active biru-back-color-blue">見込ランク</th>
+    <th class="active biru-back-color-blue" style="text-align:center;">主担当者</th>
+  </tr>
+</thead>
+<tbody>
+<% @biru_and_state.each do | biru_and_state| %>
+  <% trust = biru_and_state[0] %>
+  <% building = biru_and_state[1] %>
+  <% attack_state_before = biru_and_state[2] %>
+  <% attack_state_current = biru_and_state[3] %>
+  <% this_month_trust = biru_and_state[4] %>
+    
+  <tr>
+    <td><a href="javascript:win_building(<%= building.id %>);"><%= building.name %></a></td>
+    <td><%= building.address %></td>
+    <td style="text-align:center;"><%= building.proprietary_company %></td>
+      
+    <% if building.shop %>
+      <td style="text-align:center;"><%= building.shop.name %></td>
+    <% else %>
+      <td></td>
+    <% end %>
+      
+    <td style="text-align:center;"><%= building.selective_disp %></td>
+    
+    <!--  ここでは現時点で最新の見込み状態を表示する -->
+    <% if attack_state_current %>
+      <td><a data-toggle="modal" href="#myModal_<%= building.id.to_s %>"  ><%= attack_state_current.name %></a></td>
+    <% else %>
+      <td><a data-toggle="modal" href="#myModal_<%= building.id.to_s %>"  >未設定</a></td>
+    <% end %>
+    <td style="text-align:center;"><a data-toggle="modal" href="#userChange_<%= building.id.to_s %>" ><%= trust.biru_user.name if trust.biru_user %></a></td>
+  </tr>
+    
+  <!-- 見込みオーナーの時のみ表示 -->
+    
+  <script type="text/javascript">
+    function rank_disp(disp_id, obj){
+      if(obj.options[obj.selectedIndex].value == <%= AttackState.find_by_code('Z').id.to_s %>){
+        // 成約済みを選択時、契約戸数等の入力欄を表示
+        document.getElementById(disp_id).style.display = "";
+      }else{
+        // 成約済み以外を選択時、契約戸数等の入力欄を非表示
+        document.getElementById(disp_id).style.display = "none";
+      }
+    }
+    
+    function rank_submit_check(){
+      obj = document.getElementById('trust_attack_state_id');
+
+      // ランクZの時、必須項目の入力チェックを行う
+      if(obj.options[obj.selectedIndex].value == <%= AttackState.find_by_code('Z').id.to_s %>){
+        
+        if($('#room_num').val() == ''){
+          alert('契約戸数を設定してください');
+          return false;
+        };
+        
+        if($('#history_manage_type').children(':selected').val() == ''){
+          alert('管理方式を選択してください');
+          return false;
+        }
+        
+      }
+      
+      return true;
+    }
+  </script>
+  
+  <!-- ランクアップ編集画面（モーダルダイアログ ） -->
+  <div class="modal fade" id="myModal_<%=  building.id.to_s %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_<%=  building.id.to_s %>" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      <%= simple_form_for :trust, :url=>{:controller => :trust_managements, :action => :popup_owner_trust_update }, :html=>{class: 'form-horizontal'} do |f| %>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h4 class="modal-title" id="myModalLabel">見込みランク変更</h4>
+        </div>
+
+        <div class="modal-body">
+        
+          <%= f.input :id, :as => :hidden, :input_html => {:value => trust.id.to_s } %>
+          <%= hidden_field_tag 'before_attack_state_id', attack_state_before.id %>
+          <%#= hidden_field_tag 'month', @cur_month %>
+        
+        <% histories = TrustAttackStateHistory.where("trust_id = ?", trust.id ).order("month asc") %>
+        <div style="margin-bottom:20px;">
+          <label>変更履歴</label>
+          <% if histories.length  == 0 %>
+            未設定
+          <% else %>
+            <% histories.each do | history | %>
+              <div>
+                <%= history.month.to_s + ' ' + history.attack_state_to.name %>
+                <% if history.attack_state_to.code == 'Z' %>
+                  
+                  <% 
+                    msg = ""
+                    if history.manage_type
+                      msg = msg + history.manage_type.name 
+                    end
+                    
+                    if history.trust_oneself
+                        msg = msg + " 自社"
+                    else
+                        msg = msg + " 他社"
+                    end
+                    
+                    msg = msg + " " + history.room_num.to_s + "戸"
+                  %>
+                  ＜ <%= msg %>　＞
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        
+        <label>変更後ランク&nbsp;<%= select_tag(:month, options_for_select(@calender, @cur_month)) %></label>
+        <div>
+          <%= f.input :attack_state_id, collection: AttackState.order(:disp_order), :label=>false, :input_html => {:onchange => "javascript:rank_disp('rank_disp_id_#{trust.id.to_s}', this);"}  %>
+          <div id="rank_disp_id_<%= trust.id.to_s %>" style="display:none">
+            <div style="margin-bottom:5px;">&nbsp;</div>
+            <div>契約戸数：<%= text_field_tag :room_num, this_month_trust[:room_num], :size=>"2" %>&nbsp;戸</div>
+            <div>管理方式：<%= collection_select :history, :manage_type, ManageType.all, :id, :name, :include_blank => true, :selected=>  this_month_trust[:manage_type_id] %></div>
+            <% if this_month_trust[:trust_oneself] %>
+              <div>受託自他：<%= radio_button :history, :oneself, 'yourself' %>&nbsp;他社&nbsp;&nbsp;<%= radio_button :history, :oneself, 'oneself', {:checked => true }  %>&nbsp;自社</div>
+            <% else %>
+              <div>受託自他：<%= radio_button :history, :oneself, 'yourself', {:checked => true } %>&nbsp;他社&nbsp;&nbsp;<%= radio_button :history, :oneself, 'oneself' %>&nbsp;自社</div>
+            <% end %>
+          </div>
+        </div>
+  
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+          <%= f.submit '登録', :class => 'btn btn-primary btn-sm', :onclick=>'return rank_submit_check();' %>
+        </div>
+      <% end %>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  
+  <div class="modal fade" id="userChange_<%=  building.id.to_s %>" tabindex="-1" role="dialog" aria-labelledby="userChangeLabel_<%=  building.id.to_s %>" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+    <%= simple_form_for :trust, :url=>{:controller => :trust_managements, :action => :popup_owner_trust_change_user }, :html=>{class: 'form-horizontal'} do |f| %>
+  
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h4 class="modal-title" id="myModalLabel">主担当者変更</h4>
+        </div>
+    
+    
+      <%= f.input :id, :as => :hidden, :input_html => {:value => trust.id.to_s } %>
+
+        <div class="modal-body">
+        <label>変更前</label>
+        <div style="padding-bottom:20px;"><%= trust.biru_user.name if trust.biru_user %></div>
+        <label>変更後</label><div><%= select_tag :user_id, options_from_collection_for_select(@biru_users, :id, :name) %></div>
+      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+          <%= f.submit '登録', :class => 'btn btn-primary btn-sm', :onclick=>'return rank_submit_check();' %>
+        </div>
+    <% end %>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <% end %>
+</tbody>
+</table>
+<div style="text-align:right;margin-right:10px;" class="print-none"><%= link_to '【建物追加】', popup_owner_buildings_path(@owner.id), :style=>'text-decoration:none' %></div>

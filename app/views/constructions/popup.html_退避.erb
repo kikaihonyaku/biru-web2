@@ -1,0 +1,386 @@
+
+<!-- 2017/09/09 localにコピー
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+-->
+<script type="text/javascript">
+
+    $(document).ready(function() {
+
+        $(".js-example-data-array").select2({
+          data: gon.user_list
+        })
+
+        // 値を設定する
+        var $select = $('.js-example-data-array').select2({});
+        $select.val(<%= @construction.completion_check_user_id %>).trigger('change');        
+            
+    });
+</script>
+    
+<style type="text/css">
+    /* tableをcssで組むための定義(modalのなかでなぜかtableタグが使えないので苦肉の策) */
+    ul.table{list-style:none;}
+    ul.table li{clear:both;}
+    ul.table li div{display:block;float:left;}
+
+    /* 幅 */
+    .col1{width:60%;}
+    .col2{width:20%;}
+
+    /* 線 */
+    .table li div{border-right:1px solid #000;border-bottom:1px solid #000;}
+    .head{border-top:1px solid #000;}
+    .col1{border-left:1px solid #000;}
+
+    ul {
+    list-style:none;
+    }
+
+    li.first {
+    width: 300px;
+    border: 1px solid #ccc;
+    background-color: #eee8aa;
+    }
+
+    li.next {
+    width: 300px;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    background-color: #f5f5dc;
+    }
+
+    span.dan {
+    float: left;
+    padding: 10px;
+    }
+
+    span.dan2 {
+    display: block;
+    margin-left: 210px;
+    padding: 10px;
+    border-left: 1px solid #ccc;
+    }
+
+    span.dan2-r {
+    display: block;
+    margin-left: 210px;
+    padding: 10px;
+    border-left: 1px solid #ccc;
+    background-color: #fffff0;
+    }
+    
+</style>
+
+<div class="navbar navbar-inverse" >
+    <div class="title navbar-header biru-back-color-blue">
+        工事履歴情報
+        <span class="user-header">
+            <span class="user-name"><%= @biru_user.name %></span>
+        </span>
+    </div>
+</div>
+<% if flash[:notice] %>
+	<div class="alert alert-info alert-dismissible" role="alert" style="margin-top:0px;padding-top:10px;padding-bottom:10px;" id="alert-block">
+	  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	  <%= flash[:notice] %>
+	</div>
+<% end %>
+
+<div class="container ">
+
+    <div class='row'>
+        <div class="col-sm-6">
+            <div style="border-width:3px; border-style:solid; border-color:silver;">
+            <div id="pop_map_canvas" style="height:400px;"></div>
+        </div>
+    </div>
+        <div class="col-sm-6">
+            <div class="table-responsive panel panel-default">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr class="active">
+                                <td colspan="2" style="font-weight:bold;" class="biru-back-color-blue">基本情報</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align:right;">工事名</td>
+                                <td><%= @obic_KouziName %>&nbsp;(&nbsp;<%= ("000000000000" + @construction.code)[-12..-1] %>&nbsp;)</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:right;">物件</td>
+                                <td><%= @obic_BukkenName + ' ' + @obic_HeyaNO %>&nbsp;(&nbsp;<a href="javascript:iss_win_building(<%= @building.id %>);"><%= @obic_BukkenCD %></a>&nbsp;)</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:right;">工事種別</td>
+                                <td><%= @obic_KouziShubetuName %></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:right;">担当者</td>
+                                <td><%= @obic_Tantousha1Name %></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:right;">家主</td>
+                                <td><%= @obic_YanusiName %>&nbsp;(&nbsp;<a href="javascript:iss_win_owner(<%= @trust.owner_id if @trust %>, null);"><%= @obic_YanusiCD %></a>&nbsp;)</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:right;">契約者</td>
+                                <td><% if  @obic_KeiyakushaName %>
+                                        <%= @obic_KeiyakushaName %>&nbsp;(&nbsp;<a href="javascript:iss_win_keiyaku(<%= @obic_KeiyakuNO.to_i.to_s %>,<%= @biru_user.code %>, null);"><%= @obic_KeiyakuNO %></a>&nbsp;)
+                                    <% else %>
+                                        未設定
+                                    <% end %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:right;">最終更新日</td>
+                                <td><%= @obic_UpdateDatetime %>&nbsp;|&nbsp;<%= @obic_UpdateTantoushaName %></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:right;">備考</td>
+                                <td><%= @obic_Bikou %></td>
+                            </tr>
+                            <tr>
+                                <td rowspan="3" style="text-align:right;vertical-align:middle">補足</td>
+                                <td><%= if @kouji_hosoku[0] then @kouji_hosoku[0] else '' end %></td>
+                            </tr>
+                            <tr>
+                                <td><%= if @kouji_hosoku[1] then @kouji_hosoku[1] else '' end %></td>
+                            </tr>
+                            <tr>
+                                <td><%= if @kouji_hosoku[2] then @kouji_hosoku[2] else '' end %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="padding: 10px 0px 20px 0px">
+                <table class="table table-bordered table-condensed" style="padding-bottom:0px;margin-bottom:3px;">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;" class="active biru-back-color-blue" >&nbsp;</th>
+                            <th style="text-align: center;" class="active biru-back-color-blue">契約日</th>
+                            <th style="text-align: center;" class="active biru-back-color-blue">業者依頼日</th>
+                            <th style="text-align: center;" class="active biru-back-color-blue">発注日</th>
+                            <th style="text-align: center;" class="active biru-back-color-blue">完了日</th>
+                            <th style="text-align: center;" class="active biru-back-color-blue">売上計上日</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: right">予定</td>
+                            <td style="text-align: center"><%= @obic_KeiyakuYoteiDate %></td>
+                            <td style="text-align: center">&nbsp;</td>
+                            <td style="text-align: center"><%= @obic_HacchuuYoteiDate %></td>
+                            <td style="text-align: center"><%= @obic_KouziKanryouYoteiDate %></td>
+                            <td style="text-align: center"><%= @obic_KihonUriageKeijouYoteiDate %></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right">実績</td>
+                            <td style="text-align: center"><%= @obic_KeiyakuDate %></td>
+                            <td style="text-align: center"><%= @obic_GyoushaIraiDate %></td>
+                            <td style="text-align: center"><%= @obic_HacchuuDate %></td>
+                            <td style="text-align: center"><%= @obic_KouziKanryouDate %></td>
+                            <td style="text-align: center"><%= @obic_KihonUriageKeijouDate %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="padding: 10px 0px 20px 0px">
+                <table class="table table-bordered table-condensed" style="padding-bottom:0px;margin-bottom:3px;">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;" class="active biru-back-color-blue">業者名</th>
+                            <th style="text-align: center;width:13%;" class="active biru-back-color-blue">着工予定日</th>
+                            <!--
+                            <th style="text-align: center;width:13%;" class="active biru-back-color-blue">着工日</th>
+                            <th style="text-align: center;width:13%;" class="active biru-back-color-blue">発注番号</th>
+                            -->
+                            <th style="text-align: center;width:13%;" class="active biru-back-color-blue">完了予定日</th>
+                            <th style="text-align: center;width:13%;" class="active biru-back-color-blue">完了日</th>
+                            <th style="text-align: center;width:40%;" class="active biru-back-color-blue">業者へ連絡事項</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% @kouji_meisai.each do |meisai| %>
+                            <tr>
+                                <td style="text-align: center"><a data-toggle="modal" href="#myModal_<%= meisai["GyoushaCD"] %>"><%= meisai["GyoushaName"] %></a></td>
+                                <td style="text-align: center"><%= meisai["construction_scheduled_date"] %></td>
+                                <!--
+                                <td style="text-align: center"><%#= meisai["construction_date"] %></td>
+                                <td style="text-align: center">99999999</td>
+                                -->
+                                <td style="text-align: center"><%= meisai["completion_scheduled_date"] %></td>
+                                <td style="text-align: center"><%= meisai["KouziKanryouDate"] %></td>
+                                <td style="text-align: left"><%= meisai["comment"] %></td>
+                            </tr>
+
+                            <div class="modal fade" id="myModal_<%= meisai["GyoushaCD"] %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_<%= meisai["GyoushaCD"] %>" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                <%= simple_form_for :construction_vendor, :url=>{:action => :construction_vendor_update, :construction_id=>@construction.id, :vendor_code=>meisai["GyoushaCD"] } do |f| %>
+
+                                    <%#= f.input :construction_id, :as => :hidden, :input_html => {:value => @construction.id } %>
+                                    <%#= f.input :vendor_code, :as => :hidden, :input_html => {:value => meisai["GyoushaCD"] } %>
+
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                        <h4 class="modal-title" id="myModalLabel_<%= meisai["GyoushaCD"] %>"><%= meisai["GyoushaName"] %></h4>
+            </div>
+                                    <div class="modal-body">
+
+                                        <!-- ↓modalの中でtableタグを使うとなぜかうまくいかないので、cssでtableを表示 -->
+                                        <ul>
+                                            <li class="first"><span class="dan">工事項目</span><span class="dan2">税込金額</span></li>
+                                            <% meisai["gyousha_koumoku"].each do |gyousha_koumoku| %>
+                                                <li class="next"><span class="dan"><%= gyousha_koumoku["KouziKoumokuName"] %></span><span class="dan2-r"><%= gyousha_koumoku["GenkaZeikomiKingaku"].to_i.to_s %></span></li>
+                                            <% end %>
+                                        </ul>
+
+                                        <div style="font-weight: bold;margin-top:10px;">着工予定日</div>
+                                        <%= f.input :construction_scheduled_date, label: false, as: :string,  :input_html => {:type => 'text', :class=>'form-control form-vertical reg-date input-sm', :style=>'style="text-align:left;', :value=>meisai["construction_scheduled_date"] }  %>
+                                        
+                                        <!--
+                                        <div style="font-weight: bold;margin-top:10px;">着工日</div>
+                                        <%#= f.input :construction_date, required: false, label: false, as: :string,  :input_html => {:type => 'text', :class=>'form-control form-vertical reg-date input-sm', :style=>'style="text-align:left;', :value=>meisai["construction_date"] }  %>
+                                        -->
+
+                                        <div style="font-weight: bold;margin-top:10px;">完了予定日</div>
+                                        <%= f.input :completion_scheduled_date, label: false, as: :string,  :input_html => {:type => 'text', :class=>'form-control form-vertical reg-date input-sm', :style=>'style="text-align:left;', :value=>meisai["completion_scheduled_date"] }  %>
+
+                                        <div style="font-weight: bold;margin-top:10px;">業者へ連絡事項</div>
+                                        <%= f.text_area :comment, :label=>false, :as => :text, :rows => 4, style: "width:100%;" ,:class =>"required", :required=>"required", :input_html => {  :style => 'margin-left:0px;padding-left:0px;', :value=>meisai["comment"]} %>
+                                                                    
+                                    </div>
+                                    <div class="modal-footer">
+                                        <%= f.submit '登　録', :class => 'btn btn-primary' %>
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+                                    </div>
+                                <% end %>
+                                
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal-dialog -->
+                            </div><!-- /.modal -->
+
+                        <% end %>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+    
+    
+    
+        <%= simple_form_for(:construction, :url=>{:action=>'popup_update', :code=>@construction.code }, wrapper: :default, html: {class: 'form-vertical'} ) do |f| %>
+    <div class="form-group" style="padding-left:20px;padding-right:20px;">
+            <div class='row'>
+            <div class="col-sm-3">
+                    <label class="control-label" style="width:100%;text-align:left;" for="focusedInput">完了チェック担当者</label>
+                    <%= f.input :completion_check_user_id, as: :select , required: true, label:false, :input_html => {:class =>'js-example-data-array form-control' } %>
+
+                </div>
+            <div class="col-sm-2">
+                    <label class="control-label" style="width:100%;text-align:left;" for="focusedInput">完了チェック予定日</label>
+                    <%= f.input :completion_check_expected_date, label: false, as: :string,  :input_html => {:type => 'text', :class=>'form-control form-vertical reg-date input-sm', :style=>'style="width:100%;text-align:left;' }  %>
+                </div>
+            <div class="col-sm-2">
+                    <label class="control-label" style="width:100%;text-align:left;" for="focusedInput">完了チェック実施日</label>
+                    <%= f.input :completion_check_date, required: false, label: false, as: :string,  :input_html => {:type => 'text', :class=>'form-control form-vertical reg-date input-sm', :style=>'style="width:100%;text-align:left;' }  %>
+                </div>
+            <div class="col-sm-2">
+                <!--
+                <div class="radio">
+                    <label><input type="radio" name="radio" id="radio1" value="radio1"> 是正なし</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="radio" id="radio2" value="radio2" > 是正あり</label>
+                </div>
+            -->
+                <%= f.input :correction, collection: [["是正なし", 0],["是正あり", 1]], checked: @construction.correction ,as: :radio_buttons, required: false, label: false, item_wrapper_class: "inline" %>
+            </div>
+            <div class="col-sm-1">
+                <div class="text-center" >
+                    <div class="btn-group">
+                        <%= f.submit '完了チェック更新', :class => 'btn btn-primary btn-sm' %>
+                    </div>
+                </div>        
+            </div>
+
+            <div class="col-sm-2">
+                &nbsp;
+            </div>
+            </div>
+    </div>
+    <% end %>
+
+    <div class='row'>
+        <hr style="background-color: #fff;border-top: 2px dotted #8c8b8b;">    
+    </div>
+
+    <div class="print-none">
+        <%= simple_form_for :construction_approach, :url=>{:action => :construction_approach_regist}, wrapper: :default, html: {class: 'form-vertical'}   do |f| %>
+        <div class="form-group">
+            <%= f.input :construction_id, :as => :hidden, :input_html => {:value => @construction.id } %>
+            <%= f.input :biru_user_id, :as => :hidden, :input_html => {:value => @biru_user.id } %>
+
+            <div class="row">
+                <div class="col-sm-2">
+                    <%= f.input :approach_kind_id, label: false, collection: ApproachKind.where('kind_type = 3').order(:sequence),  :class =>"required", :required=>"required", :style=>"margin-left:0px;" %>
+                </div>        
+                <div class="col-sm-7">
+                    <%= f.text_area :content, label: false, :as => :text, placeholder: '履歴内容をいれてください',  :rows => 3, style: "width:100%;" ,:class =>"required", :required=>"required", :input_html => { :rows => 2 , :style => 'margin-left:0px;padding-left:0px;'}  %>
+            </div>
+                <div class="col-sm-3">
+                    <%= f.submit '履歴追加', :class => 'btn btn-primary btn-sm', :style=>'margin-left:0px;' %>
+                </div>
+            </div>
+        </div>
+        <% end %>
+    </div>
+              
+    <div class='row'>
+        <div class="cos-sm-12">
+            <%= grid(@construction_approaches) do |g|
+                # g.column name: '', :html=>{:style=>'width:50px;'} do |obj| link_to('削除',{:action=>'construction_approach_delete', :id=>obj.id.to_s, :construction_id=>@construction.id.to_s}, :confirm => "削除します。よろしいですか？", :class=>'print-none') end
+				g.column name: '種別', :html=>{:style=>'width:100px;'} do |obj| obj.approach_kind.name if obj.approach_kind end
+                g.column name: '内容' do |obj| obj.content if obj.content end
+                g.column name: '登録者', :html=>{:style=>'width:120px;'} do |obj| obj.biru_user.name if obj.biru_user end
+                g.column name: '登録日', :html=>{:style=>'width:150px;'} do |obj| obj.created_at if obj.created_at end
+            end
+            %>
+        </div>
+    </div>
+
+    <div class="indicator-wrap">
+        <div class="overlay"></div>
+        <div class=indicator>
+            <div class="throbber"></div>
+        </div>
+    </div>
+    <div class="gototop" style="display: block;">
+        <a href="#">
+            <span class="glyphicon glyphicon-upload"></span>
+        </a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('.reg-date').datepicker({
+        format: "yyyy/mm/dd",
+        language: "ja",
+        autoclose: true,
+        orientation: "top auto"
+    });
+</script>
+    

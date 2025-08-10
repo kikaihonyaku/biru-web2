@@ -1,0 +1,1084 @@
+
+<style>
+/* common.css *********************************************************/
+
+/*------------------------------------------------------------*/
+/* Base */
+/*------------------------------------------------------------*/
+body{
+    margin: 0;
+    padding: 0;
+    font-family: "メイリオ","ＭＳ Ｐゴシック","MS PGothic",Osaka,"Meiryo",verdana,"ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro",Sans-Serif;
+}
+
+h1,h2,h3,h4,h5,p,img,ul,li,ol,dl,div,form{
+    margin: 0;
+    padding: 0;
+    font-family: "メイリオ","ＭＳ Ｐゴシック","MS PGothic",Osaka,"Meiryo",verdana,"ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro",Sans-Serif;
+}
+
+/* プレースホルダー */
+/*for Webkit*/
+.form-control::-webkit-input-placeholder {
+    color: #9f9f9f;
+    font-size: 0.9em;
+}
+
+/*for Firefox*/
+.form-control::-moz-placeholder {
+    color: #9f9f9f;
+    font-size: 0.9em;
+}
+
+/*Firefox 18以前*/
+.form-control:-moz-placeholder {
+    color: #9f9f9f;
+    font-size: 0.9em;
+}
+ 
+/*Windows IE*/
+.form-control:-ms-input-placeholder {
+    color: #9f9f9f;
+    font-size: 0.9em;
+}
+
+/*------------------------------------------------------------*/
+/* Font */
+/*------------------------------------------------------------*/
+.bold{
+    font-weight: bold;
+}
+
+.red{
+    color: red;
+}
+
+.white{
+    color: #fff;
+}
+
+/* ソースコード */
+.sourcecode{
+    margin: 0.5em 0;
+}
+
+/* subject */
+.sourcecode span.subject{
+    display: block;
+    padding: 0 0.5em;
+    font-weight: bold;
+}
+
+.bgred{
+    padding: 0 2px;
+    background-color: #ffb6c1;
+}
+
+.bgblue{
+    padding: 0 2px;
+    background-color: #87cefa;
+}
+
+.tab{
+    text-indent: 2em;
+}
+
+.tab2{
+    text-indent: 4em;
+}
+
+.center{
+    text-align: center;
+}
+
+.right{
+    text-align: right;
+}
+
+.left{
+    text-align: left;
+}
+
+.border-r{
+    border: 1px solid RED;
+}
+
+.border-g{
+    border: 1px solid GREEN;
+}
+
+.border-b{
+    border: 1px solid BLUE;
+}
+
+/*------------------------------------------------------------*/
+/* link color（基本） */
+/*------------------------------------------------------------*/
+a:link{
+    color: #4169e1;
+    text-decoration: none;
+}
+
+a:visited{
+    color: #4169e1;
+    text-decoration: none;
+}
+
+a:hover{
+    color: #333;
+    text-decoration: none;
+    background-color: #dfdfdf;
+}
+
+a.transparent{
+    background-color: transparent;
+}
+
+/*------------------------------------------------------------*/
+/* コンテンツ */
+/*------------------------------------------------------------*/
+.main_box{
+    margin: 0 10px;
+}
+
+
+/* index.css *********************************************************/
+
+/* 必須 */
+.required{
+    margin: 0 0.5em;
+    padding: 0 0.5em;
+    -webkit-border-radius: 6px;   /* Safari,Google Chrome */
+    -moz-border-radius: 6px;      /* Firefox12まで */
+    border-radius: 6px;           /* Firefox13以降 */
+    background-color: #ff3957;
+    color: #fff;
+    font-weight: normal;
+    font-size: 90%;
+}
+
+
+/* shibata add*/
+.form-group{
+  margin-bottom:0px;
+}
+
+
+/*------------------------------------------------------------*/
+/* ヘッダ */
+/*------------------------------------------------------------*/
+header{
+    margin: 0 auto;
+    padding: 0.5em 0 1em 0;
+    background-color: #fff;
+    clear: both;
+    color: #333;
+    overflow: auto;
+}
+
+header h1{
+    margin: 0 0 -10px -15px;
+    padding: 0;
+}
+
+/*------------------------------------------------------------*/
+/* フッター */
+/*------------------------------------------------------------*/
+footer{
+    margin: 2em auto 0 auto;
+    padding: 20px 0;
+    background-color: #2e2e2e;
+    color: #999;
+}
+
+footer p.copyright{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    text-align: center;
+    color: #aaa;
+    font-size: 70%;
+}
+
+/*------------------------------------------------------------*/
+/* 表題 */
+/*------------------------------------------------------------*/
+section.container h1{
+    margin: 0 0 0.4em 0;
+    padding: 0.5em;
+    background-color: #0a6c9d;
+    font-size: 1.3em;
+    font-weight: normal;
+    color: #fff;
+}
+
+section.container h2{
+    margin: 1em 0 0 0;
+    padding: 0.5em;
+    border-top: 2px solid #3399ff;
+    border-bottom: 1px solid #3399ff;
+    background-color: #e3f5fd;
+    font-size: 1.1em;
+    line-height; 0;
+}
+
+section.container h3{
+    margin: 1em 0 1em 0;
+    padding: 0.5em;
+    border-top: 2px solid #333;
+    border-bottom: 1px solid #333;
+    background-color: #efefef;
+    font-size: 1em;
+    line-height; 0;
+    font-weight: normal;
+}
+
+section.container h4{
+    margin: 5px 0 0 0;
+    padding: 5px 5px 0 5px;
+    font-size: 1em;
+    text-align: left;
+}
+
+/*------------------------------------------------------------*/
+/* 実行などボタン周り */
+/*------------------------------------------------------------*/
+.regist_button{
+    margin: 1em 0 0 0;
+    padding: 10px;
+    border: 1px solid #90847b;
+    background-color: #edebe3;
+    text-align: center;
+}
+
+/*------------------------------------------------------------*/
+/* フォームラベル */
+/*------------------------------------------------------------*/
+section.container label.head{
+    /* margin-top: 1em; */
+    margin-top: 0em;
+    padding: 0.8em 0;
+    border-left: 5px solid #3399ff;
+    background-color: #e8f5ff;
+    text-align: left;
+    font-size: 90%;
+    font-weight: normal;
+    padding-left:5px;
+}
+
+/*------------------------------------------------------------*/
+/* ブラウザ横幅別 */
+/*------------------------------------------------------------*/
+/* 90px～ */
+@media (min-width: 90px) {
+    section.container label.head{
+        width: 100%;
+    }
+
+    .regist_button input[type="button"]{
+        display: none;
+    }
+}
+
+/* 768px～ */
+@media (min-width: 768px) {
+    section.container label.head{
+        width: 18em;
+    }
+
+    .regist_button input[type="button"]{
+        display: inline;
+    }
+}
+
+/* 992px～ */
+@media (min-width: 992px) {
+    section.container label.head{
+        width: 18em;
+    }
+
+    .regist_button input[type="button"]{
+        display: inline;
+    }
+}
+
+/* 1200px～ */
+@media (min-width: 1200px) {
+    section.container label.head{
+        width: 18em;
+    }
+
+    .regist_button input[type="button"]{
+        display: inline;
+    }
+}
+
+
+</style>
+
+
+<div id="container">
+
+    <section class="container">
+        <div class="row">
+
+            <h1>メール反響</h1>
+            <% if flash[:notice] %>
+              <div class="alert alert-info alert-dismissible" role="alert" style="margin-bottom:0px;" id="alert-block">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <%= flash[:notice] %>
+              </div>
+            <% end %>
+
+            <% if @mail_reaction.errors.any? %>
+              <div id="error_explanation">
+                <h2><%= pluralize(@mail_reaction.errors.count, "error") %> prohibited this biru_user from being saved:</h2>
+
+                <ul>
+                <% @mail_reaction.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+                <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <div class="main_box">
+                <h2 style="margin-bottom:10px;">受信情報&nbsp;&nbsp;営業推進課</h2>
+                <fieldset>
+
+                  <%= form_for(@mail_reaction ) do |f| %>
+                    <%= f.hidden_field 'メール反響ID' %>
+
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-md-6">
+
+                          <div class="form-group form-inline">
+                            <%= f.label '月度', raw('<span class="required">必須</span>月度'), :class=>"head"%>
+                            <%= f.text_field :月度, :class=>"form-control", :size=>"4" ,:placeholder=>"例:201501",:required=>"required" %>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '部署ID', raw('<span class="required">必須</span>営業所'), :class=>"head" %>
+                            <%= f.select(:部署ID, @dept_list , {}, {:class=>"form-control" ,:required=>"required"}) %>
+                          </div>
+                          
+                          <div class="form-group form-inline">
+                            <%= f.label '反響サイトコード', raw('<span class="required">必須</span>反響サイト'), :class=>"head" %>
+                            <%= f.select '反響サイトコード', @site_list , {}, {:class=>"form-control" ,:required=>"required" }%>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '受信日付', raw('<span class="required">必須</span>受付日時'), :class=>"head", :style=>"padding-bottom:0px;" %>
+                            <%= text_field_tag '受信日付', @tmp_受信日付,  :id=>'recv_date', :class=>'reg-date form-control', :size=>"5", :style=>'text-align:left;vertical-align:top',:placeholder=>Date.today ,:required=>"required" %>
+                            <input type="time" name="受信時刻" id='recv_time' class="form-control" style="vertical-align:top" value="<%= @tmp_受信時刻 %>" size="2" placeholder="00:00" required="required">
+                            <span style="margin-left:5px;"><%= @tmp_受信日付曜日 %></span>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '問合せ氏名', raw('<span class="required">必須</span>問合せ氏名'), :class=>"head"%>
+                            <%= f.text_field '問合せ氏名', :class=>"form-control", :size=>"10",:placeholder=>"（例）中央　太郎",:required=>"required" %>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '重複フラグ', '重複有無', :class=>"head"%>
+                            <%= f.check_box '重複フラグ', {:class=>"form-control" }, "1", "0" %>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '問合せ物件', '問合せ物件', :class=>"head"%>
+                            <%= f.text_field '問合せ物件', :class=>"form-control", :size=>"13",:placeholder=>"（例）アネックス〇〇" %>
+                          </div>
+
+                        </div> <!-- col-md -->
+                        <div class="col-md-6">
+
+                          <div class="form-group form-inline">
+                            <%= f.label '反響種別', '反響種別', :class=>"head"%>
+                            <%= f.select '反響種別', ["","自社","他社"] , {}, {:class=>"form-control"} %>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '掲載種別', '掲載種別', :class=>"head"%>
+                            <%= f.select '掲載種別', ["","手入力","SUUMOコピー","ホームズラク付け"] , {}, {:class=>"form-control" } %>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '駅', '駅', :class=>"head"%>
+                            <%= f.text_field '駅', :class=>"form-control", :size=>"10",:placeholder=>"（例）新越谷" %>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '徒歩', '徒歩（バス）', :class=>"head"%>
+                            <%= f.text_field '徒歩', :class=>"form-control", :size=>"2",:placeholder=>"徒歩" %>
+                            <%= f.text_field 'バス', :class=>"form-control", :size=>"2",:placeholder=>"バス" %>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '間取り', '間取り', :class=>"head"%>
+                            <%= f.select '間取り', ["","1R・1K","1DK・1LDK","2K・2DK","2LDK","3K・3DK","3LDK","4K以上","事務所店舗"] , {}, {:class=>"form-control"}%>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '賃料', '賃料', :class=>"head"%>
+                            <%= f.select '賃料', ["","3.0万未満","3.0万～","4.0万～","5.0万～","6.0万～","7.0万～","8.0万～","9.0万～","10.0万～","11.0万～"] , {}, {:class=>"form-control" } %>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '築年月', '築年月', :class=>"head" %>
+                            <%= f.text_field '築年月' , :class=>'reg-date form-control', :size=>"7", :style=>'style="text-align:left;', :placeholder=>"yyyy/mm/01"  %>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '名寄点数', '名寄点数｜名寄順位', :class=>"head"%>
+                            <%= f.text_field '名寄点数', :class=>"form-control", :size=>"2" %>
+                            <%= f.select '名寄順位', ["","1位","2位","3位","4位","不明"] , {}, {:class=>"form-control" } %>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '元付け業者名', '元付け業者', :class=>"head"%>
+                            <%= f.text_field '元付け業者名', :class=>"form-control", :size=>"10",:placeholder=>"（例）〇〇不動産" %>
+                          </div>
+
+                          <div class="form-group form-inline">
+                            <%= f.label '備考', '備考', :class=>"head", :style=>"vertical-align:top" %>
+                            <%= f.text_area '備考',  :size=>"15x2", :class=>"form-control" %>
+                          </div>
+    
+                        </div> <!-- col-md-6 -->
+
+                      </div> <!-- row -->
+                    </div> <!-- conteiner -->
+                    <div class="action" style="margin-left:15px;">
+                    	<% if @mail_reaction.メール反響ID %>
+	                      <%= f.submit '更新', :class=>"btn btn-primary" %>&nbsp;&nbsp;
+	                      <%= '登録日時：' + (if @mail_reaction.基本_登録日時 then @mail_reaction.基本_登録日時.strftime('%Y/%m/%d %H:%M') else '' end ) + ' （' + (if @mail_reaction.基本_登録者名 then @mail_reaction.基本_登録者名 else '' end) + '）' %>&nbsp;&nbsp;&nbsp;&nbsp;<%= '更新日時：' + (if @mail_reaction.基本_更新日時 then @mail_reaction.基本_更新日時.strftime('%Y/%m/%d %H:%M') else '' end ) + ' （' + (if @mail_reaction.基本_更新者名 then @mail_reaction.基本_更新者名 else '' end) + '）' %>
+                    	<% else %>
+	                      <%= f.submit '新規登録', :class=>"btn btn-primary" %>
+                    	<%end %>
+                    </div>
+
+                  <% end %> <!-- form_for -->
+
+                </fieldset>
+            </div><!--//.main_box-->
+
+            <%# 一度登録されているときのみ表示%>
+            <% if @mail_reaction.メール反響ID %>
+
+              <div style="margin:20;">&nbsp;</div>
+
+              <div class="main_box">
+                  <h2 style="margin-bottom:10px;">営業推進課 入力欄</h2>
+                  <fieldset>
+
+                    <%= form_for(@mail_reaction, :url => { :action => :update_shop }) do |f| %>
+                      <%= f.hidden_field 'メール反響ID' %>
+
+                      <div class="container">
+                        <div class="row">
+                          <div class="col-md-6">
+
+<!--
+                            <div class="form-group form-inline">
+                              <%= f.label '営業所_担当', '担当', :class=>"head"%>
+                              <%= f.text_field :営業所_担当, :class=>"form-control", :size=>"6"  %>
+                            </div>
+-->
+                            <div class="form-group form-inline">
+                              <%= f.label '営業所_メール返信有無', 'リターンメール有無', :class=>"head"%>
+                              <%= f.select '営業所_メール返信有無', ["","有","無"] , {}, {:class=>"form-control" } %>
+                              <%= text_field_tag '営業所_メール返信日付', @tmp_営業所_メール返信日付,  :id=>'shop_mailrecv_date', :class=>'reg-date form-control', :size=>"5", :style=>'text-align:left;vertical-align:top',:placeholder=>'返信日付' ,:required=>"required" %>
+                            </div>
+
+                          </div> <!-- col-md -->
+                          <div class="col-md-6">
+
+                            <div class="form-group form-inline">
+                              <%= f.label '営業所_備考', '備考', :class=>"head", :style=>"vertical-align:top" %>
+                              <%= f.text_area '営業所_備考',  :size=>"20x2", :class=>"form-control" %>
+                            </div>
+
+                            <div class="form-group form-inline">
+                              <%= f.label '営業所_来店有無', '来店有無', :class=>"head"%>
+                              <%= f.select '営業所_来店有無', ["","有","無"] , {}, {:class=>"form-control" } %>
+                              <%= text_field_tag '営業所_来店日付', @tmp_営業所_来店日付,  :id=>'shop_raiten_date', :class=>'reg-date form-control', :size=>"5", :style=>'text-align:left;vertical-align:top',:placeholder=>'来店日付' ,:required=>"required" %>
+                            </div>
+
+                            <div class="form-group form-inline">
+                              <%= f.label '営業所_案内有無', '案内有無', :class=>"head"%>
+                              <%= f.select '営業所_案内有無', ["","有","無"] , {}, {:class=>"form-control" } %>
+                              <%= text_field_tag '営業所_案内日付', @tmp_営業所_案内日付,  :id=>'shop_annnai_date', :class=>'reg-date form-control', :size=>"5", :style=>'text-align:left;vertical-align:top',:placeholder=>'案内日付' ,:required=>"required" %>
+                            </div>
+
+                            <div class="form-group form-inline">
+                              <%= f.label '営業所_申込有無', '契約有無', :class=>"head"%>
+                              <%= f.select '営業所_申込有無', ["","有","無"] , {}, {:class=>"form-control" } %>
+                              <%= text_field_tag '営業所_申込日付', @tmp_営業所_申込日付,  :id=>'shop_mousikomi_date', :class=>'reg-date form-control', :size=>"5", :style=>'text-align:left;vertical-align:top',:placeholder=>'契約日付' ,:required=>"required" %>
+                            </div>
+                          </div> <!-- col-md-6 -->
+                        </div> <!-- row -->
+                      </div> <!-- conteiner -->
+
+                    <div class="action" style="margin-left:15px;">
+                      <%= f.submit '更新', :class=>"btn btn-primary" %>&nbsp;&nbsp;
+                      <%= '更新日時：' + (if @mail_reaction.営業所_更新日時 then @mail_reaction.営業所_更新日時.strftime('%Y/%m/%d %H:%M') else '' end ) + ' （' + (if @mail_reaction.営業所_更新者名 then @mail_reaction.営業所_更新者名 else '' end) + '）' %>
+                    </div>
+
+                    <% end %> <!-- form_for -->
+
+                  </fieldset>
+              </div><!--//.main_box-->
+
+
+
+              <div style="margin:20;">&nbsp;</div>
+
+              <div class="main_box">
+                  <h2 style="margin-bottom:10px;">返信用入力</h2>
+                  <fieldset>
+
+                    <%= form_for(@mail_reaction, :url => { :action => :update_response }) do |f| %>
+                      <%= f.hidden_field 'メール反響ID' %>
+
+                      <div class="container">
+                        <div class="row">
+                          <div class="col-md-6">
+
+                            <div class="form-group form-inline">
+                              <%= f.label '直接電話', '直接電話', :class=>"head"%>
+                              <%= f.select '直接電話', ["","〇","×"] , {}, {:class=>"form-control"} %>
+                            </div>
+
+                            <div class="form-group form-inline">
+                              <%= f.label '定休日', '定休日', :class=>"head"%>
+                              <%= f.select '定休日', ["","〇"] , {}, {:class=>"form-control"} %>
+                            </div>
+
+                            <div class="form-group form-inline">
+                              <%= f.label '返信_返信日時', '返信日時', :class=>"head" %>
+                              <%= text_field_tag '返信_返信日付', @tmp_返信日付,  :id=>'response_date' , :class=>'reg-date form-control', :size=>"5", :style=>'text-align:left;vertical-align:top',:placeholder=>Date.today %>
+                              <input type="time" name="返信_返信時刻" id="response_time" class="form-control" style="vertical-align:top" value="<%= @tmp_返信時刻 %>" size="2" placeholder="00:00">
+                            </div>
+
+                            <div class="form-group form-inline">
+                              <%= f.label '返信_単純返信時間', '単純返信時間', :class=>"head"%>
+                              <%= f.text_field :返信_単純返信時間, :class=>"form-control", :size=>"3", :placeholder=>"000:00" %>
+                            </div>
+
+                            <div class="form-group form-inline">
+                              <%= f.label '返信_稼働考慮返信時間', '稼働考慮返信時間', :class=>"head"%>
+                              <%= f.text_field :返信_稼働考慮返信時間, :class=>"form-control", :size=>"3", :placeholder=>"000:00" %>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group form-inline">
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="weekOfTuesday" value="1">
+                                <label class="form-check-label" for="inlineCheckbox1">火曜定休</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="weekOfWednesday" value="1">
+                                <label class="form-check-label" for="inlineCheckbox2">水曜定休</label>
+                              </div>
+                            </div>
+                            <div>
+                              <button type="button" id="response_calc" class="btn btn-info btn-sm">返信時間計算</button>
+                            </div>
+                          </div><!-- col-md-6 -->
+                        </div> <!-- row -->
+                      </div> <!-- conteiner -->
+
+                    <div class="action" style="margin-left:15px;margin-top:10px;">
+                      <%= f.submit '更新', :class=>"btn btn-primary" %>&nbsp;&nbsp;
+                      <%= '更新日時：' + (if @mail_reaction.返信_更新日時 then @mail_reaction.返信_更新日時.strftime('%Y/%m/%d %H:%M') else '' end ) + ' （' + (if @mail_reaction.返信_更新者名 then @mail_reaction.返信_更新者名 else '' end) + '）' %>
+                    </div>
+
+                    <% end %> <!-- form_for -->
+
+                  </fieldset>
+              </div><!--//.main_box-->
+
+              <%= form_for(@mail_reaction, :url => { :action => :delete_update }, :html=>{:onsubmit=>"return confirm('削除フラグをONします。よろしいですか？')"} ) do |f| %>
+                <%= f.hidden_field 'メール反響ID' %>
+
+                <div class="action" style="margin-left:25px;margin-top:10px;";>
+                  <%= f.submit '削除', :class=>"btn btn-primary"%>&nbsp;&nbsp; 
+                </div>
+              <% end %>
+
+            <% end %><!-- if @mail_reaction.メール反響ID -->
+
+        </div><!--//.row-->
+    </section><!--//.container-->
+
+    <footer class="container">
+        <!-- <p class="copyright">メール反響管理</p> -->
+    </footer>
+
+</div><!--//#container-->
+
+
+<script type="text/javascript">
+
+  $('.reg-date').datepicker({
+      format: "yyyy/mm/dd",
+      language: "ja",
+      autoclose: true,
+      orientation: "top auto"
+  });
+
+  shop_date_validate();
+
+  document.getElementById("mail_reaction_営業所_メール返信有無").onchange = function(){
+    shop_date_validate();
+  }
+
+
+  document.getElementById("mail_reaction_営業所_来店有無").onchange = function(){
+    shop_date_validate();
+  }
+
+  document.getElementById("mail_reaction_営業所_案内有無").onchange = function(){
+    shop_date_validate();
+  }
+
+  document.getElementById("mail_reaction_営業所_申込有無").onchange = function(){
+    shop_date_validate();
+  }
+
+  // 営業所入力欄　日付チェック
+  function shop_date_validate(){
+    
+    // メール返信有無が「有」だったら入力可、それ以外だったら非活性
+    if( document.getElementById("mail_reaction_営業所_メール返信有無").value == '有'){
+      document.getElementById("shop_mailrecv_date").disabled = false;
+    }else{
+      document.getElementById("shop_mailrecv_date").disabled = true;
+    }
+
+    // 来店有無が「有」だったら入力可、それ以外だったら非活性
+    if( document.getElementById("mail_reaction_営業所_来店有無").value == '有'){
+      document.getElementById("shop_raiten_date").disabled = false;
+    }else{
+      document.getElementById("shop_raiten_date").disabled = true;
+    }
+
+    // 案内有無が「有」だったら入力可、それ以外だったら非活性
+    if( document.getElementById("mail_reaction_営業所_案内有無").value == '有'){
+      document.getElementById("shop_annnai_date").disabled = false;
+    }else{
+      document.getElementById("shop_annnai_date").disabled = true;
+    }
+
+    // 申込有無が「有」だったら入力可、それ以外だったら非活性
+    if( document.getElementById("mail_reaction_営業所_申込有無").value == '有'){
+      document.getElementById("shop_mousikomi_date").disabled = false;
+    }else{
+      document.getElementById("shop_mousikomi_date").disabled = true;
+    }
+
+  }
+
+  // 有が入っていて日付が空白だったらエラー
+  function is_shop_date_validate(){
+    
+    // メール返信有無が「有」だったら入力可、それ以外だったら非活性
+    if( document.getElementById("mail_reaction_営業所_メール返信有無").value == '有'){
+      if(document.getElementById("shop_mailrecv_date").value = ''){
+        alert('メール返信「有」なのに、日付が入っていません。')
+        return false;
+      }
+    }
+
+    // 来店有無が「有」だったら入力可、それ以外だったら非活性
+    if( document.getElementById("mail_reaction_営業所_来店有無").value == '有'){
+      if(document.getElementById("shop_raiten_date").value = ''){
+        alert('来店「有」なのに、日付が入っていません。')
+        return false;
+      }
+    }
+
+    // 案内有無が「有」だったら入力可、それ以外だったら非活性
+    if( document.getElementById("mail_reaction_営業所_案内有無").value == '有'){
+      if(document.getElementById("shop_annnai_date").value = ''){
+        alert('案内「有」なのに、日付が入っていません。')
+        return false;
+      }
+    }
+
+    // 申込有無が「有」だったら入力可、それ以外だったら非活性
+    if( document.getElementById("mail_reaction_営業所_申込有無").value == '有'){
+      if(document.getElementById("shop_mousikomi_date").value = ''){
+        alert('契約「有」なのに、日付が入っていません。')
+        return false;
+      }
+    }
+
+    return true;
+
+  }
+  
+
+  document.getElementById("response_calc").onclick = function() {
+    // ここに#buttonをクリックしたら発生させる処理を記述する
+
+    var recv_date = document.getElementById("recv_date").value;
+    var recv_time = document.getElementById("recv_time").value;
+    var response_date = document.getElementById("response_date").value;
+    var response_time = document.getElementById("response_time").value;
+
+    // ↓時刻を整形。整数４ケタだったら間に「：」を入れる
+    if (recv_time.length == 4){
+      recv_time = recv_time.slice(0,2) + ':' + recv_time.slice(2,4)
+    }
+
+    if (response_time.length == 4){
+      response_time = response_time.slice(0,2) + ':' + response_time.slice(2,4)
+    }
+
+    // 受付日付が正しく入っていなければエラー
+    if(isDate(recv_date) == false) {
+        alert('受信日付が不正です：' + recv_date);
+        return false;
+     }
+
+     // 受信時刻が正しく入っていなければエラー
+     if(isTimeType(recv_time) == false){
+        alert('受信時刻が不正です：' + recv_time);
+        return false;
+     }
+
+    // 返信日時が正しく入っていなければエラー
+    if(isDate(response_date) == false) {
+        alert('返信日付が不正です：' + response_date);
+        return false;
+     }
+
+     if(isTimeType(response_time) == false){
+        alert('返信時刻が不正です：' + response_time);
+        return false;
+     }
+
+    // 返信日時から受付日時を引いて、単純返信時間を取得
+    diffTime = diffDateTime(recv_date, recv_time, response_date, response_time);
+
+    // 受付日時より返信日時が早かったらエラー
+    if(diffTime < 0 ){
+        alert('受信時間より返信時間のほうが早く設定されています');
+        return false;
+    }
+
+    //------------------------------------
+    // 稼働考慮返信時間を求める
+    //------------------------------------
+    var kadou_sec = 0;
+
+    // 時刻をミリ秒として求める
+    var CONST_SEC_WORK_TIME_START = (1000 * 60 * 60 * 9) +  (1000 *  60 * 30) // 9:30
+    //var CONST_SEC_WORK_TIME_END = (1000 * 60 * 60 * 18 ) +  (1000 *  60 * 30) // 18:30
+    var CONST_SEC_WORK_TIME_END = (1000 * 60 * 60 * 18 ) // 18:00
+    var CONST_SEC_RECV_TIME = getMSec(recv_date, recv_time);
+    var CONST_SEC_RESPONSE_TIME = getMSec(response_date, response_time);
+
+    var tmpStartTime;
+    var tmpEndTime;
+    var tmpTime;
+
+    var recvDate = new Date(recv_date);
+    var responseDate = new Date(response_date);
+    var curDate;
+
+    // ★受信日初日
+    if(isHoliday(recv_date) == true ){
+      // 受信日が定休日だったらカウントは0
+      kadou_sec = 0;
+    } else {
+
+      tmpStartTime = 0;
+      tmpEndTime = 0;
+
+      // カウント開始時間の設定
+      if(CONST_SEC_RECV_TIME <= CONST_SEC_WORK_TIME_START){
+        // 受信時間が始業時間（9:30）より前だったら、開始日は9:30
+        tmpStartTime = CONST_SEC_WORK_TIME_START;
+      }else if (CONST_SEC_RECV_TIME <= CONST_SEC_WORK_TIME_END) {
+        // 受信時間が就業時間（9:30～18:00）の間だったら、開始時間は受信時刻
+        tmpStartTime = CONST_SEC_RECV_TIME;
+      }else{
+        // 受信時間が18:30より後だったら、カウントは0
+        tmpStartTime = 0;
+      }
+
+      // カウントが0より大きかったとき、返信日の判定
+
+      if(recvDate.getTime() <  responseDate.getTime()){
+        // // 返信日が受信日より後の時、初日の稼働終了は18:00(カウントto)
+        // tmpEndTime = CONST_SEC_WORK_TIME_END;
+
+        // 2018/06/10 add-s
+        //--------------------------------------------------------------------------------------
+        // 返信日が受信日より後の時、終了時間は『翌日の稼働開始時間もしくは返信時間』のより長い方使う
+        //--------------------------------------------------------------------------------------
+
+        // ①もし受信した時が稼働時間内の時は、受信してからの時間を考慮
+        if( CONST_SEC_RECV_TIME >= CONST_SEC_WORK_TIME_START && CONST_SEC_RECV_TIME <= CONST_SEC_WORK_TIME_END ){
+          // まずは24:00時までのミリ秒数
+          tmpEndTime = (1000 * 60 * 60 * 24 );
+
+          // ②次に、翌日の稼働開始　もしくは 翌日返信日のより短い方
+          if( CONST_SEC_RESPONSE_TIME < CONST_SEC_WORK_TIME_START ){
+            tmpEndTime += CONST_SEC_RESPONSE_TIME;
+
+          }else{
+            tmpEndTime += CONST_SEC_WORK_TIME_START;
+          }
+
+        } else {
+          tmpEndTime = 0;
+        }
+
+        // 2018/06/10 add-e
+
+
+      }else {
+
+        // 返信日が受信日と同じ日の時
+        if( CONST_SEC_RESPONSE_TIME <= CONST_SEC_WORK_TIME_START ){
+          // 返信時間が始業時間（9:30）より前だったら、終了時刻は9:30
+          tmpEndTime = CONST_SEC_WORK_TIME_START;
+        } else if(CONST_SEC_RESPONSE_TIME <= CONST_SEC_WORK_TIME_END){
+          // 返信時間が就業時間（9:30～18:00）の間だったら、終了時間は受信時刻
+          tmpEndTime = CONST_SEC_RESPONSE_TIME;
+        }else{
+          // 受信時間が18:00より後だったら、終了時間は18:00(※受信時刻でよい気もするが、あえて就業終了時間にする)
+          // tmpEndTime = CONST_SEC_WORK_TIME_END;
+
+          // 2018/06/10 やはり終了時間は受信時刻にするとのこと。
+          tmpEndTime = CONST_SEC_RESPONSE_TIME;
+        }
+      }
+
+      if(tmpStartTime > 0 && tmpEndTime > 0 ){
+        // 初日のカウント秒数を計算
+        kadou_sec = (tmpEndTime - tmpStartTime);
+      } else if (tmpStartTime == 0 && tmpEndTime > 0 && CONST_SEC_RESPONSE_TIME >= CONST_SEC_WORK_TIME_END ){
+        // 受信した日は定時後だが、返信したのは稼働前の時 2018/06/28
+        kadou_sec = 0
+      } else if (tmpEndTime > 0){
+        // 受信した日は定時後だが、返信したのは稼働後の時
+        kadou_sec = tmpEndTime - CONST_SEC_WORK_TIME_START;
+      }
+
+    }
+
+    // カレント日付(=受信日の翌日)を設定
+    curDate = new Date(recvDate.getFullYear(), recvDate.getMonth(), recvDate.getDate()+1,0,0,0 );
+
+    // ★２日目以降(カレント日付が返信日以内の間、繰り返す）
+    while(curDate.getTime() <= responseDate.getTime()){
+
+      if(isHoliday(curDate) == true ){
+
+        // カレント日付が定休日だったら、加算カウントは0。つまり何もしない。
+        kadou_sec += 0;
+      }else{
+
+        // カウント開始時間は9:30を設定
+        tmpStartTime = CONST_SEC_WORK_TIME_START;
+
+        // カレント日付と返信日の日付が同じとき、カウント終了時間は返信時間
+        if(curDate.getTime() == responseDate.getTime()){
+          tmpEndTime = CONST_SEC_RESPONSE_TIME;
+        }else{
+          // カレント日付より返信日の日付が後の時、カウント終了時間は18:00
+          tmpEndTime = CONST_SEC_WORK_TIME_END;
+        }
+
+        tmpTime = tmpEndTime - tmpStartTime;
+        if(tmpTime > 0 ){
+          // 「カレント終了日 ー カレント日付開始」がマイナスの時、加算カウントは0
+          // （返信日が始業開始前（午前7:30）などの時、この状態になる）
+          kadou_sec += tmpTime;
+
+        }
+      }
+
+      // カレント日付の翌日を設定
+      curDate = new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate()+1,0,0,0  );
+    }
+
+    if(diffTime > 359999999 && kadou_sec <= 359999999){
+        alert('単純返信時間（受信時間と返信時間の差）が100時間以上あります。\n正しく計算できないので手動で設定してください。。\n\n' |  + '稼働考慮経過時間：' + computeDuration(kadou_sec));
+        document.getElementById("mail_reaction_返信_稼働考慮返信時間").value = computeDuration(kadou_sec);
+    } else if(diffTime > 359999999 && kadou_sec > 359999999){
+        alert('単純返信時間・稼働考慮経過時間、共に100時間を超えています。。\n正しく計算できないので手動で設定してください。。');
+    } else{
+      alert('単純経過時間：' + computeDuration(diffTime) + '\n' + '稼働考慮経過時間：' + computeDuration(kadou_sec));
+      document.getElementById("mail_reaction_返信_単純返信時間").value = computeDuration(diffTime);
+      document.getElementById("mail_reaction_返信_稼働考慮返信時間").value = computeDuration(kadou_sec);
+
+    }
+
+    return true;
+
+  };
+
+
+  // 日付チェック
+  function isDate(strDate){
+      // 空文字はエラー
+      if(strDate == ""){
+          return false;
+      }  
+      // 年/月/日の形式のみ許容する
+      if(!strDate.match(/^\d{4}\/\d{1,2}\/\d{1,2}$/)){
+          return false;
+      } 
+
+      // 日付変換された日付が入力値と同じ事を確認
+      // new Date()の引数に不正な日付が入力された場合、相当する日付に変換されてしまうため
+      // 
+      var date = new Date(strDate);  
+      if(date.getFullYear() !=  strDate.split("/")[0] 
+          || date.getMonth() != strDate.split("/")[1] - 1 
+          || date.getDate() != strDate.split("/")[2]
+      ){
+          return false;
+      }
+
+      return true;
+  }
+
+  /**
+   * 時刻型かチェック
+   * @param value 対象文字列
+   * @returns 時刻型文字列
+   * 参考:http://www.saka-en.com/javascript/javascript-jquery-time-check/
+   */
+  function isTimeType(value) {
+    var times = value;
+
+    if ( times == null )
+      return false;
+
+    // ↓整数４ケタだったら間に「：」を入れる
+    if (times.length == 4){
+      times = times.slice(0,2) + ':' + times.slice(2,4)
+    }
+
+    if ( !times.match(/^\d{1,2}\:\d{2}$/) ) {
+      //alert('時刻型で入力してください(1)');
+      return false;
+    }
+    var al = times.split(":");
+    if ( parseInt(al[0],10) < 0 || parseInt(al[0],10) > 23 || parseInt(al[1],10) < 0 || parseInt(al[1],10) > 59 ) {
+      //alert('時刻型で入力してください(2)');
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * 時刻型かチェック
+   * @param value 対象文字列
+   * @param defVal デフォルト値
+   * @returns 時刻型文字列
+   */
+  function isTime(value, defVal) {
+    var times = value;
+    if ( times == null )
+      times = defVal;
+    if ( times.length == 3 )
+      times = "0" + times;
+    if ( times.length == 4 )
+      times = times.substring(0,2) + ":" + times.substring(2,4);
+    if ( times.length == 5 && !times.match(/:/))
+      times = times.substring(0,3) + ":" + times.substring(3,5);
+    
+    //alert(times.indexOf(':'));
+
+    if ( !times.match(/^\d{1,2}\:\d{2}$/) && !times.match(/^\d{1,3}\:\d{2}$/) )
+      times = defVal;
+    var al = times.split(":");
+    if ( parseInt(al[0],10) < 0 || parseInt(al[0],10) > 999 || parseInt(al[1],10) < 0 || parseInt(al[1],10) > 59 )
+      times = defVal;
+    return times;
+  }
+
+  $("#response_time").focus(function(){$(this).val($(this).val().replace(":",""));$(this).select();});
+  $("#response_time").blur(function(){$(this).val(isTime($(this).val(),""));});
+
+  $("#mail_reaction_返信_単純返信時間").focus(function(){$(this).val($(this).val().replace(":",""));$(this).select();});
+  $("#mail_reaction_返信_単純返信時間").blur(function(){$(this).val(isTime($(this).val(),""));});
+
+  $("#mail_reaction_返信_稼働考慮返信時間").focus(function(){$(this).val($(this).val().replace(":",""));$(this).select();});
+  $("#mail_reaction_返信_稼働考慮返信時間").blur(function(){$(this).val(isTime($(this).val(),""));});
+
+  $("#recv_time").focus(function(){$(this).val($(this).val().replace(":",""));$(this).select();});
+  $("#recv_time").blur(function(){$(this).val(isTime($(this).val(),""));});
+
+  /**
+   * ミリ秒を時分秒へ変換
+   * ms ミリ秒
+   */
+  function computeDuration(ms){
+      var h = String(Math.floor(ms / 3600000) + 100).substring(1);
+      var m = String(Math.floor((ms - h * 3600000)/60000)+ 100).substring(1);
+      var s = String(Math.round((ms - h * 3600000 - m * 60000)/1000)+ 100).substring(1);
+      //return h+':'+m+':'+s;
+      return h+':'+m;
+  }
+
+  // 単純返信時間を求める
+  function diffDateTime(aDate, aTime, bDate, bTime){
+    var a = Date.parse(aDate + ' ' + aTime);
+    var b = Date.parse(bDate + ' ' + bTime);
+
+    return (b - a);
+  }
+
+  // 時間ミリ秒を求める
+  function getMSec(aDate, aTime){
+    var a = Date.parse(aDate + ' ' + "00:00");
+    var b = Date.parse(aDate + ' ' + aTime);
+
+    return (b - a);
+  }
+
+  // 実返信時間を求める
+  function diffDateTimeReal(aDate, aTime, bDate, bTime){
+    var a = Date.parse(aDate + ' ' + aTime);
+    var b = Date.parse(bDate + ' ' + bTime);
+
+    // --------------------------------
+    // 受信当日の返信可能時間を計測
+    // --------------------------------
+
+    // 定休日か判定
+  }
+
+  // 休日判定
+  function isHoliday(strDate){
+
+    // 曜日を求める
+    var dayOfWeek = new Date(strDate).getDay() ;
+
+    // 曜日と合致していたら休日(2:火曜日, 3:水曜日)
+    if(dayOfWeek == 2 && document.getElementById("weekOfTuesday").checked){
+      return true // 火曜日
+    }
+
+    if(dayOfWeek == 3 && document.getElementById("weekOfWednesday").checked){
+      return true // 火曜日
+    }
+
+    return false;
+
+  }
+
+
+
+
+</script>

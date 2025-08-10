@@ -1,0 +1,103 @@
+<%#= content_for :sidebar do %>
+<!--
+        <div class="span3" >
+          <div class="well sidebar-nav" style="margin-top:30px;margin-left:20px;height:800px;">
+			  <div style="padding-bottom:5px;">変更履歴</div>
+			  <div style="margin-bottom:10px;">
+			  	<div>【2015/04/08】</div>
+				<div style="padding-left:10px;">建物管理メニュー追加</div>
+			  </div>
+			  <div>
+			  	<div>【2014/10/19】</div>
+				<div style="padding-left:10px;">地図トップを改訂</div>
+			  </div>
+          </div>
+        </div>
+-->
+<%# end %>
+
+<h1 style="margin-bottom:30px">ビル管理 Webシステム トップメニュー</h1>
+
+<p>
+	ブラウザで参照できる(＝iPadから参照できる)システムをまとめたページです。
+</p>
+<p>
+	iPadから見るときは、「ポップアップを許可する」の設定をしてください。<br>
+	ポップアップがブロックされていると一部の履歴書き込みの機能が使えません。
+</p>
+<p>
+	ポップアップブロックの解除はSafariの設定から行います。<br>
+	「設定」＞「Safari」の順に選択し、一般の項目内にある「ポップアップブロック」をオフにしてください。
+</p>
+
+<div style="margin-bottom:10px;">&nbsp;</div>
+
+<h3><%= link_to '営業支援', page_menu01_path %> </h3>
+<p class="discription">月度で締めた実績数字を表示します。</p>
+
+<h3><%= link_to '状況照会', page_menu02_path %> </h3>
+<p class="discription">契約／退去・解約／修理などの、進行中の状況を表示します。</p>
+
+<h3><%= link_to '賃貸管理システム', page_menu03_path %> </h3>
+<p  class="discription">OBIC・新旧データ・管理物件の地図情報を表示します。</p>
+
+<h3><%= link_to '受託支援システム', trust_managements_path %> </h3>
+<p class="discription">受託支援システムに遷移します。</p>
+
+<!-- 2019/03/27 不用意に見えない方がよいと福井さんと話し、削除
+<h3><%= link_to '市場占有率', managements_path + '?market_bar=on' %> </h3>
+<p class="discription">市場のアパート・マンションに対するビル管理の市場占有率を地図に表示します。</p>
+-->
+
+<h3><%= link_to 'レンターズ登録状況', page_menu04_path %> </h3>
+<p class="discription">レンターズに登録した画像掲載枚数を表示します。</p>
+
+<h3><%= link_to '業績分析', page_menu05_path %> </h3>
+<p class="discription">月度・部署ごとに業績監視項目をグラフで表示します。</p>
+
+
+
+<!--
+	<h1 style="text-decoration:underline">ビル管理Ｗｅｂシステム トップメニュー</h1>
+	<h3 style="margin-top:50px;">・管理物件確認<span style="font-size:14px;margin-left:10px;">（管理物件一覧を検索します）</span></h3>
+	<p style="padding-left:25px;">検索条件を指定しての検索は<%= link_to "こちら", property_search_path, :style=>'text-decoration:underline;' %></p>
+	<p style="padding-left:25px;">営業所集計表からの検索は<%= link_to "こちら", property_path, :style=>'text-decoration:underline;' %></p>
+	<p style="padding-left:25px;">地図全体を表示するバージョンは<%= link_to "こちら", managements_path, :style=>'text-decoration:underline;' %></p>
+	<p style="padding-left:25px;">市場占有率表示は<%= link_to "こちら", managements_path + '?market_bar=on', :style=>'text-decoration:underline;' %></p>
+
+	<h3 style="margin-top:50px;">・営業支援<span style="font-size:14px;margin-left:10px;"></span></h3>
+	<p style="padding-left:25px;"><a href="http://pzazzzs031.polus.local/ReportServer/Pages/ReportViewer.aspx?%2f%e8%b3%83%e8%b2%b8%e4%bb%b2%e4%bb%8b%e7%8a%b6%e6%b3%81%e8%a1%a8_%e5%96%b6%e6%a5%ad%e6%89%80&rs:Command=Render">賃貸仲介状況表(営業所単位)</a></p>
+	<p style="padding-left:25px;"><a href="http://pzazzzs031.polus.local/ReportServer/Pages/ReportViewer.aspx?%2f%e8%b3%83%e8%b2%b8%e4%bb%b2%e4%bb%8b%e7%8a%b6%e6%b3%81%e8%a1%a8_%e5%80%8b%e4%ba%ba%e5%8d%98%e4%bd%8d&rs:Command=Render">賃貸仲介状況表(個人単位)</a></p>
+	<p style="padding-left:25px;"><a href="http://pzazzzs031.polus.local/ReportServer/Pages/ReportViewer.aspx?%2f%e8%b3%83%e8%b2%b8%e5%8b%9f%e9%9b%86%e7%ae%a1%e7%90%86_%e4%b8%80%e8%a6%a7&rs:Command=Render">賃貸募集・管理データ分析表</a></p>
+	<p style="padding-left:25px;"><a href="http://pzazzzs031.polus.local/ReportServer/Pages/ReportViewer.aspx?%2f%e5%8f%8d%e9%9f%bf%e9%9b%86%e8%a8%88_%e4%b8%80%e8%a6%a7&rs:Command=Render">反響データ分析表</a></p>
+	<p style="padding-left:25px;"><a href="http://pzazzzs031.polus.local/ReportServer/Pages/ReportViewer.aspx?%2f%e7%ae%a1%e7%90%86%e6%88%b8%e6%95%b0%e3%81%a8%e7%a9%ba%e5%ae%a4%e7%8e%87%e3%83%bb%e7%a8%bc%e5%83%8d%e7%8e%87%e7%8a%b6%e6%b3%81&rs:Command=Render">管理戸数と空室率・稼働状況</a></p>
+	<p style="padding-left:25px;"><a href="http://pzazzzs031.polus.local/ReportServer/Pages/ReportViewer.aspx?%2f%e5%8b%9f%e9%9b%86%e5%a5%91%e7%b4%84%e5%ae%9f%e7%b8%be_%e5%80%8b%e4%ba%ba%e5%88%a5&rs:Command=Render">来店・案内契約実績（個人別）</a></p>
+	<p style="padding-left:25px;"><a href="http://pzazzzs031.polus.local/ReportServer/Pages/ReportViewer.aspx?%2frenters_summary&rs:Command=Render">レンターズ登録状況</a></p>
+	<p style="padding-left:25px;"><a href="http://pzazzzs031.polus.local/ReportServer/Pages/ReportViewer.aspx?%2f%e3%83%93%e3%83%ab%e7%ae%a1%e7%90%86%e3%81%ae%e6%95%b0%e5%ad%97&rs:Command=Render">ビル管理の数字</a></p>
+
+	<h3 style="margin-top:50px;">・状況照会<span style="font-size:14px;margin-left:10px;"></span></h3>
+	<p style="padding-left:25px;"><a href="">要確認一覧</a></p>
+	<p style="padding-left:25px;"><a href="">アンマッチ</a></p>
+	<p style="padding-left:25px;"><a href="">契約</a></p>
+	<p style="padding-left:25px;"><a href="">退去・解約</a></p>
+	<p style="padding-left:25px;"><a href="">工事業者進捗</a></p>
+	<p style="padding-left:25px;"><a href="">修理</a></p>
+
+-->
+
+<!--
+	<h3 style="margin-top:30px;"><%= link_to "・管理受託の巻き直し", trust_rewinding_path %></h3>
+	<p style="padding-left:25px;">管理受託の巻き直し状況を確認します。</p>
+-->
+
+<!--
+	<h3 style="margin-top:30px;"><%= link_to "・建物管理(定期メンテナンス）", biru_service_path %></h3>
+	<p style="padding-left:25px;">管理物件の定期メンテナンスの情報を表示します。</p>
+	<p style="padding-left:25px;">４戸以上(≒１棟管理)のアパート・マンションで、１５平米以上での集計は<%= link_to "こちら", biru_service_path('room_all'), :style=>'text-decoration:underline;' %></p>
+	
+	<h3 style="margin-top:30px;"><%= link_to "・レンターズ登録状況確認", renters_path %></h3>
+	<p style="padding-left:25px;">レンターズに掲載中の物件(自社）を地図に表示します。先物は<%= link_to "こちら", renters_path('sakimono'), :style=>'text-decoration:underline;' %></p>
+	
+	<h3 style="margin-top:30px;"><%= link_to "・受託活動報告", trust_managements_path %></h3>
+	<p style="padding-left:25px;">訪問履歴・ＤＭ発送履歴・TELアプローチ履歴の登録・集計を行います。</p>
+-->

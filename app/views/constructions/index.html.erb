@@ -1,0 +1,27 @@
+<h1>Listing constructions</h1>
+
+<table>
+  <tr>
+    <th>Completion check person</th>
+    <th>Completion check expected date</th>
+    <th>Completion check date</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @constructions.each do |construction| %>
+  <tr>
+    <td><%= construction.completion_check_person %></td>
+    <td><%= construction.completion_check_expected_date %></td>
+    <td><%= construction.completion_check_date %></td>
+    <td><%= link_to 'Show', construction %></td>
+    <td><%= link_to 'Edit', edit_construction_path(construction) %></td>
+    <td><%= link_to 'Destroy', construction, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Construction', new_construction_path %>

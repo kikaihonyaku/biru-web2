@@ -1,0 +1,22 @@
+      <!-- Tables
+      ================================================== -->
+<pre class="pre-scrollable" style="background-color:white"><table class="table table-striped table-bordered table-hover table-condensed" style="padding:0 0 0 0;margin:0 0 0 0 ;">
+        <thead>
+          <tr>
+            <th>営業所</th>
+            <th>電話番号１</th>
+            <th>電話番号２</th>
+            <th>定休日</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @shops.each do |shop| %>
+          <tr>
+            <td style="min-width: 80px;"><a href="<%= "javascript:link_shop_click(" + shop.id.to_s + ")"%>"><%= shop.name %></a></td>
+            <td><%= shop.tel %></td>
+            <td><%= shop.tel2 %></td>
+            <td><%= shop.holiday %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table></pre>

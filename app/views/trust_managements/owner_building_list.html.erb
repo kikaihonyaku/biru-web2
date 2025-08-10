@@ -1,0 +1,1222 @@
+<% content_for :header do %>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&v=3&language=ja&libraries=visualization&client=gme-chuobuildingkanri"></script>
+<script type="text/javascript">
+
+
+// アイコンを変更します。
+function change_icon(){
+
+  // ajaxで凡例を変更
+  document.forms['biru_icon'].s_commit.click();
+
+  // コンボボックスで選択されたものにgooglemapのアイコンを変更
+  change_biru_icon($('#biru_icon_id [name=disp_type]').val());
+
+}
+
+// 建物のアイコンを変更します。
+function change_biru_icon(type){
+  if(type == "siten"){
+    // 支店表示
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].siten_icon );
+    };
+  }else if(type == "area"){
+    // エリア表示
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].area_icon );
+    };
+  } else if(type == "shop" ){
+    // 営業所表示
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].shop_icon );
+    };
+
+  } else if(type == "biru_kind" ){
+    // 建物種別のアイコンにする。
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].build_type_icon );
+    };
+  } else if( type == "manage_type") {
+    // 管理方式のICONを返しますのアイコンにする。
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].manage_icon );
+    };
+  } else if( type == "num") {
+    // 管理戸数のアイコンにする。
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].kanri_room_num );
+    };
+  } else if( type == "aki") {
+    // 空室のアイコンにする。
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].free_room );
+    };
+  } else if( type == "age") {
+    // 築年月のアイコンにする。
+    for(var item in build_arr){
+      build_arr[item].setIcon(build_arr[item].biru_age );
+    };
+
+  } else {
+    // 何もしない
+  }
+
+}
+
+
+// 営業所マーカーの表示／非表示
+function dips_shops(flg){
+  for(var item in shop_arr){
+    shop_arr[item].set("visible", flg);
+  };
+}
+
+// 委託契約マーカーの表示／非表示
+function dips_trusts(flg){
+  for(var item in trust_arr){
+    trust_arr[item].set("visible", flg);
+  };
+}
+
+// 貸主マーカーの表示／非表示
+function dips_owners(flg){
+  for(var item in owner_arr){
+    owner_arr[item].set("visible", flg);
+  };
+}
+
+
+// 営業所の半径１kmのマーカーの表示／非表示
+function disp_shop_01(flg){
+  for(var item in shop_circle01_arr){
+    shop_circle01_arr[item].set("visible", flg);
+  };
+}
+
+// 営業所の半径２kmのマーカーの表示／非表示
+function disp_shop_02(flg){
+  for(var item in shop_circle02_arr){
+    shop_circle02_arr[item].set("visible", flg);
+  };
+}
+
+
+// Infoウィンドウに設定します
+function setInfoWnd(marker, msg){
+    google.maps.event.addListener(marker, "click", function(){
+      infoWnd.setContent(msg);
+      infoWnd.open(marker.getMap(), marker);
+    });
+}
+
+// posからpositionオブジェクトを返します。
+function getCoords(position) {
+    return new google.maps.LatLng(position.latitude, position.longitude);
+}
+
+
+  function win_result_biru(){
+    $( "#result_biru" ).dialog({
+		 width: 500
+	   , height: 550 
+	   , position: {
+	       of : window
+	      ,at: 'center'
+	      ,my: 'left top'
+	   }
+	 });
+  }
+
+  function win_result_owner(){
+    $( "#result_owner" ).dialog({ 
+		 width: 500
+		,height: 450
+ 	    ,position: {
+ 	       of : window
+ 	      ,at: 'center'
+ 	      ,my: 'left top'
+ 	   }
+	 });
+  }
+
+  function win_result_shop(){
+    $( "#result_shop" ).dialog({ 
+		width: 500
+	   ,height: 450
+	   ,position: {
+	       of : window
+	      ,at: 'center'
+	      ,my: 'left top'
+	   }
+    });
+  }
+
+  function write_build(biru)
+  {
+    document.getElementById("m_name").innerText=biru;
+  }
+
+  // ズームを変更する maker_kind 1:建物 2:貸主
+  function changeZoom(marker_id, maker_kind) {
+
+    var marker;
+
+    if(maker_kind == 1){
+      marker = build_arr[marker_id];
+    }
+    else{
+      marker = owner_arr[marker_id];
+    }
+
+    mapCanvas.panTo(marker.position);
+    mapCanvas.setZoom(18);
+  }
+
+
+  // 営業所
+  function get_icon_shop(num){
+    var icon;
+
+    if( num == 3 ){
+      icon = 'marker_blue.png'; // 草加
+    }else if (num == 11 ){
+      icon = 'marker_yellow.png'; // 新田
+    }else if (num == 16 ){
+      icon = 'marker_purple.png'; // 北千住
+    }else if (num == 1 ){
+      icon = 'marker_red.png'; // 南越谷
+    }else if (num == 18 ){
+      icon = 'marker_orange.png'; // 越谷
+    }else if (num == 8 ){
+      icon = 'marker_green.png'; // 北越谷
+    }else if (num == 21 ){
+      icon = 'marker_white.png'; // せんげん台
+    }else if (num == 7 ){
+      icon = 'marker_gray.png'; // 春日部
+    }else if (num == 2 ){
+      icon = 'marker_blue.png'; // 戸田
+    }else if (num == 5 ){
+      icon = 'marker_yellow.png'; // 武蔵
+    }else if (num == 15 ){
+      icon = 'marker_purple.png'; // 川口
+    }else if (num == 17 ){
+      icon = 'marker_red.png'; // 与野
+    }else if (num == 13 ){
+      icon = 'marker_orange.png'; // 浦和
+    }else if (num == 10 ){
+      icon = 'marker_green.png'; // 東浦和
+    }else if (num == 6 ){
+      icon = 'marker_white.png'; // 東川口
+    }else if (num == 14 ){
+      icon = 'marker_gray.png'; // 戸塚安行
+    }else if (num == 19 ){
+      icon = 'marker_blue.png'; // 松戸
+    }else if (num == 4 ){
+      icon = 'marker_yellow.png'; // 北松戸
+    }else if (num == 9 ){
+      icon = 'marker_purple.png'; // 柏
+    }else if (num == 12 ){
+      icon = 'marker_red.png'; // 南流山
+    }else if (num == 91 ){
+      icon = 'marker_purple.png'; // 法人課
+    }else {
+      icon = 'marker_white.png'; // 不明
+    }
+
+    icon = '/biruweb/assets/' + icon;
+    return icon;
+  }
+
+  // エリア
+  function get_icon_area(num){
+    var icon;
+
+    if( num == 3 || num == 11 || num == 16 ){
+      icon = 'marker_blue.png'; // 東武南
+    }else if (num == 1 || num == 18 ){
+      icon = 'marker_yellow.png'; // 東武中央
+    }else if (num == 8 || num == 21 || num == 7){
+      icon = 'marker_purple.png'; // 東武北
+    }else if (num == 2 || num == 5 || num == 15){
+      icon = 'marker_red.png'; // さいたま南
+    }else if (num == 17 || num == 13  ){
+      icon = 'marker_orange.png'; // さいたま北
+    }else if (num == 10 || num == 6 || num == 14 ){
+      icon = 'marker_green.png'; // さいたま東
+    }else if (num == 19 || num == 4 ){
+      icon = 'marker_white.png'; // 常磐西
+    }else if (num == 9 || num == 12){
+      icon = 'marker_gray.png'; // 常磐中央
+    }else if (num == 91 ){
+      icon = 'marker_green.png'; // 法人課
+    }else {
+      icon = 'marker_white.png'; // 不明
+    }
+
+    icon = '/biruweb/assets/' + icon;
+    return icon;
+
+  }
+
+  // 支店
+  function get_icon_siten(num){
+    var icon;
+
+    if( num == 3 || num == 11 || num == 16 || num == 1 || num == 18 || num == 8 || num == 21 || num == 7 ){
+      icon = 'marker_green.png'; // 東武支店
+    }else if (num == 2 || num == 5 || num == 15 || num == 17 || num == 13 || num == 10 || num == 6 || num == 14){
+      icon = 'marker_blue.png'; // さいたま支店
+    }else if (num == 19 || num == 4 || num == 9 || num == 12){
+      icon = 'marker_yellow.png'; // 千葉支店
+    }else if (num == 91 ){
+      icon = 'marker_purple.png'; // アセットマネジメント部
+    }else {
+      icon = 'marker_white.png'; // 不明
+    }
+
+    icon = '/biruweb/assets/' + icon;
+    return icon;
+
+  }
+
+  // 戸数
+  function get_icon_kanri_room_num(num){
+    var icon;
+
+    if(num == 1){
+      icon ='marker_purple.png';
+    }else if( 2 <= num && num <= 4){
+        icon = 'marker_blue.png';
+    }else if( 5 <= num && num <= 6){
+        icon ='marker_green.png';
+    }else if( 6 <= num && num <= 8){
+        icon ='marker_yellow.png';
+    }else if( 8 <= num && num <= 10){
+        icon ='marker_orange.png';
+    }else if( 11 <= num && num <= 15){
+        icon ='marker_red.png';
+    }else if( 16 <= num && num <= 20){
+        icon ='marker_gray.png';
+    }else if( 21 <= num ){
+        icon ='marker_gray.png';
+    }else{
+        icon ='marker_white.png';
+    }
+
+    icon = '/biruweb/assets/' + icon;
+
+    return icon;
+  }
+
+  // 空室割合
+  function get_icon_free_room(kosuu, aki){
+    var flt;
+    var icon;
+    flt = aki / kosuu;
+
+    if(flt == 0){
+        icon = 'marker_blue.png';
+    }else if( 0 < flt && flt <= 0.3 ){
+        icon ='marker_green.png';
+    }else if( 0.3 < flt && flt <= 0.6){
+        icon ='marker_orange.png';
+    }else if( 0.6 < flt && flt <= 0.9){
+        icon ='marker_orange.png';
+    }else if( 0.9 < flt && flt <= 1){
+        icon ='marker_red.png';
+    }else{
+        icon ='marker_white.png';
+    }
+
+    icon = '/biruweb/assets/' + icon;
+
+    return icon;
+
+  }
+
+  // 築年数アイコン
+  function get_icon_biru_age(age){
+    var icon;
+
+    if(0<= age && age <= 1){
+        icon ='marker_purple.png';
+    }else if( 2 <= age && age <= 5){
+        icon = 'marker_blue.png';
+    }else if( 6 <= age && age <= 10){
+        icon ='marker_green.png';
+    }else if( 11 <= age && age <= 20){
+        icon ='marker_yellow.png';
+    }else if( 21 <= age && age <= 30){
+        icon ='marker_orange.png';
+    }else if( 31 <= age && age <= 40){
+        icon ='marker_red.png';
+    }else if( 41 <= age ){
+        icon ='marker_gray.png';
+    }else{
+        icon ='marker_white.png';
+    }
+
+    icon = '/biruweb/assets/' + icon;
+
+    return icon;
+  }
+
+
+  //-------------------
+  // グローバル変数定義
+  //-------------------
+  var convert_shop = [];
+  
+  function initialize(){
+    
+	// ストリートビューの分割を縦に
+	street_vew_vertical = true;
+	
+    // 初期化処理
+    init_process();
+
+    // 初期表示は非表示
+    init_display();
+	
+    // 地図・ストリートビューを作成します。
+//   init_map(<%= @biru_user.id %>, <%= @search_bar_disp_flg %>);
+   init_map(<%= @biru_user.id %>, false);
+
+
+    // 初期表示位置を調整
+    var bounds = new google.maps.LatLngBounds();
+
+    /* 建物オブジェクトを作成 */
+    build_arr = {}; // グローバル
+    kyori_text = ""
+    var pos;
+    var idx = 0;
+    var biru_latlngs = [];
+    var populations = [];
+
+    var building_to_owners = gon.building_to_owners
+	
+    gon.buildings.forEach(function(building){
+        pos = new google.maps.LatLng(building.latitude, building.longitude);
+
+        <% if @search_type == 2 # 貸主の時、初期状態で非表示%>
+          var build_disp = false
+        <% else %>
+          var build_disp = true
+          bounds.extend(pos);
+        <% end %>
+
+        var shop_code = convert_shop[building.shop_id];
+		
+        build_arr[building.id] = createMarker({
+          position : pos
+          ,map : mapCanvas
+          //,icon : '/biruweb/assets/' + building_icon
+          //,siten_icon : get_icon_siten(shop_code)
+          //,area_icon : get_icon_area(shop_code)
+          //,shop_icon : get_icon_shop(shop_code)
+          //,manage_icon : building.tmp_manage_type_icon
+          //,build_type_icon : building.tmp_build_type_icon
+          //,kanri_room_num  : get_icon_kanri_room_num(building.kanri_room_num)
+          //,free_room : get_icon_free_room(building.kanri_room_num, building.free_num)
+          //,biru_age : get_icon_biru_age(building.biru_age)
+          //,shadow : '/biruweb/assets/pushpin_shadow.png'
+          ,html : info_msg_biru(building, building_to_owners[building.id])
+          ,visible : build_disp
+        });
+
+        /* 距離を測る */
+        /*
+        var origins = [];
+        origins.push(pos)
+        var request = {
+           origins : origins
+          ,destinations : distination_arr
+          ,travelMode : google.maps.TravelMode.WALKING
+        };
+
+        var distanceMatrix = new google.maps.DistanceMatrixService();
+        var x, ele;
+        distanceMatrix.getDistanceMatrix(request, function(result, status){
+          kyori_text = '<%#= biru.name %>' + "<hr>";
+          for(x=0; x<distination_arr.length; x++){
+            ele = result.rows[0].elements[x];
+            kyori_text += distination.getAt(x).name + "まで" + ele.distance.text + "(" + ele.duration.text + ")<br>";
+          }
+
+          setInfoWnd(build_arr[<%#= biru.id %>], kyori_text);
+
+        });
+        */
+
+        /* 戸数別のヒートマップを作る為のオブジェクト */
+        populations.push({
+          location : pos
+          ,weight : building.room_num
+        })
+
+        biru_latlngs[idx] = pos;
+        idx = idx + 1;
+    });
+
+    var heatmap_biru = new google.maps.visualization.HeatmapLayer();
+    heatmap_biru.setData(biru_latlngs);
+
+    var heatmap_room = new google.maps.visualization.HeatmapLayer();
+    heatmap_room.setData(populations);
+
+//    /* ヒートマップイベント登録 */
+//    var hiatmap00Radio = document.getElementById("hiatmap00Radio");
+//    google.maps.event.addDomListener(hiatmap00Radio, "click", function(){
+//      heatmap_biru.setMap(null);
+//      heatmap_room.setMap(null);
+//    });
+
+//    var hiatmap01Radio = document.getElementById("hiatmap01Radio");
+//    google.maps.event.addDomListener(hiatmap01Radio, "click", function(){
+//      heatmap_biru.setMap(mapCanvas);
+//      heatmap_room.setMap(null);
+//    });
+
+//    var hiatmap02Radio = document.getElementById("hiatmap02Radio");
+//    google.maps.event.addDomListener(hiatmap02Radio, "click", function(){
+//      heatmap_biru.setMap(null);
+//      heatmap_room.setMap(mapCanvas);
+//    });
+
+    /* 貸主オブジェクトを作成 */
+    owner_arr = {}; // varを外してグローバル化
+    var owner_to_buildings = gon.owner_to_buildings
+    var owner_icon;
+    var owner_disp;
+
+    gon.owners.forEach(function(owner){
+      pos = new google.maps.LatLng(owner.latitude, owner.longitude);
+
+      <% if @search_type == 1 # 建物検索の時、初期状態で非表示%>
+        owner_disp = false
+      <% else %>
+        owner_disp = true
+        bounds.extend(pos);
+      <% end %>
+
+      //owner_icon = "https://chart.googleapis.com/chart?chst=d_map_pin_icon&chld=home%7CFFFF00"
+      owner_icon = "https://chart.googleapis.com/chart?chst=d_map_pin_icon_withshadow&chld=home%7CFFFF00"
+	  //owner_icon = '/assets/yellow.png'
+
+      owner_arr[owner.id] = createMarker({
+        position : pos
+        ,map : mapCanvas
+        ,icon : owner_icon
+        ,html : info_msg_owner(owner, owner_to_buildings[owner.id])
+        ,visible : owner_disp
+      });
+	});
+
+    /* 委託契約CDのラインを引く */
+    trust_arr = {}; // varを外してグローバル化
+    gon.trusts.forEach(function(trust){
+
+		// 貸主マスタ・建物マスタに委託で指定した貸主CD・建物CDが存在することを確認
+		if ( !owner_arr[trust.owner_id] ){
+		  //continue;
+		  return;
+		}
+
+		if ( !build_arr[trust.building_id]){
+		  //continue;
+		  return;
+		}
+	  
+		// 建物・貸主の色を設定
+		var owner_icon = "";
+		var building_icon = "";
+
+		if(trust.attack_states_code == 'S'){
+		  	owner_icon = "marker_large_gold_S.png";
+		  	building_icon = "marker_orange.png";
+		}else if(trust.attack_states_code == 'A'){
+		  	owner_icon = "marker_large_green_A.png";
+		  	building_icon = "marker_green.png";
+	
+		}else if(trust.attack_states_code == 'B'){
+		  	owner_icon = "marker_large_purple_B.png";
+		  	building_icon = "marker_purple.png";
+	
+		}else if(trust.attack_states_code == 'C'){
+		  	owner_icon = "marker_large_red_C.png";
+		  	building_icon = "marker_red.png";
+	
+		}else if(trust.attack_states_code == 'D'){
+		  	owner_icon = "marker_large_blue_D.png";
+		  	building_icon = "marker_blue.png";
+	
+		}else{
+		  	owner_icon = "marker_large_white_Z.png";
+		  	building_icon = "marker_white.png";
+		}
+
+		owner_arr[trust.owner_id].setIcon('/biruweb/assets/' + owner_icon);
+		build_arr[trust.building_id].setIcon('/biruweb/assets/' + building_icon);
+
+		trust_arr[trust.id] = new google.maps.Polyline({
+		 map : mapCanvas
+		,path : [owner_arr[trust.owner_id].position, build_arr[trust.building_id].position]
+		//,strokeColor: gon.manage_line_color[trust.manage_type_id]
+		,strokeColor: 'blue'
+		,strokeOpacity:0.5
+		,strokeWeight:3
+		,zIndex:1
+		});
+
+      // 初期状態は非表示
+      trust_arr[trust.id].set("visible", false);
+
+      // ダブルクリック時のイベント登録
+      trust_ev = trust_arr[trust.id]
+      owner_ev = owner_arr[trust.owner_id]
+      build_ev = build_arr[trust.building_id]
+
+      // クリックした時のオブジェクトを保存するために、イベントは関数呼び出しで登録する。
+      create_relation_listener(trust_ev, owner_ev, build_ev)
+	});
+
+    /* 営業所の情報を表示する */
+    shop_arr = {}; // varを消してグローバル化
+    shop_circle01_arr = {}; // varを消してグローバル化
+    shop_circle02_arr = {}; // varを消してグローバル化
+    var distination = new google.maps.MVCArray();
+    var distination_arr = [];
+
+    gon.shops.forEach(function(shop){
+
+      pos = new google.maps.LatLng(shop.latitude, shop.longitude);
+      bounds.extend(pos);
+
+      shop_arr[shop.id] = createMarker({
+        position : pos
+        ,map : mapCanvas
+        ,animation: google.maps.Animation.DROP
+        ,icon : shop.icon
+        ,info_msg : shop.name
+        ,html : info_msg_shop(shop)
+      });
+
+      /* 営業所の円を作成 */
+      shop_circle01_arr[shop.id] = create_circle(1000, mapCanvas, pos);
+      shop_circle02_arr[shop.id] = create_circle(2000, mapCanvas, pos);
+
+      /* 距離を測る対象を設定 */
+      distination.push({name:shop.name, latLng:[shop.latitude,shop.longitude]});
+      distination_arr.push(pos);
+  });
+
+    mapCanvas.fitBounds(bounds);
+
+//    /* すべての委託契約の表示をON または OFF にする。 */
+//    var trustChkbox = document.getElementById("trustChkbox");
+//    google.maps.event.addDomListener(trustChkbox, "click", function(){
+//        // console.log(trust_arr);
+//        for(var item in trust_arr){
+//          trust_arr[item].set("visible", trustChkbox.checked);
+//        };
+//    });
+
+//    /* すべての貸主を表示・非表示にする */
+//    var ownerChkbox = document.getElementById("ownerChkbox");
+//    google.maps.event.addDomListener(ownerChkbox, "click", function(){
+//        for(var item in owner_arr){
+//          owner_arr[item].set("visible", ownerChkbox.checked);
+//        };
+//    });
+
+//    /* すべての営業所を表示・非表示にする */
+//    var storeChkbox = document.getElementById("storeChkbox");
+//    google.maps.event.addDomListener(storeChkbox, "click", function(){
+//        // console.log(trust_arr);
+//        for(var item in shop_arr){
+//          shop_arr[item].set("visible", storeChkbox.checked);
+//        };
+//    });
+
+//   /* 営業所の範囲サークルの表示１ */
+//    var circle01Check = document.getElementById("circle01Check");
+//    google.maps.event.addDomListener(circle01Check, "click", function(){
+//      for(var item in shop_circle01_arr){
+//        shop_circle01_arr[item].set("visible", circle01Check.checked);
+//      };
+//    });
+
+//    /* 営業所の範囲サークルの表示２ */
+//    var circle02Check = document.getElementById("circle02Check");
+//    google.maps.event.addDomListener(circle02Check, "click", function(){
+//      for(var item in shop_circle02_arr){
+//        shop_circle02_arr[item].set("visible", circle02Check.checked);
+//      };
+//    });
+
+
+  } // end initialize
+
+  google.maps.event.addDomListener(window, "load", initialize);
+
+
+</script>
+
+  <style type="text/css">
+    html, body{
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #map_canvas{
+      position: fixed;
+      width:100%;
+      height:100%;
+      top:0px;
+      left:0;
+    }
+
+    #top-menu{
+      padding:0;
+      margin:0;
+    }
+	
+	a{
+	  text-decoration:underline;	
+	}
+	
+  </style>
+
+<% end %>
+
+<script type="text/javascript">
+
+	$(function () {
+		$(".accordion .toggle").click(function () {
+			$(this).next("ul").slideToggle(200);
+			$(this).next("div").slideToggle(200);
+	
+			$(this).toggleClass("open");
+		});
+	});
+
+	// 営業所テーブルを作成します。
+	//init_jqgrid_shop();
+	
+	// アタックリストを作成します。
+	init_jqgrid_trust();
+	
+	// 営業所テーブルを作成
+	function init_jqgrid_shop(){
+		
+		// 列名の定義
+		var grid_name = ["id", "コード", "営業所名", "住所"];
+
+		// 列属性の定義
+		var grid_model = [
+		  {name:"id", index:"id", width:70, align:"right", classes:"no_class", hidden:true}
+		 ,{name:"no", index:"no", width:70, align:"center", classes:"no_class"}
+		 ,{name:"shop_name", index:"shop_name", width:200, align:"left", classes:"no_class"}
+		 ,{name:"shop_address", index:"shop_address", width:200, align:"left", classes:"no_class"}
+		 // ここに「rbtnFmatter」のように関数を書くと、初期表示のロード時に毎回定義した関数がコールされると思われる。
+	   	//,{name:"shop_address",index:"building_address",width:200,align:"center",classes:"name_class", 'label':'URL', 'formatter':rbtnFmatter}
+		];
+
+	   // function rbtnFmatter(cellvalue, options, rowObject){
+	   //	  //alert(options['shop_name']);
+	   //	  // alert('bbbb');
+	   //  }
+
+		// データの作成
+	
+		var grid_data = [];
+		gon.shops.forEach(function(shop){
+			if(shop == null){
+				return;
+			}
+			var rec = {};
+			rec['id'] = shop.id;
+			rec['no'] = shop.code;
+			rec['shop_name'] = shop.name;
+			rec['shop_address'] = shop.address;
+		
+			grid_data.push(rec);
+		});
+	
+		$(function(){
+			jqgrid_create('shop_table', 'shop_pager', 'div_dummy', grid_name, grid_model, grid_data, '営業所一覧', 1, true);
+		});
+	}
+	
+	// 委託契約リストを作成
+	function init_jqgrid_trust(){
+		// 列名の定義
+		//var grid_name = ["trust_id", "owner_id", "見込貸主CD", "貸主名", "住所", "貸主備考", "building_id", "見込建物CD", "建物名", "住所", "建物備考", "営業所", "担当者"];
+		//var grid_name = ["trust_id", "owner_id", "営業所", "見込ランク", "DM発送可", "見込貸主CD", "貸主名", "住所", "貸主備考", "訪問(留守）", "訪問(在宅）", "DM(発送）", "DM(反響）", "電話(留守）", "電話(会話）", "building_id", "見込建物CD", "建物名", "住所", "建物備考", "現 管理会社", "担当者"];
+		var grid_name = ["trust_id", "owner_id", "営業所", "見込ランク", "DM発送可", "見込貸主CD", "貸主名", "貸主カナ", "住所", "電話", "貸主備考", "building_id", "見込建物CD", "建物名", "住所", "建物備考", "現 管理会社", "担当者", "発行1", "発行2", "発行3", "発行4", "発行5", "発行6", "発行7", "発行8"];
+		
+		// 列属性の定義
+		var grid_model = [
+		  {name:"trust_id", index:"trust_id", align:"right", classes:"no_class", hidden:true}
+		 ,{name:"owner_id", index:"owner_id", align:"right", classes:"no_class", hidden:true}
+		 ,{name:"shop_name",  index:"shop_name",  width:200,  align:"center",  classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: "<%= @combo_shop %>" }}
+		 
+		 ,{name:"attack_states_code", index:"attack_states_code", align:"center", classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: ":<%= @rank_searchoptions %>" }}
+		 ,{name:"owner_dm_delivery", index:"owner_dm_delivery", width:80, align:"center", classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: ":全て;○:可;×:不可" }}
+		 ,{name:"owner_code", index:"owner_code", width:200, align:"center", classes:"no_class"}
+		 ,{name:"owner_name", index:"owner_name", width:400, align:"left", classes:"no_class"}
+		 ,{name:"owner_kana", index:"owner_kana", width:300, align:"left", classes:"no_class"}
+		 ,{name:"owner_address", index:"owner_address", width:300, align:"left", classes:"no_class"}
+		 ,{name:"owner_tel", index:"owner_tel", width:300, align:"left", classes:"no_class"}
+		 ,{name:"owner_memo", index:"owner_memo", width:400, align:"left", classes:"no_class"}
+		 
+//		 ,{name:"visit_rusu", index:"visit_rusu", width:200, align:"center", classes:"no_class", searchoptions:{ sopt:['ge']}}
+//		 ,{name:"visit_zai", index:"visit_zai", width:200, align:"center", classes:"no_class", searchoptions:{ sopt:['ge']}}
+//		 ,{name:"dm_send", index:"dm_send", width:200, align:"center", classes:"no_class", searchoptions:{ sopt:['ge']}}
+//		 ,{name:"dm_res", index:"dm_res", width:200, align:"center", classes:"no_class", searchoptions:{ sopt:['ge']}}
+//		 ,{name:"tel_call", index:"tel_call", width:200, align:"center", classes:"no_class", searchoptions:{ sopt:['ge']}}
+//		 ,{name:"tel_speack", index:"tel_speack", width:200, align:"center", classes:"no_class", searchoptions:{ sopt:['ge']}}
+
+		 ,{name:"building_id", index:"building_id", align:"right", classes:"no_class", hidden:true}
+		 
+		 ,{name:"building_code", index:"building_code", width:200, align:"center", classes:"no_class"}
+		 ,{name:"building_name", index:"building_name", width:400, align:"left", classes:"no_class"}
+		 ,{name:"building_address", index:"building_address", width:300, align:"left", classes:"no_class"}
+		 ,{name:"building_memo", index:"building_memo", width:400, align:"left", classes:"no_class"}
+		 ,{name:"proprietary_company", index:"proprietary_company", width:200, align:"left", classes:"no_class"}
+		 ,{name:"user_name", index:"user_memo", align:"left", classes:"no_class"}
+		 
+		 ,{name:"owner_dm_ptn_1", index:"owner_dm_ptn_1", width:80, align:"center", classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: ":全て;○:○;×:×"}}
+		 ,{name:"owner_dm_ptn_2", index:"owner_dm_ptn_2", width:80, align:"center", classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: ":全て;○:○;×:×"}}
+		 ,{name:"owner_dm_ptn_3", index:"owner_dm_ptn_3", width:80, align:"center", classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: ":全て;○:○;×:×"}}
+		 ,{name:"owner_dm_ptn_4", index:"owner_dm_ptn_4", width:80, align:"center", classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: ":全て;○:○;×:×"}}
+		 ,{name:"owner_dm_ptn_5", index:"owner_dm_ptn_5", width:80, align:"center", classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: ":全て;○:○;×:×"}}
+		 ,{name:"owner_dm_ptn_6", index:"owner_dm_ptn_6", width:80, align:"center", classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: ":全て;○:○;×:×"}}
+		 ,{name:"owner_dm_ptn_7", index:"owner_dm_ptn_7", width:80, align:"center", classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: ":全て;○:○;×:×"}}
+		 ,{name:"owner_dm_ptn_8", index:"owner_dm_ptn_8", width:80, align:"center", classes:"no_class", stype: 'select', searchoptions:{ sopt:['eq'], value: ":全て;○:○;×:×"}}
+		];
+		
+		// データの作成
+		var grid_data = [];
+		cnt = 1;
+		gon.trust_manages.forEach(function(trust_manage){
+			var rec = {};
+			
+			rec['trust_id'] = trust_manage.trust_id
+			rec['owner_id'] = trust_manage.owner_id
+			rec['owner_code'] = trust_manage.owner_attack_code
+					
+//			if(trust_manage.owner_dm_delivery == 't'){
+			if(trust_manage.owner_dm_delivery == 1){ // SQLServerは1
+				rec['owner_dm_delivery'] = '○'
+			}else{
+				rec['owner_dm_delivery'] = '×'
+			}
+
+			if(trust_manage.owner_dm_ptn_1 == 1){ rec['owner_dm_ptn_1'] = '○' }else{ rec['owner_dm_ptn_1'] = '×' }
+			if(trust_manage.owner_dm_ptn_2 == 1){ rec['owner_dm_ptn_2'] = '○' }else{ rec['owner_dm_ptn_2'] = '×' }
+			if(trust_manage.owner_dm_ptn_3 == 1){ rec['owner_dm_ptn_3'] = '○' }else{ rec['owner_dm_ptn_3'] = '×' }
+			if(trust_manage.owner_dm_ptn_4 == 1){ rec['owner_dm_ptn_4'] = '○' }else{ rec['owner_dm_ptn_4'] = '×' }
+
+			if(trust_manage.owner_dm_ptn_5 == 1){ rec['owner_dm_ptn_5'] = '○' }else{ rec['owner_dm_ptn_5'] = '×' }
+			if(trust_manage.owner_dm_ptn_6 == 1){ rec['owner_dm_ptn_6'] = '○' }else{ rec['owner_dm_ptn_6'] = '×' }
+			if(trust_manage.owner_dm_ptn_7 == 1){ rec['owner_dm_ptn_7'] = '○' }else{ rec['owner_dm_ptn_7'] = '×' }
+			if(trust_manage.owner_dm_ptn_8 == 1){ rec['owner_dm_ptn_8'] = '○' }else{ rec['owner_dm_ptn_8'] = '×' }
+
+			rec['owner_name'] = trust_manage.owner_name
+			rec['owner_kana'] = trust_manage.owner_kana
+			rec['owner_address'] = trust_manage.owner_address
+			rec['owner_tel'] = trust_manage.owner_tel
+			rec['owner_memo'] = trust_manage.owner_memo
+
+			rec['visit_rusu'] = trust_manage.visit_rusu
+			rec['visit_zai'] = trust_manage.visit_zai
+			rec['dm_send'] = trust_manage.dm_send
+			rec['dm_res'] = trust_manage.dm_res
+			rec['tel_call'] = trust_manage.tel_call
+			rec['tel_speack'] = trust_manage.tel_speack
+			
+			rec['building_id'] = trust_manage.building_id
+			
+			rec['attack_states_code'] = trust_manage.attack_states_code
+			rec['building_code'] = trust_manage.building_attack_code
+			rec['building_name'] = trust_manage.building_name
+			rec['building_address'] = trust_manage.building_address
+			rec['building_memo'] = trust_manage.building_memo
+			rec['proprietary_company'] = trust_manage.building_proprietary_company
+			
+			rec['shop_name'] = trust_manage.shop_name
+			rec['user_name'] = trust_manage.biru_user_name
+		
+			grid_data.push(rec);
+			
+		});
+		
+		// その他の設定
+		var jqgrid_opt = {
+			 table_name:'building_table'
+			,fotter_name:'building_pager'
+			,div_name:'div_dummy_02'
+			,caption:'アタックリスト'
+			,event_type:30
+			,shrinkFit:true
+			,multiselect:true
+		};
+			
+		
+		$(function(){
+			jqgrid_create(grid_name, grid_model, grid_data, jqgrid_opt);
+			
+			// 反映ボタン押下
+			jQuery("#building_table").navGrid('#building_pager',{ edit:false,add:false,del:false,search:false }).navButtonAdd('#building_pager',{
+			        caption:"地図に反映", position:"last", onClickButton: function(){
+						 
+						// 建物非表示
+						 for(var item in build_arr){
+						    build_arr[item].set("visible", false);
+						 };
+						 
+						 for(var item in owner_arr){
+						    owner_arr[item].set("visible", false);
+						 };
+						 
+						 for(var item in trust_arr){
+						    trust_arr[item].set("visible", false);
+						 };
+						 
+						 
+						 //var bounds = new google.maps.LatLngBounds();
+						 var table_div = $('#building_table');
+						 var row_data = table_div.getRowData();
+						 
+						 for(var j in  row_data){
+							
+							 trust = trust_arr[row_data[j].trust_id];
+							 if(trust != null){
+	 							 trust.set("visible", true);
+								 
+							 }
+							 
+							 owner = owner_arr[row_data[j].owner_id];
+							 if(owner != null){
+	 							 owner.set("visible", true);
+								 
+						         //pos = new google.maps.LatLng(owner.latitude, owner.longitude);
+						         //bounds.extend(pos);
+								 
+							 }
+							 
+							 building = build_arr[row_data[j].building_id];
+							 if(building != null){
+	 							 building.set("visible", true);
+								 
+						         //pos = new google.maps.LatLng(building.latitude, building.longitude);
+						         //bounds.extend(pos);
+								 
+							 }
+							 
+						 }
+						 
+						 // マーカーが収まるように地図を調整
+						 //mapCanvas.fitBounds(bounds);
+						 
+					 }
+		      });
+				  
+				  
+  	  			// ファイル出力ボタン
+  	  			jQuery("#building_table").navGrid('#building_pager',{
+				        edit:false, add:false, del:false, search:false
+				      }).navButtonAdd('#building_pager', {
+				        caption:"ファイル出力",  position:"last",  onClickButton: function(){
+
+			            // 選択項目の確認
+			            var rowIds = jQuery('#building_table').getGridParam('selarrrow'); 
+
+			            if (rowIds.length == 0) {
+			                msg = "出力するデータ行を選択してください。";
+			                alert(msg);
+			                return false;
+			            }
+
+			            // 選択したデータを隠しタグに出力してポストする
+			            $('#list_data').html("");    // 送信用バッファーをクリア
+			            // 列見出しの取得
+			            var dataIds = jQuery('#building_table').getDataIDs();
+				
+			            // 列見出し部をinput.hiddenタグへ出力
+			            for (var j = 0; j < grid_name.length; j++) {
+			                $('<input type="hidden" name="data[0]['+j+']" value="'+htmlEscape(grid_name[j])+'" />').appendTo("#list_data");
+			            }
+
+			            // データ部をinput.hiddenタグへ出力
+			            var rowHead = jQuery('#building_table').getRowData(dataIds[0]);
+			            var colNames = new Array();
+			            var i = 0;
+			            for (var col in rowHead) {
+			                colNames[i++] = col;
+			            }
+				
+			            for (var i = 0; i < rowIds.length; i++) {
+			                var row = jQuery('#building_table').getRowData(rowIds[i]);
+			                for (var j = 0; j < colNames.length; j++) {
+			                    $('<input type="hidden" name="data['+(i+1)+']['+j+']" value="'+htmlEscape(row[colNames[j]])+'" />').appendTo("#list_data");
+			                }
+			            }
+				
+			            // 送信
+			            document.frm_out2csv.submit();
+
+			            return true;
+				
+						}
+				 });
+				  
+		});
+		
+	    $(window).bind('resize', function () {
+	        // $('#building_table').setGridWidth($(window).width() - 40 ).setGridHeight($(window).height() * 0.4 - 50);
+	        $('#building_table').trigger("reloadGrid");
+			
+	    }).trigger('resize');
+		
+		
+	}
+	
+	// 貸主のアイコンを表示・非表示にする。
+	function icon_kind_kasi_click(){
+	    for(var item in owner_arr){
+	      owner_arr[item].set("visible", document.getElementById('kind_kasi').checked);
+	    };
+	}
+	
+	function icon_kind_biru_click(){
+	    for(var item in build_arr){
+	      build_arr[item].set("visible", document.getElementById('kind_biru').checked);
+	    };
+		
+	}
+	
+</script>
+
+
+  <!-- ここは span9で呼び出されているので合計も9に合わせる -->
+
+<% if @error_msg.size > 0 %>
+
+<%= @error_msg %>
+
+<% else %>
+
+	<a id="simple-menu" href="#sidr"></a>
+	<div style="height:50%;padding:10px 20px 0px 20px;">
+		
+		<div id="div_dummy" style="float:left;width:20%;height:80%;padding:0;margin:0;padding-right:10px;">
+			
+			
+			<div class="accordion ui-jqgrid  ui-widget-content ui-corner-all" style="width:100%;margin-bottom:10px;" >
+			    <ul>
+			        <li>
+			            <span class="toggle ui-jqgrid-view ui-jqgrid-titlebar ui-widget-header ui-corner-top">基本メニュー</span>
+					</li>
+			        </li>
+			        <li><a data-toggle="modal" href="#modal-search">検索条件を変更して再検索</a></li>
+					<!--
+			        <li><a data-toggle="modal" href="#modal-tack">タックシール出力</a></li>
+			        <li><a href="javascript:win_attack_list_maintenance_bulk(<%= @object_user.id %>);">アタックリスト編集（一括）</a></li>
+			        <li><a href="javascript:win_attack_list_maintenance(<%= @object_user.id %>);">アタックリスト編集（個別）</a></li>
+					-->
+			        <li><a data-toggle="modal" href="#modal-history-regist" onclick="return check_file_api();">履歴の取り込み</a></li>
+			        <li><%= link_to "一覧へ戻る",  {:action=>'index'}, :onclick=>'javascript:screen_block();' %></li>
+			    </ul>
+			</div>
+			
+			<div class="accordion ui-jqgrid  ui-widget-content ui-corner-all" style="width:100%;margin-bottom:10px;" >
+			    <ul>
+			        <li>
+			            <span class="toggle  ui-jqgrid-view ui-jqgrid-titlebar ui-widget-header ui-corner-top ">地図操作</span>
+						<div style="display:block;padding:5px;padding-top:10px;padding-bottom:10px;">
+
+    <table class="table table-striped table-bordered table-hover table-condensed">
+    <tbody>
+      <tr>
+        <td style="vertical-align:middle;text-align:center;width:80px;"><input type="checkbox"  id="kind_kasi" checked="checked" onclick="icon_kind_kasi_click();">&nbsp;貸主</td>
+        <td style="text-align:center">
+			<img  src="/biruweb/assets/marker_large_white_Z.png" />
+		</td>
+      </tr>
+      <tr height="50">
+        <td style="vertical-align:middle;text-align:center;"><input type="checkbox"  id="kind_biru" checked="checked" onclick="icon_kind_biru_click();">&nbsp;物件</td>
+        <td style="text-align:center;vertical-align:middle;">
+			<img  src="/biruweb/assets/marker_white.png" />
+		</td>
+      </tr>
+
+
+    </tbody>
+  </table>
+
+							
+
+						</div>
+			        </li>
+			    </ul>
+			</div>
+			
+
+			<!--
+			<div class="accordion ui-jqgrid  ui-widget-content ui-corner-all" style="width:100%;" >
+			    <ul>
+			        <li>
+			            <span class="toggle  ui-jqgrid-view ui-jqgrid-titlebar ui-widget-header ui-corner-top ">アタックリストメンテナンス</span>
+			            <ul>
+					        <li><a href="#">見込み貸主登録</a></li>
+					        <li><a href="#">見込み建物登録</a></li>
+					        <li><a href="#">アタックリスト追加</a></li>
+					        <li><a href="#">アタックリスト削除</a></li>
+			            </ul>
+						
+			        </li>
+			        <li>
+			            <span class="toggle  ui-jqgrid-view ui-jqgrid-titlebar ui-widget-header ui-corner-top ">地図操作</span>
+						<div style="display:block;padding:5px;margin-left:10px;padding-top:10px;padding-bottom:10px;">
+							貸主マーク<br/>
+							建物マーク<br/>
+							委託マーク<br/>
+						</div>
+			        </li>
+					
+			        <li>
+			            <span class="toggle ui-jqgrid-view ui-jqgrid-titlebar ui-widget-header ui-corner-top">その他メニュー</span>
+			            <ul>
+			                <li><a href="#">貸主登録</a></li>
+			                <li><a href="#">建物登録</a></li>
+			                <li><a href="#">××××</a></li>
+			            </ul>
+			        </li>
+			        <li><a href="#">履歴・ランク検索</a></li>
+			        <li><a href="#">貸主登録</a></li>
+			    </ul>
+			</div>
+				-->
+			
+			<table id="shop_table"></table>
+			<div id = "shop_pager"></div>
+		</div>
+		<div id="panowide" style="width: 40%; height: 0px;float:right;"></div>
+		<div id="map_canvas" style="width: 80%;float:right;"></div>
+		
+	</div>
+	<div id="div_dummy_02" style="clear:both;width:100%;height:40%;padding:10px 20px 10px 20px;margin-bottom:50px;">
+		<table id="building_table"></table>
+		<div id = "building_pager"></div>
+	</div>
+	
+	<!-- For index -->
+
+	<style type="text/css">
+		a{
+		  text-decoration:underline;	
+		}
+	</style>
+
+	<script type="text/javascript">
+
+		function search_submit() {
+		
+			screen_block();
+			document.trust_search.submit();
+		}
+	
+	
+		// ファイルのAPIが使えるかチェックします。
+		function check_file_api(){
+		
+			if (window.File && window.FileReader && window.FileList && window.Blob) {
+				return true;
+			} else {
+				alert('お使いのブラウザはファイル取り込みに対応していません');
+				return false;
+			}
+		}
+	</script>
+	
+	<!-- 検索ダイアログの表示 -->
+	<div class="modal fade" id="modal-search" tabindex="-1" role="dialog" aria-labelledby="modal-search-label" aria-hidden="true">
+	  <div class="modal-dialog" style="width:980px;">
+	    <div class="modal-content">
+
+			<%= form_tag( {:action=>'owner_building_list'},{:name=>'trust_search'} ) do %>
+			<%= hidden_field_tag :sid,  @object_user.id %>
+			
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title" >条件を指定して再検索</h4>
+			</div>
+
+			<div class="modal-body">
+				<%= render 'search_template' %>
+			</div>
+
+			<div class="modal-footer">
+				<%= submit_tag '指定した条件で絞込み' , :class=>"btn btn-primary btn-sm", :style=>"margin:0", :onClick=>"javascript:search_submit();" %>
+			</div>
+		<% end %>
+
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+	
+
+	<!-- 履歴の一括取り込み  -->
+	<div class="modal fade" id="modal-history-regist" tabindex="-1" role="dialog" aria-labelledby="model-history-regist-label" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+				
+		<%= form_tag( {:action=>'owner_building_list'},{:name=>'trust_search'} ) do %>
+		<%= hidden_field_tag :sid,  @object_user.id %>
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h4 class="modal-title" >履歴の一括読み込み</h4>
+	      </div>
+		  
+	      <div class="modal-body">
+			  	
+			<input type="file" id="file" style="display:none;" onchange="$('#fake_input_file').val($(this).val())">
+			<input id="fake_input_file" readonly type="text" value=""  onClick="$('#file').click();">
+			<input type="button" value="ファイル選択" onClick="$('#file').click();">
+
+	      </div>
+	      <div class="modal-footer">
+			<%= submit_tag '取り込み' , :class=>"btn btn-primary", :style=>"margin:0" %>
+	      </div>
+		<% end %>
+			
+
+			  
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+	<% if @disp_search %>
+	<%# 最初の検索の時のみ、検索フォームを表示させる %>
+	<script type="text/javascript">
+		$('#modal-search').modal('show');
+	</script>
+	<% end %>
+	
+	<!-- リスト出力用 -->
+	<%= form_tag({:action=>'csv_out'}, {:method=>'post', :name=>'frm_out2csv' }) do %>
+	   <%= hidden_field_tag 'list_data', ''  %>
+	<% end %>
+	
+
+
+<% end %>
+
+

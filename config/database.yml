@@ -1,0 +1,26 @@
+# config/database.yml
+default: &default
+  adapter: sqlserver
+  encoding: utf8
+  host: 192.168.0.12        # うまく行かないときは Windows 側 IP を記載
+  port: 1433
+  username: biru
+  password: system9922
+  pool: 10
+  timeout: 5000          # ms
+
+development:
+  <<: *default
+  database: BIRU30
+
+test:
+  <<: *default
+  database: BIRU30
+
+production:
+  <<: *default
+  host: 192.168.0.12        # うまく行かないときは Windows 側 IP を記載
+  username: biru
+  password: system9922
+  database: BIRU30
+  pool: <%= ENV.fetch("DB_POOL", 20) %>

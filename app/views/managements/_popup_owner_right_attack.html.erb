@@ -1,0 +1,119 @@
+<div class="table-responsive panel panel-default">
+    <table class="table table-bordered">
+      <thead>
+        <tr class="active">
+          <td colspan="2" class="biru-back-color-blue" style="font-weight:bold;">貸主基本情報（<a data-toggle="modal" href="#modal-owner-update" style="color:#FFFFFF;" >編集</a>）</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="text-align:right;font-size:12px;">見込み貸主CD</td>
+          <td><%= @owner.attack_code %></td>
+        </tr>
+        <tr>
+          <td style="text-align:right;">カナ</td>
+          <td><%= @owner.kana %></td>
+        </tr>
+        <tr>
+          <td style="text-align:right;">名前</td>
+          <td><%= @owner.name %><%= @owner.honorific_title if @owner.honorific_title%></td>
+        </tr>
+        <tr>
+          <td style="text-align:right;">電話番号</td>
+          <td><%= @owner.tel %></td>
+        </tr>
+        <tr>
+          <td style="text-align:right;">住所</td>
+          <td><%= @owner.address %></td>
+        </tr>
+        <tr>
+          <td style="text-align:right;">ＤＭ発行パターン</td>
+          <td>
+            <% unless @owner.dm_delivery %>
+              発行しない
+            <% else %>
+              <% if @owner.dm_ptn_1 == false and @owner.dm_ptn_2 == false and @owner.dm_ptn_3 == false and @owner.dm_ptn_4 == false and @owner.dm_ptn_5 == false and @owner.dm_ptn_6 == false and @owner.dm_ptn_7 == false and @owner.dm_ptn_8 == false  %>
+                発行パターンが未設定です
+              <% else %>
+                <%= '①　' if @owner.dm_ptn_1 %>
+                <%= '②　' if @owner.dm_ptn_2 %>
+                <%= '③　' if @owner.dm_ptn_3 %>
+                <%= '④　' if @owner.dm_ptn_4 %>
+                <%= '⑤　' if @owner.dm_ptn_5 %>
+                <%= '⑥　' if @owner.dm_ptn_6 %>
+                <%= 'ニュースレター１　' if @owner.dm_ptn_7 %>
+                <%= 'ニュースレター２　' if @owner.dm_ptn_8 %>
+              <% end %>
+            <% end %>
+            
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align:right;">添付書類</td>
+          <td><a data-toggle="modal" href="#modal-owner-document"><%= @owner.documents.count %>件</a></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+  <%= form_for(@owner, :url=>{:action=>'popup_owner_update_memo', :controller=>'managements', :id=>@owner}, :html=>{:class=>"form-horizontal"}) do |f|%>
+  
+    <div style="clear:both;margin-top:10px;">
+      <%= f.text_area :memo,  :size => "8x4", :class=>"form-control", :placeholder=>'メモ'  %>
+    </div>
+    <div style="padding-top:10px;">
+      <%= f.submit '更新', :class=>"btn btn-sm btn-primary print-none"%>
+    </div>
+  
+  <% end %>
+
+  <!-- モーダルダイアログ(貸主更新) -->
+<div class="modal fade" id="modal-owner-update" tabindex="-1" role="dialog" aria-labelledby="modal-owner-update-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h4 class="modal-title" id="myModalLabel">貸主更新</h4>
+        </div>
+  
+    <%= simple_form_for :owner, :url=>{:action => :popup_owner_update, :id=>@owner.id}, :html=>{ :class=> 'form-horizontal' } do |f| %>
+      <div class="modal-body">
+        <%= f.input :name, label: '貸主名',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+        <%= f.input :kana, label: 'カナ',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+        <%= f.input :honorific_title, label: '敬称',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+        <%= f.input :postcode, label: '郵便番号',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+        <%= f.input :address, label: '住所',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+        <%= f.input :tel, label: '電話番号',  :input_html => {:class=>'form-control', :style=>'width:300px;'} %>
+        <%= f.input :dm_delivery, :collection=> [["有", true],["無", false]], :as=>:radio_buttons, :item_wrapper_class=>"inline", :label=>'ＤＭ発行' %>
+        
+        <div class="container">
+          <div class="row">
+            <div class="col-md-2">
+                <%= f.input :dm_ptn_1, :as => :boolean, label: 'ＤＭ１' %>
+                <%= f.input :dm_ptn_2, :as => :boolean, label: 'ＤＭ２' %>
+                <%= f.input :dm_ptn_3, :as => :boolean, label: 'ＤＭ３' %>
+                <%= f.input :dm_ptn_4, :as => :boolean, label: 'ＤＭ４' %>
+            </div>
+            <div class="col-md-10">
+                <%= f.input :dm_ptn_5, :as => :boolean, label: 'ＤＭ５' %>
+                <%= f.input :dm_ptn_6, :as => :boolean, label: 'ＤＭ６' %>
+                <%= f.input :dm_ptn_7, :as => :boolean, label: 'News１' %>
+                <%= f.input :dm_ptn_8, :as => :boolean, label: 'News２' %>
+            </div>
+          </div>
+          </row>
+        </div>
+
+        
+      </div>
+      <div class="modal-footer">
+        <%= f.submit '更新', :class=>"btn btn-default", :style=>"margin:0;background-color:#2b5540;" %>
+      </div>
+    <% end %>
+  
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
