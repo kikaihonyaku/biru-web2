@@ -428,7 +428,16 @@ GEM
     thruster (0.1.15-x86_64-darwin)
     thruster (0.1.15-x86_64-linux)
     timeout (0.4.3)
-    tiny_tds (2.1.7)
+    tiny_tds (3.2.1)
+      bigdecimal (~> 3)
+    tiny_tds (3.2.1-aarch64-linux-gnu)
+      bigdecimal (~> 3)
+    tiny_tds (3.2.1-aarch64-linux-musl)
+      bigdecimal (~> 3)
+    tiny_tds (3.2.1-x86_64-linux-gnu)
+      bigdecimal (~> 3)
+    tiny_tds (3.2.1-x86_64-linux-musl)
+      bigdecimal (~> 3)
     ttfunk (1.8.0)
       bigdecimal (~> 3.1)
     turbo-rails (2.0.16)
@@ -503,7 +512,7 @@ DEPENDENCIES
   stimulus-rails
   thinreports
   thruster
-  tiny_tds (~> 2.1)
+  tiny_tds (~> 3.2)
   turbo-rails
   tzinfo-data
   web-console
