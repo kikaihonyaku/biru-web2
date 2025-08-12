@@ -280,7 +280,6 @@ class ApplicationController < ActionController::Base
           # 建物に紐づく貸主一覧を作成する。※本来建物に対するオーナーは１人だが、念のため複数オーナーも対応する。
           building_to_owners[biru.id] = [] unless building_to_owners[biru.id]
           building_to_owners[biru.id] << tmp_owner
-
         end
       end
     end
