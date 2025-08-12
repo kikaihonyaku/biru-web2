@@ -462,7 +462,6 @@ class ManagementsController < ApplicationController
     redirect_to action: "popup_building", id: @trust.building_id
   end
 
-
   def index
     # 営業所のみ表示 (検索結果一覧リストに出すために、インスタンス変数にも入れる)
     @shops = Shop.where("code != 91")

@@ -14,7 +14,7 @@ class PropertyController < ApplicationController
     @biru_icon = params[:disp_type]
   end
 
-  # 検索画面を表示します
+  # 検索画面を表示します。
   def search
     if params[:owner_name]
       @search_param = params
