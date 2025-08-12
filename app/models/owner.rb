@@ -2,14 +2,13 @@
 class Owner < ActiveRecord::Base
   acts_as_gmappable
 
-  attr_accessible :address, :code, :name, :memo, :attack_code, :dm_delivery,  :honorific_title, :postcode, :biru_user_id, :tel, :kana
 
   belongs_to :biru_user
   has_many :trusts
   has_many :documents
 
   # デフォルトスコープを定義
-  default_scope where(:delete_flg => false)
+  default_scope { where(delete_flg: false) }
   scope :oneself , -> { where(:attack_code => nil )}
   
 

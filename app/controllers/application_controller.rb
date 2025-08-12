@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  protect_from_forgery
+  protect_from_forgery with: :exception
 
   # 2014/06/02
   # change_biru_iconはrailsのformではなくhtmlのformで直接送ってくるから
@@ -20,13 +20,13 @@ class ApplicationController < ActionController::Base
   # 一度sessionがクリアされてしまうと次検索した時に必ずログイン画面になってしまう。
   # 検索条件もリセットされてしまうので使い勝手が悪いので、managementsコントローラの時は
   # もうチェックしないようにする。（良い対策ができるまで）
-  # before_filter :check_logined, :except => ['change_biru_icon', 'search_owners', 'search_buildings', 'bulk_search_text']
+  # before_action :check_logined, :except => ['change_biru_icon', 'search_owners', 'search_buildings', 'bulk_search_text']
 
   # 2014/06/10 paramでuser_idを送るようにして対応できた。
-  before_filter :check_logined
+  before_action :check_logined
 
   # CSV出力する際、Windowsで開くためにShift_JISに変換する。■2014/08/12 当面はpdfで出力するため、文字コードはutf-8に戻す。
-  after_filter :change_charset_to_sjis, if: :csv?
+  after_action :change_charset_to_sjis, if: :csv?
 
 
   # 建物用のハッシュを取得します

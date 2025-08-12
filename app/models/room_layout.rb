@@ -1,9 +1,8 @@
 class RoomLayout < ActiveRecord::Base
-  attr_accessible :code, :name
   has_many :rooms
 
 
-  # ŒŸõðŒ‚ðid‚É•ÏŠ·‚µ‚½‚à‚Ì‚ðAarr‚Épush‚µ‚Ü‚·B
+  # æ¤œç´¢æ¡ä»¶ã‚’idã«å¤‰æ›ã—ãŸã‚‚ã®ã‚’ã€arrã«pushã—ã¾ã™ã€‚
   def self.conv_param(param_code, arr)
 
     tmp_code = []
@@ -67,7 +66,7 @@ class RoomLayout < ActiveRecord::Base
     else
     end
 
-    # ”z—ñ‚Éroom_layout‚Ìid‚ð“o˜^
+    # é…åˆ—ã«room_layoutã®idã‚’ç™»éŒ²
     tmp_code.each do |code|
       room_layout = RoomLayout.find_by_code(code)
       arr.push(room_layout.id) if room_layout

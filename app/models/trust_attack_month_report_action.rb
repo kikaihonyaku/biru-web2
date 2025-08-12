@@ -1,7 +1,6 @@
 class TrustAttackMonthReportAction < ActiveRecord::Base
-  # attr_accessible :title, :body
   
-  default_scope where(:delete_flg => false)
+  default_scope { where(delete_flg: false) }
   
   belongs_to :owner
   belongs_to :approach_kind
