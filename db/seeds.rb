@@ -3942,7 +3942,6 @@ def dm_owner_approach_regist(approach_date, content, biru_user_code, filename)
       owner_approach.save!
     end
   end
-
   puts '処理終了'
 end
 
