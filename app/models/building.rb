@@ -25,12 +25,11 @@ class Building < ActiveRecord::Base
   has_many :building_near_station
   belongs_to :occur_source
 
-  attr_accessible :address, :code, :name, :shop_id, :manage_type_id, :build_type_id, :icon, :room_num, :manage_icon, :memo, :building_rank_id, :self_type, :tmp_build_type_icon, :build_day, :attack_code, :biru_user_id, :postcode, :occur_source_id, :proprietary_company
 
   # デフォルトスコープを定義
-  #default_scope where(:delete_flg => false).includes(:shop).includes(:build_type).includes(:trusts).includes(:trusts => :owner)
+  #default_scope { where(delete_flg: false) }.includes(:shop).includes(:build_type).includes(:trusts).includes(:trusts => :owner)
   # ↑ 最初からスコープでincludesを指定しようと思ったが、管理では使うが募集では不要な結合なので、使う検索の時に別途結合するようにする。
-  default_scope where(:delete_flg => false)
+  default_scope { where(delete_flg: false) }
   scope :oneself , -> { where(:attack_code => nil )}
 
   def gmaps4rails_address

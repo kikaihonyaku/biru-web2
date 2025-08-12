@@ -1,5 +1,4 @@
 class TrustAttackMonthReport < ActiveRecord::Base
-  # attr_accessible :title, :body
   has_many :trust_attack_month_report_actions
   has_many :trust_attack_month_report_ranks
   has_many :trust_attack_month_report_results

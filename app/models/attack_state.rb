@@ -1,7 +1,6 @@
 class AttackState < ActiveRecord::Base
-  # attr_accessible :title, :body
   
-  # ƒ‰ƒ“ƒN‚ÌƒXƒRƒA‚Ì”äŠrBƒ‰ƒ“ƒN‚ª“¯‚¶‚È‚ç0 rank_b‚Ì•]‰¿‚Ì•û‚ª’á‚¯‚ê‚Î1Arank_b‚Ì•]‰¿‚Ì•û‚ª‚‚¯‚ê‚Î2‚ð•Ô‚·
+  # ãƒ©ãƒ³ã‚¯ã®ã‚¹ã‚³ã‚¢ã®æ¯”è¼ƒã€‚ãƒ©ãƒ³ã‚¯ãŒåŒã˜ãªã‚‰0 rank_bã®è©•ä¾¡ã®æ–¹ãŒä½Žã‘ã‚Œã°1ã€rank_bã®è©•ä¾¡ã®æ–¹ãŒé«˜ã‘ã‚Œã°2ã‚’è¿”ã™
   def self.compare_rank(rank_a, rank_b)
     
     if rank_a.score == rank_b.score

@@ -1,5 +1,4 @@
 class BiruUser < ActiveRecord::Base
-  attr_accessible :code, :name, :password
   
   def self.authenticate(code, password)
     where(:code=> code,
