@@ -1,13 +1,121 @@
 /*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
- *
- * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
- * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the top of the
- * compiled file, but it's generally better to create a new file per style scope.
- * 
- *= require_self
- *= require_tree .
+ * Rails 8 Application Stylesheet
+ * This file includes all essential styles for the Biru Web application
  */
+
+/* Bootstrap Core CSS */
+@import url("bootstrap.css");
+
+/* jQuery UI Theme */
+@import url("jqgrid/themes/redroad/jquery-ui-1.8.custom.css");
+
+/* jqGrid Styles */
+@import url("jqgrid/ui.jqgrid.css");
+
+/* jQuery Plugins */
+@import url("jquery.sidr.light.css");
+@import url("jqtree.css");
+@import url("jquery.Jcrop.css");
+@import url("select2.min.css");
+@import url("select2-bootstrap.css");
+
+/* Slick Grid Components */
+@import url("slick.grid.css");
+@import url("slick.pager.css");
+@import url("slick.columnpicker.css");
+@import url("slick-default-theme.css");
+
+/* Bootstrap DatePicker */
+@import url("bootstrap-datepicker3.css");
+
+/* Application Specific Styles */
+@import url("biru-web.css.scss");
+@import url("popup.css");
+
+/* Feature Specific Styles */
+@import url("property.css.scss");
+@import url("managements.css.scss");
+@import url("trust_managements.css.scss");
+@import url("trust_rewinding.css.scss");
+@import url("performance_build_age.css.scss");
+@import url("performances_neo.css.scss");
+@import url("comments.css.scss");
+@import url("constructions.css.scss");
+@import url("kss.css.scss");
+@import url("mail_reaction.css.scss");
+@import url("wice_grid.css.scss");
+@import url("scaffolds.css.scss");
+
+/* Custom styles for Rails 8 compatibility */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-fixed-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+}
+
+/* Print media specific styles */
+@media print {
+  a[href]:after {
+    content: "" !important;
+  }
+  abbr[title]:after {
+    content: "" !important;
+  }
+}
+
+/* Container fluid styles */
+.container-fluid {
+  width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Grid system compatibility */
+.row-fluid {
+  width: 100%;
+  display: block;
+}
+
+/* Asset path fixes for Rails 8 */
+.ui-icon {
+  background-image: url('ui-icons_222222_256x240.png') !important;
+}
+
+/* Map marker styles */
+.marker-icon {
+  width: 32px;
+  height: 32px;
+}
+
+/* Loading and overlay styles */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+  .navbar-nav {
+    margin: 0;
+  }
+  
+  .container-fluid {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}

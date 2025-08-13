@@ -1,182 +1,239 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-	<!--
-	<% if content_for?(:out_charset) %>
-      <%= yield :out_charset %>
-	<%  else %>
-		<meta charset="utf-8" />
-	<% end%>
-	-->
-		<meta charset="utf-8" />
-    
+    <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= content_for?(:title) ? yield(:title) : "中央ビル管理Webシステム" %></title>
+    
     <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
     <%= include_gon %>
 
-    <%= stylesheet_link_tag "application", :media => "all" %>
-    <%= stylesheet_link_tag "jquery.sidr.light", :media => "all" %>
-    <%#= stylesheet_link_tag "jquery-ui", :media => "all" %>
-    <%= stylesheet_link_tag "jqtree", :media => "all" %>
-	
-	
-	
-	<!-- bootstrapで印刷時にULRリンクがでる処理の取り消し -->
+    <!-- Rails 8 Asset Pipeline -->
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    
+    <!-- Additional CSS files not in main bundle -->
+    <%= stylesheet_link_tag "jqgrid/themes/redroad/jquery-ui-1.8.custom", "data-turbo-track": "reload" %>
+    
+    <!-- Bootstrap print media fix -->
     <style type="text/css">
-		@media print {
-		  a[href]:after {
-		    content: ""!important;
-		  }
-		  abbr[title]:after {
-		    content: ""!important;
-		  }
-		}
-	</style>
- 
-  <!-- For all other devices -->
-  <!-- Size should be 32 x 32 pixels -->
-  <%#= favicon_link_tag 'favicon.ico', :rel => 'shortcut icon' %>
+      @media print {
+        a[href]:after {
+          content: ""!important;
+        }
+        abbr[title]:after {
+          content: ""!important;
+        }
+      }
+    </style>
 
-  <%= javascript_include_tag "application" %>
-  
-  <%= javascript_include_tag "tree.jquery" %>
-  <%= javascript_include_tag "jquery.cookie" %>
-  <%= javascript_include_tag "biru-map" %>
+    <!-- Favicon (if exists) -->
+    <%#= favicon_link_tag 'favicon.ico', :rel => 'shortcut icon' %>
 
-	<%#= stylesheet_link_tag("jqgrid/themes/default/jquery-ui-1.8.custom") %>
-	<%= stylesheet_link_tag("jqgrid/themes/redroad/jquery-ui-1.8.custom") %>
-	
-	<%= stylesheet_link_tag('jqgrid/ui.jqgrid') %>
-	<%#= javascript_include_tag('jqgrid/jquery-ui-1.8.custom.min') %>
-	<%#= javascript_include_tag('jqgrid/i18n/grid.locale-ja') %>
-	<%#= javascript_include_tag('jqgrid/jquery.jqGrid.min') %>
-	
+    <!-- Individual JavaScript files for compatibility -->
+    <%= javascript_include_tag "tree.jquery", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "jquery.cookie", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "biru-map", "data-turbo-track": "reload" %>
+    
+    <!-- Additional stylesheets for jqGrid -->
+    <%= stylesheet_link_tag('jqgrid/ui.jqgrid', "data-turbo-track": "reload") %>
+    
     <% if content_for?(:header) %>
       <%= yield :header %>
     <% end %>
-	
+    
     <% if content_for?(:slick_grid) %>
       <%= yield :slick_grid %>
     <% end %>
-	
-
   </head>
+  
   <body>
-
-        <!-- Begin Navbar -->
-		
-		<% unless @header_hidden %>
-		    <div class="navbar  navbar-fixed-top" style="margin:0;height:5px;padding:0">
-		      <div class="container">
-		        <div class="navbar-collapse collapse" id="navbar-main" >
-		          <ul class="nav navbar-nav" >
-			  
-		              <li><%= link_to "トップメニュー", root_path, :style=>'text-decoration:none;' %></li>
-		              <!-- <li><%= link_to "業績分析メニュー", performances_path, :style=>'text-decoration:none;'   %></li> -->
-			        </ul>
-					<% if @biru_user %>
-						<ul class='nav navbar-nav pull-right' >
-				              <li><%= link_to @biru_user.name + " さん", "", :style=>'text-decoration:none;' %></li>
-				              <li><%= link_to "ログアウト", logout_path, :style=>'text-decoration:none;'  %></li>
-						</ul>
-					<% end %>
-			      </div>		
-			    </div>
-			</div><!-- /.navbar -->
-		    <div class="container-fluid" style="height:100%;width:100%;padding:0;margin:0;padding-top:50px;" id="body-contents">
-		      <%#= bootstrap_flash %>
-		<% else %>
-		    <div class="container-fluid" style="height:100%;width:100%;padding:0;margin:0;" id="body-contents">
-		      <%#= bootstrap_flash %>
-		<% end %>
-
-<!--	  
-<div class="alert alert-warning alert-dismissible" role="alert" style="margin-bottom:0px;display:none;" id="alert-block">
-  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-  <strong>Warning!</strong>&nbsp;現在のブラウザでは表示や操作に時間がかかります。パフォーマンスを発揮する為にはInternetExplore9以上、またはグーグルクロームをお使いください。
-</div>
--->
-      <div class="row-fluid" style="height:100%;" id="top-wrapper">
-        
-        <div style="height:100%" id="top-contents">
-          <div style="height:100%" id="top-contents-main" >
-            <%= yield %>
-          </div>
+    <!-- Begin Navbar -->
+    <% unless @header_hidden %>
+      <div class="navbar navbar-fixed-top" style="margin:0;height:5px;padding:0">
+        <div class="container">
+          <div class="navbar-collapse collapse" id="navbar-main">
+            <ul class="nav navbar-nav">
+              <li><%= link_to "トップメニュー", root_path, :style=>'text-decoration:none;' %></li>
+            </ul>
+            <% if @biru_user %>
+              <ul class='nav navbar-nav pull-right'>
+                <li><%= link_to @biru_user.name + " さん", "", :style=>'text-decoration:none;' %></li>
+                <li><%= link_to "ログアウト", logout_path, :style=>'text-decoration:none;' %></li>
+              </ul>
+            <% end %>
+          </div>    
         </div>
+      </div><!-- /.navbar -->
+      <div class="container-fluid" style="height:100%;width:100%;padding:0;margin:0;padding-top:50px;" id="body-contents">
+    <% else %>
+      <div class="container-fluid" style="height:100%;width:100%;padding:0;margin:0;" id="body-contents">
+    <% end %>
 
-        <%# performances（旧） %>
-        <% if content_for?(:sidebar) %>
-        
-          <div id="top-sidebar">
-              <%= yield :sidebar %>
-          </div>
-        <% end %>
+    <div class="row-fluid" style="height:100%;" id="top-wrapper">
+      <div style="height:100%" id="top-contents">
+        <div style="height:100%" id="top-contents-main">
+          <%= yield %>
+        </div>
+      </div>
 
-        <%# performance_monthly %>
-        <% if content_for?(:sidebar_monthly) %>
+      <!-- Sidebar sections -->
+      <% if content_for?(:sidebar) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar %>
+        </div>
+      <% end %>
 
-          <div id="top-sidebar">
-              <%= yield :sidebar_monthly %>
-          </div>
-        <% end %>
+      <% if content_for?(:sidebar_monthly) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_monthly %>
+        </div>
+      <% end %>
 
-        <%# performance_build_age %>
-        <% if content_for?(:sidebar_build_age) %>
+      <% if content_for?(:sidebar_build_age) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_build_age %>
+        </div>
+      <% end %>
 
-          <div id="top-sidebar">
-              <%= yield :sidebar_build_age %>
-          </div>
-        <% end %>
+      <% if content_for?(:sidebar_vacant_day) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_vacant_day %>
+        </div>
+      <% end %>
 
-        <% if content_for?(:sidebar_map) %>
+      <% if content_for?(:sidebar_tenancy_period) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_tenancy_period %>
+        </div>
+      <% end %>
 
-          <div id="sidr">
-              <%= yield :sidebar_map %>
-          </div><!--/span-->
-        <% end %>
+      <% if content_for?(:sidebar_recruitments) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_recruitments %>
+        </div>
+      <% end %>
 
-      </div><!--/row-->
-    </div> <!-- /container -->
+      <% if content_for?(:sidebar_managements) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_managements %>
+        </div>
+      <% end %>
 
+      <% if content_for?(:sidebar_trust_managements) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_trust_managements %>
+        </div>
+      <% end %>
 
-    <!-- Javascripts
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <%#= javascript_include_tag "application" %> <!-- ここにあると「$」定義されていないとエラーになるのでヘッダに移動 -->
+      <% if content_for?(:sidebar_building_rooms) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_building_rooms %>
+        </div>
+      <% end %>
 
-	<style type="text/css">
-		@media print{
-		  #top-menu{display:none;}
-		  #top-sidebar{display:none;}
-		  #sidr{display:none;}
-		  #top-contents{width:100%;height:100%; float:none;}
-		}
-	</style>
-	
-<!--
-	<script type="text/javascript">
-		if(isSupported(['ie6','ie7','ie8'])){
-			// サポート対象ブラウザでないとき
-			document.getElementById("alert-block").style.display="block";
-		}else{
-			document.getElementById("alert-block").style.display="none";
-		}
-		
-		// 2016/01/20 shibata あたらしいIE10が標準になったので、バージョンが何であっても表示を無効にする。
-		document.getElementById("alert-block").style.display="none";
+      <% if content_for?(:sidebar_biru_service) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_biru_service %>
+        </div>
+      <% end %>
 
-	</script>
--->
+      <% if content_for?(:sidebar_property) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_property %>
+        </div>
+      <% end %>
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->  
-	
-	
+      <% if content_for?(:sidebar_renters) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_renters %>
+        </div>
+      <% end %>
+
+      <% if content_for?(:sidebar_owners) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_owners %>
+        </div>
+      <% end %>
+
+      <% if content_for?(:sidebar_comments) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_comments %>
+        </div>
+      <% end %>
+
+      <% if content_for?(:sidebar_trust_rewinding) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_trust_rewinding %>
+        </div>
+      <% end %>
+
+      <% if content_for?(:sidebar_mail_reactions) %>
+        <div id="top-sidebar">
+          <%= yield :sidebar_mail_reactions %>
+        </div>
+      <% end %>
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted credit">中央ビル管理Webシステム</p>
+      </div>
+    </div>
+
+    </div> <!-- End container-fluid -->
+
+    <!-- Global JavaScript functions and initialization -->
+    <script>
+      // Screen blocking function (now defined in application.js)
+      // Keep this for backward compatibility if needed
+      function screen_block() {
+        if (typeof window.screen_block === 'function') {
+          window.screen_block();
+        } else if (typeof $.blockUI !== 'undefined') {
+          $.blockUI({
+            message: '<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i><br><br>処理中...</div>',
+            css: {
+              border: 'none',
+              padding: '15px',
+              backgroundColor: '#000',
+              '-webkit-border-radius': '10px',
+              '-moz-border-radius': '10px',
+              opacity: .5,
+              color: '#fff'
+            }
+          });
+        }
+      }
+
+      // Enhanced error handling for jQuery plugins
+      document.addEventListener('DOMContentLoaded', function() {
+        // Check for required libraries
+        if (typeof $ === 'undefined') {
+          console.error('jQuery is not loaded');
+          return;
+        }
+
+        // tree.jquery plugin error handling
+        if (typeof $.fn.tree === 'undefined') {
+          console.warn('tree.jquery plugin not loaded');
+        } else {
+          console.log('tree.jquery plugin loaded successfully');
+        }
+
+        // Global error handler for JavaScript
+        window.addEventListener('error', function(e) {
+          if (e.filename && e.filename.includes('tree.jquery')) {
+            console.warn('tree.jquery error:', e.message);
+            return false;
+          }
+        });
+
+        // Initialize any global jQuery plugins here if needed
+        console.log('Application initialization complete');
+      });
+    </script>
   </body>
 </html>

@@ -1,32 +1,60 @@
-// This is a manifest file that'll be compiled into application.js, which will include all the files
-// listed below.
-//
-// Any JavaScript/Coffee file within this directory, lib/assets/javascripts, vendor/assets/javascripts,
-// or vendor/assets/javascripts of plugins, if any, can be referenced here using a relative path.
-//
-// It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
-// the compiled file.
-//
-// WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
-// GO AFTER THE REQUIRES BELOW.
-//
-//= require jquery.min
-//= require jquery-ui.min
-//= require jquery_ujs
-//= require jquery.sidr.min
-//= require jquery.ui.ympicker
-//= require jquery.Jcrop
-//= require tree.jquery
-//= require bootstrap.min
-//= require bootstrap-datepicker
+// Rails 8 Application JavaScript
+// Configure your import map in config/importmap.rb
 
-//= require biru-map
-//= require wice_grid
-// 2014.05.24 del = require highcharts/highcharts
-// 2014.05.24 del = require highcharts/highcharts-more
-//= require highcharts/highstock
-//= require jquery.blockUI
-//= require select2.min
-//
-//= require_tree .
+import "@hotwired/turbo-rails"
+import "controllers"
 
+// Custom application JavaScript
+// Note: Large JavaScript libraries are now managed through importmap
+// Individual script loading is handled in the layout file
+
+console.log('Biru Web application loaded successfully');
+
+// Global error handler for debugging
+window.addEventListener('error', function(e) {
+  if (e.filename && (
+    e.filename.includes('tree.jquery') ||
+    e.filename.includes('gmaps') ||
+    e.filename.includes('jquery')
+  )) {
+    console.warn('JavaScript library error:', e.message, 'in', e.filename);
+    return false;
+  }
+});
+
+// Global screen blocking function for compatibility
+window.screen_block = function() {
+  if (typeof $.blockUI !== 'undefined') {
+    $.blockUI({
+      message: '<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i><br><br>処理中...</div>',
+      css: {
+        border: 'none',
+        padding: '15px',
+        backgroundColor: '#000',
+        '-webkit-border-radius': '10px',
+        '-moz-border-radius': '10px',
+        opacity: .5,
+        color: '#fff'
+      }
+    });
+  } else {
+    console.warn('jQuery BlockUI not available');
+  }
+};
+
+// Document ready handler for jQuery compatibility
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize any jQuery-dependent features after DOM is loaded
+  if (typeof $ !== 'undefined') {
+    console.log('jQuery available, version:', $.fn.jquery);
+    
+    // tree.jquery plugin initialization
+    if (typeof $.fn.tree !== 'undefined') {
+      console.log('tree.jquery plugin loaded successfully');
+    } else {
+      console.warn('tree.jquery plugin not loaded');
+    }
+  } else {
+    console.warn('jQuery not available');
+  }
+});
