@@ -741,7 +741,7 @@ class TrustManagementsController < ApplicationController
     # sql = sql + " , SUM(case approaches.code when '0045' then 1 else 0 end) as tel_speack "
     sql = sql + ", case buildings.selective_type when 1 then '重点' when 2 then '準重点' else '' end as building_selective_type "
     sql = sql + ", occur_sources.name as occur_sources_name "
-    sql = sql + " FROM trusts inner join owners on trusts.owner_id = owners.id "
+    sql = sql + " FROM biru.trusts inner join biru.owners on trusts.owner_id = owners.id "
     sql = sql + " inner JOIN manage_types on trusts.manage_type_id = manage_types.id "
     sql = sql + " inner JOIN buildings on trusts.building_id = buildings.id "
     sql = sql + " inner JOIN shops on buildings.shop_id = shops.id "
@@ -898,7 +898,7 @@ class TrustManagementsController < ApplicationController
 
         if @history_visit[:exist]
           kinds = ApproachKind.find_all_by_code([ "0010", "0020" ])
-          sql = sql + " AND owners.id IN ( select owner_id from owner_approaches where delete_flg = 0 and approach_kind_id In ( " + kinds.map { |kind| kind.id }.join(",") +  " ) and approach_date between '" + Date.parse(@history_visit_from).strftime("%Y-%m-%d") + "' and  '" + Date.parse(@history_visit_to).strftime("%Y-%m-%d") + "') "
+          sql = sql + " AND owners.id IN ( select owner_id from biru.owner_approaches where delete_flg = 0 and approach_kind_id In ( " + kinds.map { |kind| kind.id }.join(",") +  " ) and approach_date between '" + Date.parse(@history_visit_from).strftime("%Y-%m-%d") + "' and  '" + Date.parse(@history_visit_to).strftime("%Y-%m-%d") + "') "
         end
 
       end
@@ -931,7 +931,7 @@ class TrustManagementsController < ApplicationController
 
         if @history_dm[:exist]
           kinds = ApproachKind.find_all_by_code([ "0030", "0035" ])
-          sql = sql + " AND owners.id IN ( select owner_id from owner_approaches where delete_flg = 0 and approach_kind_id In ( " + kinds.map { |kind| kind.id }.join(",") +  " ) and approach_date between '" + Date.parse(@history_dm_from).strftime("%Y-%m-%d") + "' and  '" + Date.parse(@history_dm_to).strftime("%Y-%m-%d") + "') "
+          sql = sql + " AND owners.id IN ( select owner_id from biru.owner_approaches where delete_flg = 0 and approach_kind_id In ( " + kinds.map { |kind| kind.id }.join(",") +  " ) and approach_date between '" + Date.parse(@history_dm_from).strftime("%Y-%m-%d") + "' and  '" + Date.parse(@history_dm_to).strftime("%Y-%m-%d") + "') "
         end
       end
 
@@ -961,7 +961,7 @@ class TrustManagementsController < ApplicationController
         if @history_tel[:exist]
 
           kinds = ApproachKind.find_all_by_code([ "0040", "0045" ])
-          sql = sql + " AND owners.id IN ( select owner_id from owner_approaches where delete_flg = 0 and approach_kind_id In ( " + kinds.map { |kind| kind.id }.join(",") +  " ) and approach_date between '" + Date.parse(@history_tel_from).strftime("%Y-%m-%d") + "' and  '" + Date.parse(@history_tel_to).strftime("%Y-%m-%d") + "') "
+          sql = sql + " AND owners.id IN ( select owner_id from biru.owner_approaches where delete_flg = 0 and approach_kind_id In ( " + kinds.map { |kind| kind.id }.join(",") +  " ) and approach_date between '" + Date.parse(@history_tel_from).strftime("%Y-%m-%d") + "' and  '" + Date.parse(@history_tel_to).strftime("%Y-%m-%d") + "') "
         end
       end
 
@@ -1633,7 +1633,7 @@ class TrustManagementsController < ApplicationController
 
       str_sql = ""
       str_sql = str_sql + " SELECT distinct owners.id as owner_id"
-      str_sql = str_sql + " FROM owners inner join trusts on owners.id = trusts.owner_id "
+      str_sql = str_sql + " FROM biru.owners inner join biru.trusts on owners.id = trusts.owner_id "
       str_sql = str_sql + " inner join attack_states on trusts.attack_state_id = attack_states.id "
       str_sql = str_sql + " where trusts.biru_user_id = " + params[:sid]
       str_sql = str_sql + " and trusts.delete_flg = 0"
@@ -2012,7 +2012,7 @@ class TrustManagementsController < ApplicationController
 
    str_sql = ""
    str_sql = str_sql + " select approach_kind_code, biru.F_UTIL_DATE_FORMAT(b.approach_date, '%d') as key_date, count(*) as cnt" # todo sqlserver
-   str_sql = str_sql + " from trust_attack_month_reports a"
+       str_sql = str_sql + " from biru.trust_attack_month_reports a"
    str_sql = str_sql + " inner join trust_attack_month_report_actions b on a.id = b.trust_attack_month_report_id"
    str_sql = str_sql + " where a.month = '" + @month + "'"
    str_sql = str_sql + " and a.biru_user_id = '" + @biru_trust_user.id.to_s + "'"
@@ -2638,9 +2638,9 @@ class TrustManagementsController < ApplicationController
     sql = sql + ",rp.area_name "
     sql = sql + ",usr.name as biru_user_name "
     sql = sql + ",ow.id AS owner_id "
-    sql = sql + "FROM trusts tr INNER JOIN owners ow ON tr.owner_id = ow.id "
-    sql = sql + "INNER JOIN biru_users usr ON tr.biru_user_id = usr.id "
-    sql = sql + "INNER JOIN trust_attack_month_reports rp ON tr.biru_user_id = rp.biru_user_id "
+    sql = sql + "FROM biru.trusts tr INNER JOIN biru.owners ow ON tr.owner_id = ow.id "
+    sql = sql + "INNER JOIN biru.biru_users usr ON tr.biru_user_id = usr.id "
+    sql = sql + "INNER JOIN biru.trust_attack_month_reports rp ON tr.biru_user_id = rp.biru_user_id "
     sql = sql + "WHERE rp.month = '" + @month + "' "
     sql = sql + "  AND tr.delete_flg = 0 "
     sql = sql + "  AND ow.delete_flg = 0 "
@@ -2652,7 +2652,7 @@ class TrustManagementsController < ApplicationController
     sql = sql + "  ,usr.name "
     sql = sql + "  ,rp.area_name "
     sql = sql + ") A "
-    sql = sql + "INNER JOIN owners B ON A.owner_id = B.id "
+    sql = sql + "INNER JOIN biru.owners B ON A.owner_id = B.id "
     sql = sql + "GROUP BY "
     sql = sql + " A.area_name "
     sql = sql + ",A.biru_user_id "
@@ -2706,8 +2706,8 @@ class TrustManagementsController < ApplicationController
     sql = ""
     sql = sql + "SELECT "
     sql = sql + "	 ow.id as owner_id "
-    sql = sql + "FROM trusts tr INNER JOIN owners ow ON tr.owner_id = ow.id "
-    sql = sql + "INNER JOIN biru_users usr ON tr.biru_user_id = usr.id "
+    sql = sql + "FROM biru.trusts tr INNER JOIN biru.owners ow ON tr.owner_id = ow.id "
+    sql = sql + "INNER JOIN biru.biru_users usr ON tr.biru_user_id = usr.id "
     sql = sql + "WHERE tr.biru_user_id = " + user.id.to_s + " "
     sql = sql + "  AND tr.delete_flg = 0 "
     sql = sql + "  AND ow.delete_flg = 0 "
@@ -2784,9 +2784,9 @@ def get_owners_sql(object_user, bulk)
     sql = sql + ", SUM(case WHEN attack_states.code = 'X' then 1 else 0 end) as rank_x "
     sql = sql + ", SUM(case WHEN attack_states.code = 'Y' then 1 else 0 end) as rank_y "
     sql = sql + ", SUM(case WHEN attack_states.code = 'W' then 1 else 0 end) as rank_w "
-    sql = sql + "FROM owners a "
-    sql = sql + " inner join trusts on a.id = trusts.owner_id "
-    sql = sql + " inner join attack_states on trusts.attack_state_id = attack_states.id "
+    sql = sql + "FROM biru.owners a "
+    sql = sql + " inner join biru.trusts on a.id = trusts.owner_id "
+    sql = sql + " inner join biru.attack_states on trusts.attack_state_id = attack_states.id "
     #    sql = sql + "WHERE  a.biru_user_id = " + object_user.id.to_s + " "
     sql = sql + "WHERE  trusts.biru_user_id = " + object_user.id.to_s + " "
 sql = sql + " AND a.delete_flg = 0 "
@@ -2822,7 +2822,7 @@ sql = sql + " AND a.delete_flg = 0 "
     sql = sql + ", a.name "
     sql = sql + ", a.address "
     sql = sql + ", a.memo "
-    sql = sql + "FROM owners a "
+    sql = sql + "FROM biru.owners a "
     sql = sql + "WHERE  biru_user_id = " + object_user.id.to_s + " "
     sql = sql + "AND a.delete_flg = 0 "
     sql = sql + "ORDER BY updated_at DESC "
@@ -2837,7 +2837,7 @@ def get_buildings_sql(object_user)
   sql = sql + ", a.address "
   sql = sql + ", a.memo "
   sql = sql + ", b.name as shop_name "
-  sql = sql + "FROM buildings a inner join shops b on a.shop_id = b.id "
+  sql = sql + "FROM biru.buildings a inner join biru.shops b on a.shop_id = b.id "
   sql = sql + "WHERE  biru_user_id = " + object_user.id.to_s + " "
   sql = sql + "AND a.delete_flg = 0 "
   sql = sql + "ORDER BY updated_at DESC "

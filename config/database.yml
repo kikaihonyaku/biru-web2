@@ -8,8 +8,12 @@ default: &default
   password: system9922
   pool: 10
   timeout: 5000          # ms
-  schema_search_path: biru # スキーマ名を指定
-  schema: biru
+  database: BIRU30_DEV
+  variables:
+    sql_mode: ANSI_QUOTES
+  options:
+    default_schema: biru
+    schema_search_path: biru
 
 development:
   <<: *default

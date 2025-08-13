@@ -497,15 +497,15 @@ private
       strSql = strSql + ",j.name as room_status "
     end
 
-    strSql = strSql + "from buildings a "
-    strSql = strSql + "inner join rooms b on a.id = b.building_id "
-    strSql = strSql + "inner join shops c on c.id = a.shop_id "
-    strSql = strSql + "inner join trusts d on a.id = d.building_id "
-    strSql = strSql + "inner join manage_types e on e.id = b.manage_type_id  "
-    strSql = strSql + "inner join owners f on d.owner_id = f.id "
-    strSql = strSql + "inner join build_types g on a.build_type_id = g.id "
-    strSql = strSql + "inner join room_statuses j on b.room_status_id = j.id "
-    strSql = strSql + "left outer join (select * from trust_maintenances where delete_flg = 0 ) h on h.trust_id = d.id "
+    strSql = strSql + "from biru.buildings a "
+    strSql = strSql + "inner join biru.rooms b on a.id = b.building_id "
+    strSql = strSql + "inner join biru.shops c on c.id = a.shop_id "
+    strSql = strSql + "inner join biru.trusts d on a.id = d.building_id "
+    strSql = strSql + "inner join biru.manage_types e on e.id = b.manage_type_id  "
+    strSql = strSql + "inner join biru.owners f on d.owner_id = f.id "
+    strSql = strSql + "inner join biru.build_types g on a.build_type_id = g.id "
+    strSql = strSql + "inner join biru.room_statuses j on b.room_status_id = j.id "
+    strSql = strSql + "left outer join (select * from biru.trust_maintenances where delete_flg = 0 ) h on h.trust_id = d.id "
     strSql = strSql + "where 1 = 1  "
     strSql = strSql + "and c.code in ( " + shop_list + ") " if shop_list.length > 0
 

@@ -24,6 +24,7 @@ class ApplicationController < ActionController::Base
 
   # 2014/06/10 paramでuser_idを送るようにして対応できた。
   before_action :check_logined
+  before_action :set_sqlserver_schema
 
   # CSV出力する際、Windowsで開くためにShift_JISに変換する。■2014/08/12 当面はpdfで出力するため、文字コードはutf-8に戻す。
   after_action :change_charset_to_sjis, if: :csv?
@@ -190,6 +191,14 @@ class ApplicationController < ActionController::Base
     #      endpos = request.fullpath.index("?") - 1
     #      redirect_to request.fullpath[0..endpos]
     #    end
+  end
+
+  def set_sqlserver_schema
+    if ActiveRecord::Base.connection.adapter_name.downcase == 'sqlserver'
+      ActiveRecord::Base.connection.execute("SET SCHEMA biru")
+    end
+  rescue => e
+    Rails.logger.warn "Failed to set SQL Server schema: #{e.message}"
   end
 
   # 管理／募集画面で、検索結果の初期表示を制御するのに使用します。
