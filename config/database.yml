@@ -8,14 +8,16 @@ default: &default
   password: system9922
   pool: 10
   timeout: 5000          # ms
+  schema_search_path: biru # スキーマ名を指定
+  schema: biru
 
 development:
   <<: *default
-  database: BIRU30
+  database: BIRU30_DEV
 
 test:
   <<: *default
-  database: BIRU30
+  database: BIRU30_TEST
 
 production:
   <<: *default
