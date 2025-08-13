@@ -1,5 +1,6 @@
 class Station < ActiveRecord::Base
 
+  self.table_name = 'biru.stations'
   acts_as_gmappable
 
   belongs_to :line

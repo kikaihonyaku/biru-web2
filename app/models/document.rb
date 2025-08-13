@@ -1,5 +1,6 @@
 class Document < ActiveRecord::Base
   
+  self.table_name = 'biru.documents'
   belongs_to :owner
   belongs_to :building
   belongs_to :biru_user

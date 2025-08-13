@@ -1,5 +1,6 @@
 # -*- encoding:utf-8 -*-
 class Trust < ActiveRecord::Base
+  self.table_name = 'biru.trusts'
   belongs_to :building
   belongs_to :owner
   belongs_to :manage_type

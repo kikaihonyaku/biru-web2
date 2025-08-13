@@ -11,6 +11,7 @@ require 'hmac'
 require 'hmac-sha1'
 
 class Building < ActiveRecord::Base
+  self.table_name = 'biru.buildings'
   acts_as_gmappable
   
   # belongs_to :biru_marker

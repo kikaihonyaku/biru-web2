@@ -1,5 +1,6 @@
 class AttackState < ActiveRecord::Base
   
+  self.table_name = 'biru.attack_states'
   # ランクのスコアの比較。ランクが同じなら0 rank_bの評価の方が低ければ1、rank_bの評価の方が高ければ2を返す
   def self.compare_rank(rank_a, rank_b)
     

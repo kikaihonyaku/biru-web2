@@ -1,5 +1,6 @@
 # -*- encoding :utf-8 -*-
 class Owner < ActiveRecord::Base
+  self.table_name = 'biru.owners'
   acts_as_gmappable
 
 

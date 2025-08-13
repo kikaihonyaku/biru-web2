@@ -1,4 +1,5 @@
 class TrustAttackMonthReport < ActiveRecord::Base
+  self.table_name = 'biru.trust_attack_month_reports'
   has_many :trust_attack_month_report_actions
   has_many :trust_attack_month_report_ranks
   has_many :trust_attack_month_report_results

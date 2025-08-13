@@ -1,6 +1,7 @@
 # -*- encoding :utf-8 -*-
 
 class MailReaction < ActiveRecord::Base
+  self.table_name = 'biru.mail_reactions'
   set_table_name 'BIRU31.biru.T_募集_メール反響'
   set_primary_key 'メール反響ID'
 

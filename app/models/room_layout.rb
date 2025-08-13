@@ -1,4 +1,5 @@
 class RoomLayout < ActiveRecord::Base
+  self.table_name = 'biru.room_layouts'
   has_many :rooms
 
 

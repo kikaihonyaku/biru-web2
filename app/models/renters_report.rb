@@ -1,5 +1,6 @@
 class RentersReport < ActiveRecord::Base
   
+  self.table_name = 'biru.renters_reports'
   belongs_to :renters_room
   belongs_to :renters_building
   

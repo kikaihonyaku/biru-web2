@@ -143,7 +143,7 @@ class ApplicationController < ActionController::Base
     url_param_delete = false
 
     if session[:biru_user]
-      user_id = session[:biru_user]
+      user_id = session[:biru_user]  # 既にIDが保存されている
     elsif params[:user_id]
       user_id = params[:user_id].to_i
     elsif params[:sid]
@@ -169,7 +169,7 @@ class ApplicationController < ActionController::Base
     if user_id then
       begin
         @biru_user = BiruUser.find(user_id)
-        session[:biru_user] = @biru_user
+        session[:biru_user] = @biru_user.id  # IDのみを保存
       rescue ActiveRecord::RecordNotFound
         reset_session
       end

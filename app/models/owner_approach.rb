@@ -2,6 +2,7 @@
 
 class OwnerApproach < ActiveRecord::Base
 
+  self.table_name = 'biru.owner_approaches'
   belongs_to :owner
   belongs_to :approach_kind
   belongs_to :biru_user

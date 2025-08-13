@@ -2,6 +2,7 @@
 
 class Room < ActiveRecord::Base
 
+  self.table_name = 'biru.rooms'
   # デフォルトスコープを定義
   default_scope { where(delete_flg: false) }
 

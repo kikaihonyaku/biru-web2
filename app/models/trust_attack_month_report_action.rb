@@ -1,5 +1,6 @@
 class TrustAttackMonthReportAction < ActiveRecord::Base
   
+  self.table_name = 'biru.trust_attack_month_report_actions'
   default_scope { where(delete_flg: false) }
   
   belongs_to :owner

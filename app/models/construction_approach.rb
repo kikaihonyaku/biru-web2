@@ -1,6 +1,7 @@
 #-*- coding:utf-8 -*-
 
 class ConstructionApproach < ActiveRecord::Base
+  self.table_name = 'biru.construction_approaches'
   belongs_to :construction
   belongs_to :approach_kind
 
