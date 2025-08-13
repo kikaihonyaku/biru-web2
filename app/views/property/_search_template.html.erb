@@ -1,213 +1,347 @@
+<!-- 基本情報セクション -->
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="form-floating">
+      <%= text_field_tag :owner_name, @search_param[:owner_name], class: 'form-control', placeholder: '貸主名を入力' %>
+      <label for="owner_name">
+        <i class="fas fa-user me-2"></i>貸主名
+      </label>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-floating">
+      <%= text_field_tag :owner_address, @search_param[:owner_address], class: 'form-control', placeholder: '貸主住所を入力' %>
+      <label for="owner_address">
+        <i class="fas fa-map-marker-alt me-2"></i>貸主住所
+      </label>
+    </div>
+  </div>
+</div>
 
-		<!-- 2行目 -->
-		<div class="row">
-	    <div class="col-sm-6">
-			  <div class="form-group">
-			    <label class="col-sm-2 control-label" for="">貸主名</label>
-			    <div class="col-sm-10">
-			      <%= text_field_tag :owner_name, @search_param[:owner_name] %>
-			    </div>
-			  </div>
-			</div>
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="form-floating">
+      <%= text_field_tag :building_name, @search_param[:building_name], class: 'form-control', placeholder: '物件名を入力' %>
+      <label for="building_name">
+        <i class="fas fa-building me-2"></i>物件名
+      </label>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-floating">
+      <%= text_field_tag :building_address, @search_param[:building_address], class: 'form-control', placeholder: '物件住所を入力' %>
+      <label for="building_address">
+        <i class="fas fa-map-pin me-2"></i>物件住所
+      </label>
+    </div>
+  </div>
+</div>
 
-	    <div class="col-sm-6">
-			  <div class="form-group">
-			    <label class="col-sm-2 control-label" for="">貸主住所</label>
-			    <div class="col-sm-10">
-			      <%= text_field_tag :owner_address, @search_param[:owner_address] %>
-			    </div>
-			  </div>
-			</div>
-			
-		</div>
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="form-floating">
+      <%= select_tag :shop_id, 
+          options_from_collection_for_select(@shops, :id, :name, @search_param[:shop_id]), 
+          prompt: '営業所を選択', 
+          class: 'form-select' %>
+      <label for="shop_id">
+        <i class="fas fa-store me-2"></i>管理営業所
+      </label>
+    </div>
+  </div>
+  <div class="col-md-6"></div>
+</div>
 
-		<!-- 3行目 -->
-		<div class="row">
-	    <div class="col-sm-6">
-			  <div class="form-group">
-			    <label class="col-sm-2 control-label" for="">物件名</label>
-			    <div class="col-sm-10">
-			      <%= text_field_tag :building_name, @search_param[:building_name] %>
-			    </div>
-			  </div>
-			</div>
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="form-floating">
+      <%= text_field_tag :owner_memo, @search_param[:owner_memo], class: 'form-control', placeholder: '貸主備考を入力' %>
+      <label for="owner_memo">
+        <i class="fas fa-sticky-note me-2"></i>貸主備考
+      </label>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-floating">
+      <%= text_field_tag :building_memo, @search_param[:building_memo], class: 'form-control', placeholder: '物件備考を入力' %>
+      <label for="building_memo">
+        <i class="fas fa-clipboard me-2"></i>物件備考
+      </label>
+    </div>
+  </div>
+</div>
 
-	    <div class="col-sm-6">
-			  <div class="form-group">
-			    <label class="col-sm-2 control-label" for="">物件住所</label>
-			    <div class="col-sm-10">
-			      <%= text_field_tag :building_address, @search_param[:building_address] %>
-			    </div>
-			    </div>
-			  </div>
+<!-- 管理方式セクション -->
+<div class="row mb-4">
+  <div class="col-12">
+    <label class="form-label fw-bold">
+      <i class="fas fa-cogs me-2"></i>管理方式
+    </label>
+    <div class="row g-3">
+      <div class="col-md-3 col-sm-6">
+        <div class="form-check">
+          <%= check_box_tag :manage_type_i, true, @search_param[:manage_type_i], class: 'form-check-input' %>
+          <label class="form-check-label" for="manage_type_i">
+            <span class="badge bg-primary">一般</span>
+          </label>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="form-check">
+          <%= check_box_tag :manage_type_a, true, @search_param[:manage_type_a], class: 'form-check-input' %>
+          <label class="form-check-label" for="manage_type_a">
+            <span class="badge bg-success">A管理</span>
+          </label>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="form-check">
+          <%= check_box_tag :manage_type_b, true, @search_param[:manage_type_b], class: 'form-check-input' %>
+          <label class="form-check-label" for="manage_type_b">
+            <span class="badge bg-info">B管理</span>
+          </label>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="form-check">
+          <%= check_box_tag :manage_type_d, true, @search_param[:manage_type_d], class: 'form-check-input' %>
+          <label class="form-check-label" for="manage_type_d">
+            <span class="badge bg-warning">D管理</span>
+          </label>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="form-check">
+          <%= check_box_tag :manage_type_g, true, @search_param[:manage_type_g], class: 'form-check-input' %>
+          <label class="form-check-label" for="manage_type_g">
+            <span class="badge bg-secondary">業務君</span>
+          </label>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="form-check">
+          <%= check_box_tag :manage_type_s, true, @search_param[:manage_type_s], class: 'form-check-input' %>
+          <label class="form-check-label" for="manage_type_s">
+            <span class="badge bg-dark">総務君</span>
+          </label>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="form-check">
+          <%= check_box_tag :manage_type_t, true, @search_param[:manage_type_t], class: 'form-check-input' %>
+          <label class="form-check-label" for="manage_type_t">
+            <span class="badge bg-danger">特優賃</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-			</div>
+<!-- その他オプション -->
+<div class="row mb-4">
+  <div class="col-md-6">
+    <div class="form-check form-switch">
+      <%= check_box_tag :parking_search, true, @search_param[:parking_search], class: 'form-check-input' %>
+      <label class="form-check-label fw-bold" for="parking_search">
+        <i class="fas fa-car me-2"></i>駐車場・その他を含む
+      </label>
+    </div>
+  </div>
+</div>
 
-		<!-- 4行目 -->
-		<div class="row">
-	    <div class="col-sm-6">
-			  <div class="form-group">
-			    <label class="col-sm-2 control-label" for="">管理営業所</label>
-			    <div class="col-sm-10">
-			      <%= select_tag :shop_id, options_from_collection_for_select(@shops, :id, :name, @search_param[:shop_id]), :prompt=>'指定なし' %>
-			    </div>
-			  </div>
-			    </div>
-			  
-	    <div class="col-sm-6"></div>
-			  </div>
+<!-- 履歴検索セクション -->
+<div class="card border-primary mb-4">
+  <div class="card-header bg-primary text-white">
+    <h6 class="card-title mb-0">
+      <i class="fas fa-history me-2"></i>履歴検索
+    </h6>
+  </div>
+  <div class="card-body">
+    <!-- 訪問履歴 -->
+    <div class="row mb-3">
+      <div class="col-12">
+        <label class="form-label fw-bold">
+          <i class="fas fa-walking me-2"></i>訪問履歴
+        </label>
+        <div class="row g-3 align-items-end">
+          <div class="col-md-2">
+            <div class="form-check">
+              <%= radio_button_tag 'history_visit', 'all', @history_visit[:all], class: 'form-check-input' %>
+              <label class="form-check-label" for="history_visit_all">すべて</label>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-check">
+              <%= radio_button_tag 'history_visit', 'exist', @history_visit[:exist], class: 'form-check-input' %>
+              <label class="form-check-label" for="history_visit_exist">履歴あり</label>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-floating">
+              <%= text_field_tag 'history_visit_from', @history_visit_from, class: 'form-control datepicker', placeholder: '開始日' %>
+              <label for="history_visit_from">開始日</label>
+            </div>
+          </div>
+          <div class="col-md-1 text-center">
+            <span class="text-muted">〜</span>
+          </div>
+          <div class="col-md-3">
+            <div class="form-floating">
+              <%= text_field_tag 'history_visit_to', @history_visit_to, class: 'form-control datepicker', placeholder: '終了日' %>
+              <label for="history_visit_to">終了日</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- DM履歴 -->
+    <div class="row mb-3">
+      <div class="col-12">
+        <label class="form-label fw-bold">
+          <i class="fas fa-envelope me-2"></i>DM履歴
+        </label>
+        <div class="row g-3 align-items-end">
+          <div class="col-md-2">
+            <div class="form-check">
+              <%= radio_button_tag 'history_dm', 'all', @history_dm[:all], class: 'form-check-input' %>
+              <label class="form-check-label" for="history_dm_all">すべて</label>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-check">
+              <%= radio_button_tag 'history_dm', 'exist', @history_dm[:exist], class: 'form-check-input' %>
+              <label class="form-check-label" for="history_dm_exist">履歴あり</label>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-floating">
+              <%= text_field_tag 'history_dm_from', @history_dm_from, class: 'form-control datepicker', placeholder: '開始日' %>
+              <label for="history_dm_from">開始日</label>
+            </div>
+          </div>
+          <div class="col-md-1 text-center">
+            <span class="text-muted">〜</span>
+          </div>
+          <div class="col-md-3">
+            <div class="form-floating">
+              <%= text_field_tag 'history_dm_to', @history_dm_to, class: 'form-control datepicker', placeholder: '終了日' %>
+              <label for="history_dm_to">終了日</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-		<!-- 5行目 -->
-		<div class="row">
-	    <div class="col-sm-6">
-			  <div class="form-group">
-			    <label class="col-sm-2 control-label" for="">貸主備考</label>
-			    <div class="col-sm-10">
-			      <%= text_field_tag :owner_memo, @search_param[:owner_memo] %>
-			    </div>
-			  </div>
-			</div>
-			  
-	    <div class="col-sm-6">
-			  <div class="form-group">
-			    <label class="col-sm-2 control-label" for="">物件備考</label>
-			    <div class="col-sm-10">
-			      <%= text_field_tag :building_memo, @search_param[:building_memo] %>
-			    </div>
-			  </div>			  
-			</div>
-		</div>
-			  
-		<div class="row">
-	    <div class="col-sm-6">
-			  <div class="form-group">
-  			    <label class="col-sm-2 control-label" for="">管理方式</label>
-			    <div class="col-sm-10">
-			      <div>
-					  <label><%= check_box_tag :manage_type_i, true, @search_param[:manage_type_i] %>&nbsp;&nbsp;一般</label>
-					  &nbsp;
-					  <label><%= check_box_tag :manage_type_a, true, @search_param[:manage_type_a] %>&nbsp;&nbsp;A</label>
-					  &nbsp;
-					  <label><%= check_box_tag :manage_type_b, true, @search_param[:manage_type_b] %>&nbsp;&nbsp;B</label>
-					  &nbsp;
-					  <label><%= check_box_tag :manage_type_d, true, @search_param[:manage_type_d] %>&nbsp;&nbsp;D</label>
-					  &nbsp;
-					  <label><%= check_box_tag :manage_type_g, true, @search_param[:manage_type_g] %>&nbsp;&nbsp;業務君</label>
-					  &nbsp;
-					  <label><%= check_box_tag :manage_type_s, true, @search_param[:manage_type_s] %>&nbsp;&nbsp;総務君</label>
-					  &nbsp;
-					  <label><%= check_box_tag :manage_type_t, true, @search_param[:manage_type_t] %>&nbsp;&nbsp;特有賃</label>
-					  &nbsp;
-				  </div>
-			    </div>
-			  </div>
-			</div>
-	    <div class="col-sm-6"></div>
+    <!-- 電話履歴 -->
+    <div class="row">
+      <div class="col-12">
+        <label class="form-label fw-bold">
+          <i class="fas fa-phone me-2"></i>電話履歴
+        </label>
+        <div class="row g-3 align-items-end">
+          <div class="col-md-2">
+            <div class="form-check">
+              <%= radio_button_tag 'history_tel', 'all', @history_tel[:all], class: 'form-check-input' %>
+              <label class="form-check-label" for="history_tel_all">すべて</label>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-check">
+              <%= radio_button_tag 'history_tel', 'exist', @history_tel[:exist], class: 'form-check-input' %>
+              <label class="form-check-label" for="history_tel_exist">履歴あり</label>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-floating">
+              <%= text_field_tag 'history_tel_from', @history_tel_from, class: 'form-control datepicker', placeholder: '開始日' %>
+              <label for="history_tel_from">開始日</label>
+            </div>
+          </div>
+          <div class="col-md-1 text-center">
+            <span class="text-muted">〜</span>
+          </div>
+          <div class="col-md-3">
+            <div class="form-floating">
+              <%= text_field_tag 'history_tel_to', @history_tel_to, class: 'form-control datepicker', placeholder: '終了日' %>
+              <label for="history_tel_to">終了日</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-		</div>
-			  
-		<div class="row">
-	    <div class="col-sm-6">
-			  <div class="form-group">
-			    <label class="col-sm-2 control-label" for="">駐車場・その他</label>
-			    <div class="col-sm-10">
-				  <label><%= check_box_tag :parking_search, true, @search_param[:parking_search] %>&nbsp;&nbsp;含む</label>
-			    </div>
-			  </div>
-			</div>
-	    <div class="col-sm-6"></div>
-		</div>
+<script>
+$(document).ready(function() {
+  // 日付ピッカーの初期化
+  $('.datepicker').datepicker({
+    format: "yyyy/mm/dd",
+    language: "ja",
+    autoclose: true,
+    orientation: "top auto",
+    todayHighlight: true,
+    clearBtn: true,
+    templates: {
+      leftArrow: '<i class="fas fa-chevron-left"></i>',
+      rightArrow: '<i class="fas fa-chevron-right"></i>'
+    }
+  });
 
-		<div class="row">
-			
-			<div class="col-sm-12">
-				<div class="form-group">
-					<label class="col-sm-1" for="">訪問リレキ</label>
-					<div class="col-sm-11">
-									<label><%= radio_button_tag 'history_visit', 'all' ,@history_visit[:all]  %>&nbsp;すべて</label>&nbsp;&nbsp;
-									<label><%= radio_button_tag 'history_visit', 'exist', @history_visit[:exist] %>&nbsp;履歴あり</label>&nbsp;&nbsp;
-										（&nbsp;&nbsp;<%= text_field_tag 'history_visit_from', @history_visit_from, :size=>10, :style=>'text-align:center;' %>&nbsp;〜&nbsp;<%= text_field_tag 'history_visit_to', @history_visit_to, :size=>10, :style=>'text-align:center;' %>&nbsp;&nbsp;）
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		
-		<div class="row">
-			
-			<div class="col-sm-12">
-				<div class="form-group">
-					<label class="col-sm-1" for="">ＤＭリレキ</label>
-					<div class="col-sm-11">
-									<label><%= radio_button_tag 'history_dm', 'all' ,@history_dm[:all]  %>&nbsp;すべて</label>&nbsp;&nbsp;
-									<label><%= radio_button_tag 'history_dm', 'exist', @history_dm[:exist] %>&nbsp;履歴あり</label>&nbsp;&nbsp;
-						（&nbsp;&nbsp;<%= text_field_tag 'history_dm_from', @history_dm_from, :size=>10, :style=>'text-align:center;' %>&nbsp;〜&nbsp;<%= text_field_tag 'history_dm_to', @history_dm_to, :size=>10, :style=>'text-align:center;' %>&nbsp;&nbsp;）
-					</div>
-				</div>
-			</div>
-			
-		</div>
-		<div class="row">
-			
-			<div class="col-sm-12">
-				<div class="form-group">
-					<label class="col-sm-1" for="">電話リレキ</label>
-					<div class="col-sm-11">
-									<label><%= radio_button_tag 'history_tel', 'all' ,@history_tel[:all]  %>&nbsp;すべて</label>&nbsp;&nbsp;
-									<label><%= radio_button_tag 'history_tel', 'exist', @history_tel[:exist] %>&nbsp;履歴あり</label>&nbsp;&nbsp;
-									（&nbsp;&nbsp;<%= text_field_tag 'history_tel_from', @history_tel_from, :size=>10, :style=>'text-align:center;' %>&nbsp;〜&nbsp;<%= text_field_tag 'history_tel_to', @history_tel_to, :size=>10, :style=>'text-align:center;' %>&nbsp;&nbsp;）
-					</div>
-				</div>
-			</div>
-			
-			
-			</div>
-			
-<script type="text/javascript">
-$('#history_visit_from').datepicker({
-	format: "yyyy/mm/dd",
-	language: "ja",
-	autoclose: true,
-	orientation: "top auto"
+  // フォームチェックボックスのスタイル改善
+  $('.form-check-input').on('change', function() {
+    $(this).closest('.form-check').toggleClass('checked', this.checked);
+  });
+
+  // 初期状態の設定
+  $('.form-check-input:checked').closest('.form-check').addClass('checked');
 });
-
-$('#history_visit_to').datepicker({
-	format: "yyyy/mm/dd",
-	language: "ja",
-	autoclose: true,
-	orientation: "top auto"
-});
-
-
-$('#history_dm_from').datepicker({
-	format: "yyyy/mm/dd",
-	language: "ja",
-	autoclose: true,
-	orientation: "top auto"
-});
-
-$('#history_dm_to').datepicker({
-	format: "yyyy/mm/dd",
-	language: "ja",
-	autoclose: true,
-	orientation: "top auto"
-});
-
-$('#history_tel_from').datepicker({
-	format: "yyyy/mm/dd",
-	language: "ja",
-	autoclose: true,
-	orientation: "top auto"
-});
-
-$('#history_tel_to').datepicker({
-	format: "yyyy/mm/dd",
-	language: "ja",
-	autoclose: true,
-	orientation: "top auto"
-});
-
 </script>
+
+<style>
+.form-check.checked .form-check-label {
+  font-weight: 600;
+}
+
+.form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+  color: #0d6efd;
+}
+
+.form-floating > .form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.datepicker {
+  border-radius: 0.5rem;
+}
+
+.datepicker table tr td.active,
+.datepicker table tr td.active:hover {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.badge {
+  font-size: 0.75em;
+  padding: 0.5em 0.75em;
+}
+
+.card.border-primary {
+  border-radius: 0.75rem;
+}
+
+.card-header {
+  border-radius: 0.75rem 0.75rem 0 0 !important;
+}
+</style>
 
 		
