@@ -586,7 +586,7 @@ class PropertyController < ApplicationController
     strSql = strSql + ",b.address as station_address"
     strSql = strSql + ",b.latitude as station_latitude"
     strSql = strSql + ",b.longitude as station_longitude"
-    strSql = strSql + " from lines a inner join stations b on a.id = b.line_id"
+    strSql = strSql + " from biru.lines a inner join stations b on a.id = b.line_id"
 
     ActiveRecord::Base.connection.select_all(strSql).each do |rec|
       ####################
@@ -679,11 +679,11 @@ private
     # strSql = strSql + ",MAX(case h.code when '25' then 1 else 0 end ) trust_mente_tyosui_seisou "
     # strSql = strSql + ",MAX(case h.code when '45' then 1 else 0 end ) trust_mente_elevator_hosyu "
     # strSql = strSql + ",MAX(case h.code when '48' then 1 else 0 end ) trust_mente_bouhan_camera "
-    strSql = strSql + ",(select COUNT(*) from trust_maintenances where delete_flg = 0 and  trust_id = d.id  and code = '3' ) trust_mente_junkai_seisou "
-    strSql = strSql + ",(select COUNT(*) from trust_maintenances where delete_flg = 0 and  trust_id = d.id  and code = '15' ) trust_mente_kyusui_setubi "
-    strSql = strSql + ",(select COUNT(*) from trust_maintenances where delete_flg = 0 and  trust_id = d.id  and code = '25' ) trust_mente_tyosui_seisou "
-    strSql = strSql + ",(select COUNT(*) from trust_maintenances where delete_flg = 0 and  trust_id = d.id  and code = '45' ) trust_mente_elevator_hosyu "
-    strSql = strSql + ",(select COUNT(*) from trust_maintenances where delete_flg = 0 and  trust_id = d.id  and code = '48' ) trust_mente_bouhan_camera "
+    strSql = strSql + ",(select COUNT(*) from biru.trust_maintenances where delete_flg = 0 and  trust_id = d.id  and code = '3' ) trust_mente_junkai_seisou "
+    strSql = strSql + ",(select COUNT(*) from biru.trust_maintenances where delete_flg = 0 and  trust_id = d.id  and code = '15' ) trust_mente_kyusui_setubi "
+    strSql = strSql + ",(select COUNT(*) from biru.trust_maintenances where delete_flg = 0 and  trust_id = d.id  and code = '25' ) trust_mente_tyosui_seisou "
+    strSql = strSql + ",(select COUNT(*) from biru.trust_maintenances where delete_flg = 0 and  trust_id = d.id  and code = '45' ) trust_mente_elevator_hosyu "
+    strSql = strSql + ",(select COUNT(*) from biru.trust_maintenances where delete_flg = 0 and  trust_id = d.id  and code = '48' ) trust_mente_bouhan_camera "
     # 2019/05/17 upd-e 定期メンテナンスが複数あると部屋数がおかしくなる不具合対応
 
     strSql = strSql + ",SUM(case j.code when '10' then 1 else 0 end ) room_status_unrecognized "
@@ -697,19 +697,19 @@ private
       strSql = strSql + ",j.name as room_status "
     end
 
-    strSql = strSql + "from buildings a "
-    strSql = strSql + "inner join rooms b on a.id = b.building_id "
-    strSql = strSql + "inner join shops c on c.id = a.shop_id "
+    strSql = strSql + "from biru.buildings a "
+    strSql = strSql + "inner join biru.rooms b on a.id = b.building_id "
+    strSql = strSql + "inner join biru.shops c on c.id = a.shop_id "
 
     # 2019/02/20 upd-s 1つの物件に複数の委託が紐づいていると、紐づく部屋を出すときに重複して表示されてしまうので、部屋の委託とつなぐ。
     # strSql = strSql + "inner join trusts d on a.id = d.building_id "
-    strSql = strSql + "inner join trusts d on d.id = b.trust_id "
+    strSql = strSql + "inner join biru.trusts d on d.id = b.trust_id "
 
-    strSql = strSql + "inner join manage_types e on e.id = b.manage_type_id  "
-    strSql = strSql + "inner join owners f on d.owner_id = f.id "
-    strSql = strSql + "inner join build_types g on a.build_type_id = g.id "
-    strSql = strSql + "inner join room_statuses j on b.room_status_id = j.id "
-    strSql = strSql + "inner join room_types k on b.room_type_id = k.id "
+    strSql = strSql + "inner join biru.manage_types e on e.id = b.manage_type_id  "
+    strSql = strSql + "inner join biru.owners f on d.owner_id = f.id "
+    strSql = strSql + "inner join biru.build_types g on a.build_type_id = g.id "
+    strSql = strSql + "inner join biru.room_statuses j on b.room_status_id = j.id "
+    strSql = strSql + "inner join biru.room_types k on b.room_type_id = k.id "
 
     # 2019/05/17 upd-s 定期メンテナンスが複数あると部屋数がおかしくなる不具合対応
     # strSql = strSql + "left outer join (select * from trust_maintenances where delete_flg = 0 ) h on h.trust_id = d.id "
@@ -928,13 +928,13 @@ private
     strSql = strSql + ",case when k.bus_used_flg = 1 then 'バス' else '徒歩' end as bus_used "
     strSql = strSql + ",k.minute "
 
-    strSql = strSql + "from buildings a "
-    strSql = strSql + "inner join shops c on c.id = a.shop_id "
-    strSql = strSql + "inner join trusts d on a.id = d.building_id "
-    strSql = strSql + "inner join build_types g on a.build_type_id = g.id "
-    strSql = strSql + "inner join building_nearest_stations k on a.id = k.building_id "
-    strSql = strSql + "inner join lines l on k.line_id = l.id "
-    strSql = strSql + "inner join stations m on k.station_id = m.id "
+    strSql = strSql + "from biru.buildings a "
+    strSql = strSql + "inner join biru.shops c on c.id = a.shop_id "
+    strSql = strSql + "inner join biru.trusts d on a.id = d.building_id "
+    strSql = strSql + "inner join biru.build_types g on a.build_type_id = g.id "
+    strSql = strSql + "inner join biru.building_nearest_stations k on a.id = k.building_id "
+    strSql = strSql + "inner join biru.lines l on k.line_id = l.id "
+    strSql = strSql + "inner join biru.stations m on k.station_id = m.id "
 
     strSql = strSql + "where 1 = 1  "
     strSql = strSql + "and c.code in ( " + shop_list + ") " if shop_list.length > 0

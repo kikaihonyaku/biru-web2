@@ -195,7 +195,9 @@ class ApplicationController < ActionController::Base
 
   def set_sqlserver_schema
     if ActiveRecord::Base.connection.adapter_name.downcase == 'sqlserver'
-      ActiveRecord::Base.connection.execute("SET SCHEMA biru")
+      # SQL Serverではスキーマは接続時に設定されるため、ここでは何もしない
+      # 必要に応じて、特定のスキーマを指定したい場合は以下を使用：
+      # ActiveRecord::Base.connection.execute("USE #{Rails.application.config.database_configuration[Rails.env]['database']}")
     end
   rescue => e
     Rails.logger.warn "Failed to set SQL Server schema: #{e.message}"
