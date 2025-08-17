@@ -1,0 +1,19 @@
+{
+  "entrypoints/application.css": {
+    "file": "assets/application-tn0RQdqM.css",
+    "src": "entrypoints/application.css",
+    "isEntry": true
+  },
+  "entrypoints/application.js": {
+    "file": "assets/application-BMXet6FP.js",
+    "name": "entrypoints/application.js",
+    "src": "entrypoints/application.js",
+    "isEntry": true
+  },
+  "entrypoints/cosmos.jsx": {
+    "file": "assets/cosmos-BH2z56Cl.js",
+    "name": "entrypoints/cosmos.jsx",
+    "src": "entrypoints/cosmos.jsx",
+    "isEntry": true
+  }
+}

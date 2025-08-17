@@ -10,9 +10,9 @@
     <%= csp_meta_tag %>
     <%= include_gon %>
 
-    <!-- Rails 8 Asset Pipeline -->
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
+    <!-- ViteRails Asset Pipeline -->
+    <%= vite_stylesheet_tag "application" %>
+    <%= vite_javascript_tag "application" %>
     
     <!-- Additional CSS files not in main bundle -->
     <%= stylesheet_link_tag "jqgrid/themes/redroad/jquery-ui-1.8.custom", "data-turbo-track": "reload" %>

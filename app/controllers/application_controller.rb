@@ -23,12 +23,12 @@ class ApplicationController < ActionController::Base
   # before_action :check_logined, :except => ['change_biru_icon', 'search_owners', 'search_buildings', 'bulk_search_text']
 
   # 2014/06/10 paramでuser_idを送るようにして対応できた。
-  before_action :check_logined
-  before_action :set_sqlserver_schema
+  # before_action :check_logined # 2025/08/17 ログインチェックを無効化
 
   # CSV出力する際、Windowsで開くためにShift_JISに変換する。■2014/08/12 当面はpdfで出力するため、文字コードはutf-8に戻す。
-  after_action :change_charset_to_sjis, if: :csv?
+  # after_action :change_charset_to_sjis, if: :csv? # 2025/08/17 文字コード変換を無効化
 
+  before_action :set_sqlserver_schema
 
   # 建物用のハッシュを取得します
   def conv_code_building(user_id, address, name)
@@ -194,7 +194,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_sqlserver_schema
-    if ActiveRecord::Base.connection.adapter_name.downcase == 'sqlserver'
+    if ActiveRecord::Base.connection.adapter_name.downcase == "sqlserver"
       # SQL Serverではスキーマは接続時に設定されるため、ここでは何もしない
       # 必要に応じて、特定のスキーマを指定したい場合は以下を使用：
       # ActiveRecord::Base.connection.execute("USE #{Rails.application.config.database_configuration[Rails.env]['database']}")

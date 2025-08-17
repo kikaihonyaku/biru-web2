@@ -1,6 +1,13 @@
 Rails.application.routes.draw do
-  get "home/index"
+  root "home#index"
+  # root to: "pages#index"
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+
+  # React Router に任せたいパスを全部 index に返す（APIは除外）
+  get "*path", to: "home#index", constraints: ->(req) do
+    req.format.html? && !req.path.start_with?("/rails", "/assets", "/api")
+  end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
@@ -34,7 +41,6 @@ Rails.application.routes.draw do
   put "mail_reactions/update_response" => "mail_reactions#update_response"
   resources :mail_reactions
 
- root to: "pages#index"
 
   #  resources :owners
 
