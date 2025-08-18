@@ -1,12 +1,24 @@
 import React from "react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 export default function App() {
+  const location = useLocation();
+  const isMapSystem = location.pathname === '/map';
+  
   const navStyle = ({ isActive }) => ({
     fontWeight: isActive ? "700" : "400",
     textDecoration: "none",
     marginRight: "1rem",
   });
+
+  // 地図システムページでは全画面レイアウト
+  if (isMapSystem) {
+    return (
+      <div style={{ fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif" }}>
+        <Outlet />
+      </div>
+    );
+  }
 
   return (
     <div style={{ fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif" }}>
@@ -16,6 +28,7 @@ export default function App() {
         </Link>
         <NavLink to="/" style={navStyle} end>Home</NavLink>
         <NavLink to="/properties" style={navStyle}>Properties</NavLink>
+        <NavLink to="/map" style={navStyle}>地図システム</NavLink>
         <NavLink to="/about" style={navStyle}>About</NavLink>
       </header>
 

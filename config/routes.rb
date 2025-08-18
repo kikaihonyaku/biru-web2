@@ -4,6 +4,19 @@ Rails.application.routes.draw do
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
+  # API routes for Cosmos React app
+  namespace :api do
+    namespace :v1 do
+      get 'properties/map_data', to: 'properties#map_data'
+      post 'properties/search', to: 'properties#search'
+      get 'layers/:type', to: 'layers#show'
+      
+      # CORS preflight requests
+      match 'properties/*path', to: 'properties#options', via: :options
+      match 'layers/*path', to: 'layers#options', via: :options
+    end
+  end
+
   # React Router に任せたいパスを全部 index に返す（APIは除外）
   get "*path", to: "home#index", constraints: ->(req) do
     req.format.html? && !req.path.start_with?("/rails", "/assets", "/api")

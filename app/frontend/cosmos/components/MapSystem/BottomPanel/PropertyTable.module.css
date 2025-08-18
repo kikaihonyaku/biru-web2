@@ -1,0 +1,302 @@
+/* プロパティテーブル */
+.tableContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.tableInfo {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.tableActions {
+  display: flex;
+  gap: 10px;
+}
+
+.exportButton {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.exportButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.tableWrapper {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid #dee2e6;
+  margin: 0 20px;
+}
+
+.propertyTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.propertyTable thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.propertyTable th {
+  padding: 12px 8px;
+  text-align: left;
+  font-weight: 600;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+.propertyTable th:last-child {
+  border-right: none;
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.sortable:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.filterInput,
+.filterSelect {
+  width: 100%;
+  padding: 4px 6px;
+  margin-top: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  font-size: 11px;
+}
+
+.filterInput::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.rangeFilter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 11px;
+}
+
+.rangeInput {
+  width: 50px;
+  padding: 3px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  font-size: 10px;
+}
+
+.propertyTable tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.propertyTable tbody tr:nth-child(even) {
+  background: #f8f9fa;
+}
+
+.propertyTable tbody tr:hover {
+  background: #e3f2fd;
+  cursor: pointer;
+}
+
+.propertyTable td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #dee2e6;
+  border-right: 1px solid #dee2e6;
+}
+
+.propertyTable td:last-child {
+  border-right: none;
+}
+
+.nameCell {
+  font-weight: 600;
+  color: #333;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.numberCell {
+  text-align: right;
+  font-weight: 500;
+  color: #495057;
+}
+
+.vacancyRate {
+  text-align: center;
+}
+
+.vacancyBadge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  min-width: 40px;
+}
+
+.vacancyBadge.excellent {
+  background: #28a745;
+}
+
+.vacancyBadge.good {
+  background: #20c997;
+}
+
+.vacancyBadge.warning {
+  background: #fd7e14;
+}
+
+.vacancyBadge.danger {
+  background: #dc3545;
+}
+
+/* ページネーション */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  gap: 8px;
+}
+
+.pageButton {
+  background: white;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  min-width: 40px;
+}
+
+.pageButton:hover:not(:disabled) {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.pageButton:disabled {
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pageButton.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.pageNumbers {
+  display: flex;
+  gap: 4px;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .tableWrapper {
+    margin: 0 10px;
+  }
+  
+  .tableHeader {
+    padding: 10px 15px;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  
+  .tableInfo,
+  .tableActions {
+    text-align: center;
+  }
+  
+  .propertyTable {
+    font-size: 12px;
+  }
+  
+  .propertyTable th,
+  .propertyTable td {
+    padding: 8px 6px;
+    min-width: 100px;
+  }
+  
+  .filterInput,
+  .filterSelect {
+    font-size: 10px;
+    padding: 3px 4px;
+  }
+  
+  .rangeInput {
+    width: 40px;
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .pageButton {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-width: 35px;
+  }
+  
+  .propertyTable {
+    font-size: 11px;
+  }
+  
+  .propertyTable th,
+  .propertyTable td {
+    padding: 6px 4px;
+  }
+}
