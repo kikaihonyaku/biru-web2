@@ -141,7 +141,7 @@ GEM
     goldiloader (5.4.0)
       activerecord (>= 6.1, < 8.1)
       activesupport (>= 6.1, < 8.1)
-    gon (6.4.0)
+    gon (6.5.0)
       actionpack (>= 3.0.20)
       i18n (>= 0.7)
       multi_json
