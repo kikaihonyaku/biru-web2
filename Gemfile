@@ -7,7 +7,7 @@ gem "propshaft"
 
 # takashi add
 gem "tiny_tds", "~> 3.2"
-gem "activerecord-sqlserver-adapter", "~> 8.0.2"
+gem "activerecord-sqlserver-adapter", "~> 8.0.8"
 
 
 # Use sqlite3 as the database for Active Record
