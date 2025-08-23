@@ -1,18 +1,28 @@
 import React, { useState, useMemo } from 'react';
-import styles from './PropertyTable.module.css';
+import {
+  Box,
+  Button,
+  Chip,
+  Typography,
+  IconButton,
+  Toolbar,
+} from '@mui/material';
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarExport,
+  GridToolbarFilterButton,
+  GridToolbarColumnsButton,
+  GridToolbarDensitySelector,
+} from '@mui/x-data-grid';
+import {
+  FileDownload as FileDownloadIcon,
+  Refresh as RefreshIcon,
+} from '@mui/icons-material';
 
 export default function PropertyTable({ properties = [], onPropertySelect, searchConditions = {} }) {
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
-  const [filters, setFilters] = useState({
-    name: '',
-    address: '',
-    type: '',
-    minRooms: '',
-    maxRooms: '',
-    maxVacancyRate: ''
-  });
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  const [pageSize, setPageSize] = useState(25);
+  const [selectionModel, setSelectionModel] = useState([]);
 
   // サンプルデータ（後でpropsから取得）
   const sampleProperties = [
@@ -70,71 +80,6 @@ export default function PropertyTable({ properties = [], onPropertySelect, searc
 
   const allProperties = properties.length > 0 ? properties : sampleProperties;
 
-  // フィルタリング
-  const filteredProperties = useMemo(() => {
-    return allProperties.filter(property => {
-      const vacancyRate = (property.vacantRooms / property.rooms) * 100;
-      
-      return (
-        (!filters.name || property.name.toLowerCase().includes(filters.name.toLowerCase())) &&
-        (!filters.address || property.address.toLowerCase().includes(filters.address.toLowerCase())) &&
-        (!filters.type || property.type === filters.type) &&
-        (!filters.minRooms || property.rooms >= parseInt(filters.minRooms)) &&
-        (!filters.maxRooms || property.rooms <= parseInt(filters.maxRooms)) &&
-        (!filters.maxVacancyRate || vacancyRate <= parseFloat(filters.maxVacancyRate))
-      );
-    });
-  }, [allProperties, filters]);
-
-  // ソート
-  const sortedProperties = useMemo(() => {
-    if (!sortConfig.key) return filteredProperties;
-
-    return [...filteredProperties].sort((a, b) => {
-      let aValue = a[sortConfig.key];
-      let bValue = b[sortConfig.key];
-
-      // 空室率の計算
-      if (sortConfig.key === 'vacancyRate') {
-        aValue = (a.vacantRooms / a.rooms) * 100;
-        bValue = (b.vacantRooms / b.rooms) * 100;
-      }
-
-      if (aValue < bValue) {
-        return sortConfig.direction === 'asc' ? -1 : 1;
-      }
-      if (aValue > bValue) {
-        return sortConfig.direction === 'asc' ? 1 : -1;
-      }
-      return 0;
-    });
-  }, [filteredProperties, sortConfig]);
-
-  // ページネーション
-  const paginatedProperties = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return sortedProperties.slice(startIndex, startIndex + itemsPerPage);
-  }, [sortedProperties, currentPage, itemsPerPage]);
-
-  const totalPages = Math.ceil(sortedProperties.length / itemsPerPage);
-
-  const handleSort = (key) => {
-    setSortConfig(prevConfig => ({
-      key,
-      direction: prevConfig.key === key && prevConfig.direction === 'asc' ? 'desc' : 'asc'
-    }));
-  };
-
-  const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-    setCurrentPage(1);
-  };
-
-  const getSortIcon = (columnKey) => {
-    if (sortConfig.key !== columnKey) return '↕️';
-    return sortConfig.direction === 'asc' ? '↑' : '↓';
-  };
-
   const getTypeLabel = (type) => {
     const typeMap = {
       apartment: 'アパート',
@@ -154,194 +99,229 @@ export default function PropertyTable({ properties = [], onPropertySelect, searc
     return typeMap[type] || '不明';
   };
 
-  const exportToCSV = () => {
-    const headers = ['物件名', '住所', '建物種別', '管理方式', '総戸数', '空室数', '空室率(%)', '築年数'];
-    const csvData = [
-      headers,
-      ...sortedProperties.map(property => [
-        property.name,
-        property.address,
-        getTypeLabel(property.type),
-        getManagementTypeLabel(property.managementType),
-        property.rooms,
-        property.vacantRooms,
-        ((property.vacantRooms / property.rooms) * 100).toFixed(1),
-        property.age
-      ])
-    ];
+  // DataGrid用の列定義
+  const columns = [
+    {
+      field: 'name',
+      headerName: '物件名',
+      width: 200,
+      flex: 1,
+      minWidth: 150,
+    },
+    {
+      field: 'address',
+      headerName: '住所',
+      width: 250,
+      flex: 1,
+      minWidth: 200,
+    },
+    {
+      field: 'type',
+      headerName: '建物種別',
+      width: 120,
+      renderCell: (params) => (
+        <Chip
+          label={getTypeLabel(params.value)}
+          size="small"
+          color="primary"
+          variant="outlined"
+        />
+      ),
+    },
+    {
+      field: 'managementType',
+      headerName: '管理方式',
+      width: 120,
+      renderCell: (params) => getManagementTypeLabel(params.value),
+    },
+    {
+      field: 'rooms',
+      headerName: '総戸数',
+      width: 100,
+      type: 'number',
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => `${params.value}戸`,
+    },
+    {
+      field: 'vacantRooms',
+      headerName: '空室数',
+      width: 100,
+      type: 'number',
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => `${params.value}戸`,
+    },
+    {
+      field: 'vacancyRate',
+      headerName: '空室率(%)',
+      width: 120,
+      type: 'number',
+      align: 'center',
+      headerAlign: 'center',
+      valueGetter: (value, row) => {
+        return ((row.vacantRooms / row.rooms) * 100).toFixed(1);
+      },
+      renderCell: (params) => {
+        const rate = parseFloat(params.value);
+        let color = 'default';
+        if (rate === 0) color = 'success';
+        else if (rate <= 10) color = 'info';
+        else if (rate <= 30) color = 'warning';
+        else color = 'error';
 
-    const csvContent = csvData.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = '物件一覧.csv';
-    link.click();
+        return (
+          <Chip
+            label={`${rate}%`}
+            size="small"
+            color={color}
+            sx={{ minWidth: 60 }}
+          />
+        );
+      },
+    },
+    {
+      field: 'age',
+      headerName: '築年数',
+      width: 100,
+      type: 'number',
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => `${params.value}年`,
+    },
+  ];
+
+  // データにidフィールドを追加（DataGridで必要）
+  const rowsWithId = useMemo(() => {
+    return allProperties.map((property) => ({
+      ...property,
+      id: property.id || Math.random(), // idが無い場合は一意のidを生成
+    }));
+  }, [allProperties]);
+
+  // カスタムツールバー
+  const CustomToolbar = () => {
+    return (
+      <GridToolbarContainer>
+        <GridToolbarColumnsButton />
+        <GridToolbarFilterButton />
+        <GridToolbarDensitySelector />
+        <GridToolbarExport 
+          printOptions={{ disableToolbarButton: true }}
+          csvOptions={{
+            fileName: '物件一覧',
+            utf8WithBom: true,
+          }}
+        />
+        <Box sx={{ flexGrow: 1 }} />
+        <IconButton
+          size="small"
+          onClick={() => {
+            // リフレッシュ処理（必要に応じて実装）
+            console.log('データを更新');
+          }}
+          sx={{ mr: 1 }}
+        >
+          <RefreshIcon />
+        </IconButton>
+      </GridToolbarContainer>
+    );
+  };
+
+  // 行クリック処理
+  const handleRowClick = (params) => {
+    if (onPropertySelect) {
+      onPropertySelect(params.row);
+    }
   };
 
   return (
-    <div className={styles.tableContainer}>
-      <div className={styles.tableHeader}>
-        <div className={styles.tableInfo}>
-          <span>全{sortedProperties.length}件中 {((currentPage - 1) * itemsPerPage) + 1}～{Math.min(currentPage * itemsPerPage, sortedProperties.length)}件を表示</span>
-        </div>
-        <div className={styles.tableActions}>
-          <button className={styles.exportButton} onClick={exportToCSV}>
-            📊 CSV出力
-          </button>
-        </div>
-      </div>
-
-      <div className={styles.tableWrapper}>
-        <table className={styles.propertyTable}>
-          <thead>
-            <tr>
-              <th onClick={() => handleSort('name')} className={styles.sortable}>
-                物件名 {getSortIcon('name')}
-                <input
-                  type="text"
-                  placeholder="物件名で絞込"
-                  value={filters.name}
-                  onChange={(e) => handleFilterChange('name', e.target.value)}
-                  className={styles.filterInput}
-                  onClick={(e) => e.stopPropagation()}
-                />
-              </th>
-              <th onClick={() => handleSort('address')} className={styles.sortable}>
-                住所 {getSortIcon('address')}
-                <input
-                  type="text"
-                  placeholder="住所で絞込"
-                  value={filters.address}
-                  onChange={(e) => handleFilterChange('address', e.target.value)}
-                  className={styles.filterInput}
-                  onClick={(e) => e.stopPropagation()}
-                />
-              </th>
-              <th onClick={() => handleSort('type')} className={styles.sortable}>
-                建物種別 {getSortIcon('type')}
-                <select
-                  value={filters.type}
-                  onChange={(e) => handleFilterChange('type', e.target.value)}
-                  className={styles.filterSelect}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <option value="">全て</option>
-                  <option value="apartment">アパート</option>
-                  <option value="mansion">マンション</option>
-                  <option value="house">戸建て</option>
-                  <option value="other">その他</option>
-                </select>
-              </th>
-              <th onClick={() => handleSort('managementType')} className={styles.sortable}>
-                管理方式 {getSortIcon('managementType')}
-              </th>
-              <th onClick={() => handleSort('rooms')} className={styles.sortable}>
-                総戸数 {getSortIcon('rooms')}
-                <div className={styles.rangeFilter}>
-                  <input
-                    type="number"
-                    placeholder="最小"
-                    value={filters.minRooms}
-                    onChange={(e) => handleFilterChange('minRooms', e.target.value)}
-                    className={styles.rangeInput}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  ～
-                  <input
-                    type="number"
-                    placeholder="最大"
-                    value={filters.maxRooms}
-                    onChange={(e) => handleFilterChange('maxRooms', e.target.value)}
-                    className={styles.rangeInput}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                </div>
-              </th>
-              <th onClick={() => handleSort('vacantRooms')} className={styles.sortable}>
-                空室数 {getSortIcon('vacantRooms')}
-              </th>
-              <th onClick={() => handleSort('vacancyRate')} className={styles.sortable}>
-                空室率(%) {getSortIcon('vacancyRate')}
-                <input
-                  type="number"
-                  placeholder="最大%"
-                  value={filters.maxVacancyRate}
-                  onChange={(e) => handleFilterChange('maxVacancyRate', e.target.value)}
-                  className={styles.filterInput}
-                  onClick={(e) => e.stopPropagation()}
-                />
-              </th>
-              <th onClick={() => handleSort('age')} className={styles.sortable}>
-                築年数 {getSortIcon('age')}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedProperties.map(property => {
-              const vacancyRate = ((property.vacantRooms / property.rooms) * 100).toFixed(1);
-              return (
-                <tr 
-                  key={property.id} 
-                  className={styles.tableRow}
-                  onClick={() => onPropertySelect && onPropertySelect(property)}
-                >
-                  <td className={styles.nameCell}>{property.name}</td>
-                  <td>{property.address}</td>
-                  <td>{getTypeLabel(property.type)}</td>
-                  <td>{getManagementTypeLabel(property.managementType)}</td>
-                  <td className={styles.numberCell}>{property.rooms}戸</td>
-                  <td className={styles.numberCell}>{property.vacantRooms}戸</td>
-                  <td className={`${styles.numberCell} ${styles.vacancyRate}`}>
-                    <span className={`${styles.vacancyBadge} ${
-                      vacancyRate == 0 ? styles.excellent :
-                      vacancyRate <= 10 ? styles.good :
-                      vacancyRate <= 30 ? styles.warning : styles.danger
-                    }`}>
-                      {vacancyRate}%
-                    </span>
-                  </td>
-                  <td className={styles.numberCell}>{property.age}年</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      {totalPages > 1 && (
-        <div className={styles.pagination}>
-          <button 
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-            className={styles.pageButton}
-          >
-            ← 前へ
-          </button>
-          
-          <div className={styles.pageNumbers}>
-            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              const page = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
-              return (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`${styles.pageButton} ${currentPage === page ? styles.active : ''}`}
-                >
-                  {page}
-                </button>
-              );
-            })}
-          </div>
-
-          <button 
-            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-            disabled={currentPage === totalPages}
-            className={styles.pageButton}
-          >
-            次へ →
-          </button>
-        </div>
-      )}
-    </div>
+    <Box sx={{ height: '100%', width: '100%' }}>
+      <DataGrid
+        rows={rowsWithId}
+        columns={columns}
+        pageSize={pageSize}
+        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+        rowsPerPageOptions={[10, 25, 50, 100]}
+        pagination
+        checkboxSelection
+        disableSelectionOnClick={false}
+        onRowClick={handleRowClick}
+        selectionModel={selectionModel}
+        onSelectionModelChange={(newSelectionModel) => {
+          setSelectionModel(newSelectionModel);
+        }}
+        components={{
+          Toolbar: CustomToolbar,
+        }}
+        sx={{
+          border: 'none',
+          '& .MuiDataGrid-row': {
+            cursor: 'pointer',
+          },
+        }}
+        localeText={{
+          // 日本語ローカライゼーション
+          noRowsLabel: 'データがありません',
+          noResultsOverlayLabel: '検索結果がありません',
+          errorOverlayDefaultLabel: 'エラーが発生しました',
+          toolbarColumns: '列',
+          toolbarFilters: 'フィルター',
+          toolbarDensity: '密度',
+          toolbarExport: 'エクスポート',
+          toolbarExportLabel: 'エクスポート',
+          toolbarExportCSV: 'CSVダウンロード',
+          toolbarExportPrint: '印刷',
+          columnsPanelTextFieldLabel: '列を検索',
+          columnsPanelTextFieldPlaceholder: '列名',
+          columnsPanelDragIconLabel: '列の順序を変更',
+          columnsPanelShowAllButton: '全て表示',
+          columnsPanelHideAllButton: '全て隠す',
+          filterPanelAddFilter: 'フィルターを追加',
+          filterPanelDeleteIconLabel: '削除',
+          filterPanelLinkOperator: '論理演算子',
+          filterPanelOperator: '演算子',
+          filterPanelOperatorAnd: 'かつ',
+          filterPanelOperatorOr: 'または',
+          filterPanelColumns: '列',
+          filterPanelInputLabel: '値',
+          filterPanelInputPlaceholder: 'フィルター値',
+          filterOperatorContains: '含む',
+          filterOperatorEquals: '等しい',
+          filterOperatorStartsWith: '始まる',
+          filterOperatorEndsWith: '終わる',
+          filterOperatorIs: 'である',
+          filterOperatorNot: '以外',
+          filterOperatorAfter: 'より後',
+          filterOperatorOnOrAfter: '以降',
+          filterOperatorBefore: 'より前',
+          filterOperatorOnOrBefore: '以前',
+          filterOperatorIsEmpty: '空である',
+          filterOperatorIsNotEmpty: '空でない',
+          filterOperatorIsAnyOf: 'のいずれか',
+          columnMenuLabel: 'メニュー',
+          columnMenuShowColumns: '列を表示',
+          columnMenuFilter: 'フィルター',
+          columnMenuHideColumn: '列を隠す',
+          columnMenuUnsort: 'ソート解除',
+          columnMenuSortAsc: '昇順ソート',
+          columnMenuSortDesc: '降順ソート',
+          columnHeaderFiltersTooltipActive: (count) =>
+            count !== 1 ? `${count} active filters` : `${count} active filter`,
+          columnHeaderFiltersLabel: 'フィルターを表示',
+          columnHeaderSortIconLabel: 'ソート',
+          footerRowSelected: (count) =>
+            count !== 1
+              ? `${count.toLocaleString()} 行を選択中`
+              : `${count.toLocaleString()} 行を選択中`,
+          footerTotalRows: '総行数:',
+          footerTotalVisibleRows: (visibleCount, totalCount) =>
+            `${visibleCount.toLocaleString()} / ${totalCount.toLocaleString()}`,
+          checkboxSelectionHeaderName: '選択',
+          booleanCellTrueLabel: 'はい',
+          booleanCellFalseLabel: 'いいえ',
+        }}
+      />
+    </Box>
   );
 }

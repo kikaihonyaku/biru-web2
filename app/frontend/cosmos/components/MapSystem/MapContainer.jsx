@@ -1,9 +1,37 @@
 import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  Fab,
+  Tooltip,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Paper,
+  Zoom,
+} from '@mui/material';
+import {
+  Home as HomeIcon,
+  MyLocation as MyLocationIcon,
+  Fullscreen as FullscreenIcon,
+  FullscreenExit as FullscreenExitIcon,
+  Layers as LayersIcon,
+  Satellite as SatelliteIcon,
+  Map as MapIcon,
+  Terrain as TerrainIcon,
+  Visibility as StreetViewIcon,
+} from '@mui/icons-material';
 import { useGoogleMaps } from '../../hooks/useGoogleMaps';
-import styles from '../../styles/MapSystem.module.css';
 
 export default function MapContainer({ onMarkerSelect, selectedLayers = [] }) {
   const [properties, setProperties] = useState([]);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [mapType, setMapType] = useState('roadmap');
+  const [speedDialOpen, setSpeedDialOpen] = useState(false);
+  
   const { 
     map, 
     isLoaded, 
@@ -16,7 +44,7 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [] }) {
   } = useGoogleMaps('google-map', {
     center: { lat: 35.8617, lng: 139.6455 }, // さいたま市周辺
     zoom: 10,
-    mapTypeId: 'roadmap'
+    mapTypeId: mapType
   });
 
   // サンプルデータ（後でRails APIから取得）
@@ -89,28 +117,95 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [] }) {
     }
   };
 
-  // InfoWindow用のHTMLコンテンツを生成
+  // InfoWindow用のHTMLコンテンツを生成（MUI風のスタイル）
   const createInfoWindowContent = (property) => {
     const vacancyRate = ((property.vacantRooms / property.rooms) * 100).toFixed(1);
     
     return `
-      <div style="padding: 10px; min-width: 200px;">
-        <h3 style="margin: 0 0 10px 0; color: #333;">${property.name}</h3>
-        <p style="margin: 5px 0; color: #666;">${property.address}</p>
-        <div style="margin: 10px 0;">
-          <div>総戸数: ${property.rooms}戸</div>
-          <div>空室数: ${property.vacantRooms}戸</div>
-          <div>空室率: ${vacancyRate}%</div>
+      <div style="padding: 16px; min-width: 280px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        <h3 style="margin: 0 0 12px 0; color: #333; font-size: 1.25rem; font-weight: 600;">${property.name}</h3>
+        <p style="margin: 8px 0; color: #666; font-size: 0.875rem;">${property.address}</p>
+        <div style="margin: 16px 0; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; justify-content: space-between; padding: 8px; background: #f5f5f5; border-radius: 4px;">
+            <span style="font-weight: 500; color: #666;">総戸数</span>
+            <span style="font-weight: 600; color: #333;">${property.rooms}戸</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px; background: #f5f5f5; border-radius: 4px;">
+            <span style="font-weight: 500; color: #666;">空室数</span>
+            <span style="font-weight: 600; color: #333;">${property.vacantRooms}戸</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px; background: #f5f5f5; border-radius: 4px;">
+            <span style="font-weight: 500; color: #666;">空室率</span>
+            <span style="font-weight: 600; color: ${vacancyRate == 0 ? '#4caf50' : vacancyRate <= 10 ? '#2196f3' : vacancyRate <= 30 ? '#ff9800' : '#f44336'};">${vacancyRate}%</span>
+          </div>
         </div>
-        <div style="margin-top: 15px;">
+        <div style="margin-top: 16px; display: flex; gap: 8px;">
           <button onclick="window.selectProperty(${property.id})" 
-                  style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                  style="background-color: #0066cc; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; flex: 1;">
             詳細を表示
+          </button>
+          <button onclick="window.showStreetView(${property.latitude}, ${property.longitude})" 
+                  style="background: #f5f5f5; color: #666; border: 1px solid #ddd; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 500;">
+            📍
           </button>
         </div>
       </div>
     `;
   };
+
+  // フルスクリーンの切り替え
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    }
+  };
+
+  // 地図タイプの変更
+  const changeMapType = (newMapType) => {
+    setMapType(newMapType);
+    if (map) {
+      map.setMapTypeId(newMapType);
+    }
+  };
+
+  // 現在地に移動
+  const goToCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const pos = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        panToLocation(pos, 15);
+      });
+    }
+  };
+
+  // 初期位置に戻る
+  const goToHomeLocation = () => {
+    panToLocation({ lat: 35.8617, lng: 139.6455 }, 10);
+  };
+
+  // 全体表示
+  const fitToAllProperties = () => {
+    const positions = properties.map(p => ({ lat: p.latitude, lng: p.longitude }));
+    if (positions.length > 0) {
+      fitBounds(positions);
+    }
+  };
+
+  // SpeedDialのアクション
+  const speedDialActions = [
+    { icon: <MapIcon />, name: '通常', onClick: () => changeMapType('roadmap') },
+    { icon: <SatelliteIcon />, name: '衛星', onClick: () => changeMapType('satellite') },
+    { icon: <TerrainIcon />, name: '地形', onClick: () => changeMapType('terrain') },
+  ];
 
   // 地図が読み込まれたら物件マーカーを配置
   useEffect(() => {
@@ -123,6 +218,12 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [] }) {
         if (property && onMarkerSelect) {
           onMarkerSelect('property', property);
         }
+      };
+
+      // ストリートビュー表示関数
+      window.showStreetView = (lat, lng) => {
+        // ここでストリートビュー表示のロジックを実装
+        console.log('ストリートビューを表示:', lat, lng);
       };
 
       // 既存のマーカーをクリア
@@ -158,60 +259,215 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [] }) {
       if (window.selectProperty) {
         delete window.selectProperty;
       }
+      if (window.showStreetView) {
+        delete window.showStreetView;
+      }
     };
   }, [isLoaded, map]);
 
   return (
-    <div className={styles.mapContainer}>
+    <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
       {/* 常にmap要素を配置し、状態に応じてオーバーレイを表示 */}
-      <div className={styles.mapCanvas} id="google-map">
+      <Box
+        id="google-map"
+        sx={{
+          width: '100%',
+          height: '100%',
+          borderRadius: 0,
+        }}
+      >
         {/* Google Maps will be rendered here */}
-      </div>
+      </Box>
       
       {/* エラー時のオーバーレイ */}
       {error && (
-        <div className={styles.mapOverlay}>
-          <div className={styles.errorMessage}>
-            <h3>地図の読み込みエラー</h3>
-            <p>{error}</p>
-            <p>Google Maps APIキーの設定を確認してください。</p>
-          </div>
-        </div>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            bgcolor: 'rgba(248, 249, 250, 0.95)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 50,
+            backdropFilter: 'blur(2px)',
+          }}
+        >
+          <Card sx={{ maxWidth: 400, p: 2 }}>
+            <CardContent sx={{ textAlign: 'center' }}>
+              <Typography variant="h6" color="error" gutterBottom>
+                地図の読み込みエラー
+              </Typography>
+              <Typography variant="body2" color="text.secondary" paragraph>
+                {error}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Google Maps APIキーの設定を確認してください。
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
       )}
 
       {/* ローディング時のオーバーレイ */}
       {!isLoaded && !error && (
-        <div className={styles.mapOverlay}>
-          <div className={styles.loadingMessage}>
-            <div className={styles.spinner}></div>
-            <p>地図を読み込み中...</p>
-          </div>
-        </div>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            bgcolor: 'rgba(248, 249, 250, 0.95)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 50,
+            backdropFilter: 'blur(2px)',
+          }}
+        >
+          <Card sx={{ maxWidth: 300, p: 3 }}>
+            <CardContent sx={{ textAlign: 'center' }}>
+              <Box
+                sx={{
+                  width: 40,
+                  height: 40,
+                  border: '4px solid',
+                  borderColor: 'grey.300',
+                  borderTopColor: 'primary.main',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                  margin: '0 auto 16px',
+                  '@keyframes spin': {
+                    '0%': { transform: 'rotate(0deg)' },
+                    '100%': { transform: 'rotate(360deg)' },
+                  },
+                }}
+              />
+              <Typography variant="body2" color="text.secondary">
+                地図を読み込み中...
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
       )}
       
-      {/* 地図上の操作ボタン */}
-      <div className={styles.mapControls}>
-        <button 
-          className={styles.controlButton}
-          onClick={() => {
-            const positions = properties.map(p => ({ lat: p.latitude, lng: p.longitude }));
-            if (positions.length > 0) {
-              fitBounds(positions);
-            }
+      {/* 地図上の操作ボタン群 */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 16,
+          right: 16,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+          zIndex: 100,
+        }}
+      >
+        <Tooltip title="全体表示" placement="left">
+          <Fab
+            size="small"
+            color="primary"
+            onClick={fitToAllProperties}
+            sx={{
+              boxShadow: 2,
+              '&:hover': {
+                transform: 'scale(1.1)',
+              },
+            }}
+          >
+            <HomeIcon />
+          </Fab>
+        </Tooltip>
+
+        <Tooltip title="初期位置に戻る" placement="left">
+          <Fab
+            size="small"
+            color="primary"
+            onClick={goToHomeLocation}
+            sx={{
+              boxShadow: 2,
+              '&:hover': {
+                transform: 'scale(1.1)',
+              },
+            }}
+          >
+            <MyLocationIcon />
+          </Fab>
+        </Tooltip>
+
+        <Tooltip title="フルスクリーン" placement="left">
+          <Fab
+            size="small"
+            color="primary"
+            onClick={toggleFullscreen}
+            sx={{
+              boxShadow: 2,
+              '&:hover': {
+                transform: 'scale(1.1)',
+              },
+            }}
+          >
+            {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+          </Fab>
+        </Tooltip>
+      </Box>
+
+      {/* 地図タイプ切り替えのSpeedDial */}
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: 16,
+          right: 16,
+          zIndex: 100,
+        }}
+      >
+        <SpeedDial
+          ariaLabel="地図タイプ切り替え"
+          sx={{ position: 'absolute', bottom: 0, right: 0 }}
+          icon={<SpeedDialIcon icon={<LayersIcon />} />}
+          open={speedDialOpen}
+          onClose={() => setSpeedDialOpen(false)}
+          onOpen={() => setSpeedDialOpen(true)}
+          FabProps={{
+            size: 'medium',
+            color: 'primary',
+            sx: {
+              boxShadow: 2,
+              '&:hover': {
+                transform: 'scale(1.05)',
+              },
+            },
           }}
-          title="全体表示"
         >
-          🏠 全体表示
-        </button>
-        
-        <button 
-          className={styles.controlButton}
-          onClick={() => panToLocation({ lat: 35.8617, lng: 139.6455 }, 10)}
-          title="初期位置に戻る"
-        >
-          📍 初期位置
-        </button>
-      </div>
-    </div>
+          {speedDialActions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+              onClick={(event) => {
+                action.onClick();
+                setSpeedDialOpen(false);
+              }}
+              FabProps={{
+                size: 'small',
+                sx: {
+                  bgcolor: mapType === action.name.toLowerCase() || 
+                         (mapType === 'roadmap' && action.name === '通常') ? 'primary.main' : 'background.paper',
+                  color: mapType === action.name.toLowerCase() || 
+                         (mapType === 'roadmap' && action.name === '通常') ? 'primary.contrastText' : 'text.primary',
+                  '&:hover': {
+                    transform: 'scale(1.1)',
+                  },
+                },
+              }}
+            />
+          ))}
+        </SpeedDial>
+      </Box>
+    </Box>
   );
 }

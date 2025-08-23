@@ -1,9 +1,19 @@
 import React, { useState } from "react";
+import {
+  ThemeProvider,
+  CssBaseline,
+  Box,
+  useMediaQuery,
+  Fade,
+  Button,
+  Paper,
+  Collapse,
+} from '@mui/material';
+import muiTheme from '../theme/muiTheme';
 import MapContainer from "../components/MapSystem/MapContainer";
 import LeftPanel from "../components/MapSystem/LeftPanel/LeftPanel";
 import PropertyTable from "../components/MapSystem/BottomPanel/PropertyTable";
 import MapTest from "../components/MapSystem/MapTest";
-import styles from "../styles/MapSystem.module.css";
 
 export default function MapSystem() {
   const [leftPanelPinned, setLeftPanelPinned] = useState(false);
@@ -12,6 +22,11 @@ export default function MapSystem() {
   const [searchConditions, setSearchConditions] = useState({});
   const [selectedLayers, setSelectedLayers] = useState([]);
   const [showDebugMode, setShowDebugMode] = useState(false);
+  const [rightPanelVisible, setRightPanelVisible] = useState(true);
+  
+  // レスポンシブ設定
+  const isMdUp = useMediaQuery(muiTheme.breakpoints.up('md'));
+  const isSmUp = useMediaQuery(muiTheme.breakpoints.up('sm'));
 
   const handleMarkerSelect = (type, data) => {
     setSelectedObject({ type, data });
@@ -42,136 +57,313 @@ export default function MapSystem() {
   // デバッグモード表示
   if (showDebugMode) {
     return (
-      <div style={{ padding: '20px' }}>
-        <button 
-          onClick={() => setShowDebugMode(false)}
-          style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px' }}
-        >
-          ← 地図システムに戻る
-        </button>
-        <MapTest />
-      </div>
+      <ThemeProvider theme={muiTheme}>
+        <CssBaseline />
+        <Box sx={{ padding: 3 }}>
+          <Button
+            variant="contained"
+            onClick={() => setShowDebugMode(false)}
+            sx={{ mb: 2 }}
+          >
+            ← 地図システムに戻る
+          </Button>
+          <MapTest />
+        </Box>
+      </ThemeProvider>
     );
   }
 
   return (
-    <div className={styles.mapSystem}>
-      {/* 左ペイン */}
-      <LeftPanel
-        isPinned={leftPanelPinned}
-        onTogglePin={handleTogglePin}
-        onSearch={handleSearch}
-        onLayerToggle={handleLayerToggle}
-        searchConditions={searchConditions}
-        selectedLayers={selectedLayers}
-      />
-
-      {/* 中央の地図エリア */}
-      <MapContainer onMarkerSelect={handleMarkerSelect} />
-
-      {/* 右ペイン */}
-      <div className={styles.rightPanel}>
-        <div className={styles.rightPanelContent}>
-          <h3>物件詳細</h3>
-          {selectedObject ? (
-            <div className={styles.objectDetails}>
-              {selectedObject.type === 'property' && (
-                <>
-                  <div className={styles.detailItem}>
-                    <strong>物件名:</strong>
-                    <span>{selectedObject.data.name}</span>
-                  </div>
-                  <div className={styles.detailItem}>
-                    <strong>住所:</strong>
-                    <span>{selectedObject.data.address}</span>
-                  </div>
-                  <div className={styles.detailItem}>
-                    <strong>建物種別:</strong>
-                    <span>{selectedObject.data.type === 'apartment' ? 'アパート' : 
-                           selectedObject.data.type === 'mansion' ? 'マンション' : 
-                           selectedObject.data.type === 'house' ? '戸建て' : '不明'}</span>
-                  </div>
-                  <div className={styles.detailItem}>
-                    <strong>総戸数:</strong>
-                    <span>{selectedObject.data.rooms}戸</span>
-                  </div>
-                  <div className={styles.detailItem}>
-                    <strong>空室数:</strong>
-                    <span>{selectedObject.data.vacantRooms}戸</span>
-                  </div>
-                  <div className={styles.detailItem}>
-                    <strong>空室率:</strong>
-                    <span>{((selectedObject.data.vacantRooms / selectedObject.data.rooms) * 100).toFixed(1)}%</span>
-                  </div>
-                  <div className={styles.detailActions}>
-                    <button className={styles.actionButton}>
-                      詳細ページを開く
-                    </button>
-                    <button className={styles.actionButton}>
-                      ストリートビュー表示
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          ) : (
-            <div className={styles.detailsPlaceholder}>
-              <p>地図上の物件を選択してください</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* 下ペイン */}
-      {bottomPanelVisible && (
-        <div className={styles.bottomPanel}>
-          <div className={styles.bottomPanelHeader}>
-            <h3>物件一覧</h3>
-            <button 
-              className={styles.toggleButton}
-              onClick={() => setBottomPanelVisible(false)}
-            >
-              ✕
-            </button>
-          </div>
-          <PropertyTable
-            onPropertySelect={(property) => {
-              setSelectedObject({ type: 'property', data: property });
-            }}
-            searchConditions={searchConditions}
-          />
-        </div>
-      )}
-
-      {/* 下ペイン表示ボタン（非表示時） */}
-      {!bottomPanelVisible && (
-        <button 
-          className={styles.showBottomPanelButton}
-          onClick={() => setBottomPanelVisible(true)}
-        >
-          物件一覧を表示
-        </button>
-      )}
-      
-      {/* デバッグボタン */}
-      <button 
-        onClick={() => setShowDebugMode(true)}
-        style={{
-          position: 'fixed',
-          top: '10px',
-          right: '10px',
-          padding: '8px 12px',
-          backgroundColor: '#dc3545',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontSize: '12px',
-          zIndex: 2000
+    <ThemeProvider theme={muiTheme}>
+      <CssBaseline />
+      <Box
+        sx={{
+          display: 'flex',
+          height: '100vh',
+          overflow: 'hidden',
+          bgcolor: 'background.default',
         }}
       >
-        🐛 Debug
-      </button>
-    </div>
+        {/* 左ペイン */}
+        <LeftPanel
+          isPinned={leftPanelPinned}
+          onTogglePin={handleTogglePin}
+          onSearch={handleSearch}
+          onLayerToggle={handleLayerToggle}
+          searchConditions={searchConditions}
+          selectedLayers={selectedLayers}
+        />
+
+        {/* メインコンテンツエリア */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            flex: 1,
+            overflow: 'hidden',
+          }}
+        >
+          {/* 上部エリア（地図 + 右ペイン） */}
+          <Box
+            sx={{
+              display: 'flex',
+              flex: 1,
+              overflow: 'hidden',
+            }}
+          >
+            {/* 中央の地図エリア */}
+            <Box sx={{ flex: 1, position: 'relative' }}>
+              <MapContainer onMarkerSelect={handleMarkerSelect} />
+            </Box>
+
+            {/* 右ペイン */}
+            {(isMdUp || rightPanelVisible) && (
+              <Fade in={true}>
+                <Paper
+                  elevation={2}
+                  sx={{
+                    width: isMdUp ? 320 : '100%',
+                    position: isMdUp ? 'relative' : 'absolute',
+                    top: isMdUp ? 'auto' : 0,
+                    right: 0,
+                    height: isMdUp ? '100%' : 'auto',
+                    maxHeight: isMdUp ? '100%' : '80%',
+                    zIndex: isMdUp ? 'auto' : 1300,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      bgcolor: 'primary.main',
+                      color: 'white',
+                      px: 2,
+                      py: 0.75,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Box component="h3" sx={{ m: 0, fontSize: '1rem', fontWeight: 600 }}>
+                      物件詳細
+                    </Box>
+                    {!isMdUp && (
+                      <Button
+                        size="small"
+                        onClick={() => setRightPanelVisible(false)}
+                        sx={{ color: 'white', minWidth: 'auto', p: 0.5 }}
+                      >
+                        ✕
+                      </Button>
+                    )}
+                  </Box>
+                  
+                  <Box sx={{ p: 2, flex: 1, overflow: 'auto' }}>
+                    {selectedObject ? (
+                      <Box>
+                        {selectedObject.type === 'property' && (
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            <Paper variant="outlined" sx={{ p: 2 }}>
+                              <Box sx={{ fontWeight: 600, fontSize: '0.75rem', color: 'text.secondary', mb: 0.5 }}>
+                                物件名
+                              </Box>
+                              <Box sx={{ fontSize: '1rem', color: 'text.primary' }}>
+                                {selectedObject.data.name}
+                              </Box>
+                            </Paper>
+                            
+                            <Paper variant="outlined" sx={{ p: 2 }}>
+                              <Box sx={{ fontWeight: 600, fontSize: '0.75rem', color: 'text.secondary', mb: 0.5 }}>
+                                住所
+                              </Box>
+                              <Box sx={{ fontSize: '1rem', color: 'text.primary' }}>
+                                {selectedObject.data.address}
+                              </Box>
+                            </Paper>
+                            
+                            <Paper variant="outlined" sx={{ p: 2 }}>
+                              <Box sx={{ fontWeight: 600, fontSize: '0.75rem', color: 'text.secondary', mb: 0.5 }}>
+                                建物種別
+                              </Box>
+                              <Box sx={{ fontSize: '1rem', color: 'text.primary' }}>
+                                {selectedObject.data.type === 'apartment' ? 'アパート' : 
+                                 selectedObject.data.type === 'mansion' ? 'マンション' : 
+                                 selectedObject.data.type === 'house' ? '戸建て' : '不明'}
+                              </Box>
+                            </Paper>
+                            
+                            <Box sx={{ display: 'flex', gap: 1 }}>
+                              <Paper variant="outlined" sx={{ p: 2, flex: 1 }}>
+                                <Box sx={{ fontWeight: 600, fontSize: '0.75rem', color: 'text.secondary', mb: 0.5 }}>
+                                  総戸数
+                                </Box>
+                                <Box sx={{ fontSize: '1rem', color: 'text.primary' }}>
+                                  {selectedObject.data.rooms}戸
+                                </Box>
+                              </Paper>
+                              
+                              <Paper variant="outlined" sx={{ p: 2, flex: 1 }}>
+                                <Box sx={{ fontWeight: 600, fontSize: '0.75rem', color: 'text.secondary', mb: 0.5 }}>
+                                  空室数
+                                </Box>
+                                <Box sx={{ fontSize: '1rem', color: 'text.primary' }}>
+                                  {selectedObject.data.vacantRooms}戸
+                                </Box>
+                              </Paper>
+                            </Box>
+                            
+                            <Paper variant="outlined" sx={{ p: 2 }}>
+                              <Box sx={{ fontWeight: 600, fontSize: '0.75rem', color: 'text.secondary', mb: 0.5 }}>
+                                空室率
+                              </Box>
+                              <Box sx={{ fontSize: '1rem', color: 'text.primary' }}>
+                                {((selectedObject.data.vacantRooms / selectedObject.data.rooms) * 100).toFixed(1)}%
+                              </Box>
+                            </Paper>
+                            
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 2 }}>
+                              <Button variant="contained" fullWidth>
+                                詳細ページを開く
+                              </Button>
+                              <Button variant="outlined" fullWidth>
+                                ストリートビュー表示
+                              </Button>
+                            </Box>
+                          </Box>
+                        )}
+                      </Box>
+                    ) : (
+                      <Paper
+                        variant="outlined"
+                        sx={{
+                          p: 3,
+                          textAlign: 'center',
+                          color: 'text.secondary',
+                          border: '2px dashed',
+                          borderColor: 'grey.300',
+                        }}
+                      >
+                        地図上の物件を選択してください
+                      </Paper>
+                    )}
+                  </Box>
+                </Paper>
+              </Fade>
+            )}
+          </Box>
+
+          {/* 下ペイン */}
+          {(!leftPanelPinned || isMdUp) && (
+            <Collapse in={bottomPanelVisible}>
+              <Paper
+                elevation={2}
+                sx={{
+                  maxHeight: '40vh',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  borderRadius: 0,
+                  zIndex: 1200,
+                  position: 'relative',
+                }}
+              >
+                <Box
+                  sx={{
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    px: 2,
+                    py: 0.75,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Box component="h3" sx={{ m: 0, fontSize: '1rem', fontWeight: 600 }}>
+                    物件一覧
+                  </Box>
+                  <Button
+                    size="small"
+                    onClick={() => setBottomPanelVisible(false)}
+                    sx={{ color: 'white', minWidth: 'auto', p: 0.5 }}
+                  >
+                    ✕
+                  </Button>
+                </Box>
+                <Box sx={{ flex: 1, overflow: 'auto' }}>
+                  <PropertyTable
+                    onPropertySelect={(property) => {
+                      setSelectedObject({ type: 'property', data: property });
+                    }}
+                    searchConditions={searchConditions}
+                  />
+                </Box>
+              </Paper>
+            </Collapse>
+          )}
+        </Box>
+
+        {/* 下ペイン表示ボタン（非表示時） */}
+        {!bottomPanelVisible && (
+          <Fade in={true}>
+            <Button
+              variant="contained"
+              onClick={() => setBottomPanelVisible(true)}
+              sx={{
+                position: 'fixed',
+                bottom: 20,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 1000,
+                borderRadius: '25px',
+                px: 3,
+                py: 1.5,
+              }}
+            >
+              物件一覧を表示
+            </Button>
+          </Fade>
+        )}
+        
+        {/* 右ペイン表示ボタン（モバイル用） */}
+        {!isMdUp && !rightPanelVisible && selectedObject && (
+          <Fade in={true}>
+            <Button
+              variant="contained"
+              onClick={() => setRightPanelVisible(true)}
+              sx={{
+                position: 'fixed',
+                bottom: bottomPanelVisible ? 80 : 20,
+                right: 20,
+                zIndex: 1000,
+                borderRadius: '50%',
+                minWidth: 56,
+                height: 56,
+              }}
+            >
+              詳細
+            </Button>
+          </Fade>
+        )}
+        
+        {/* デバッグボタン */}
+        <Button
+          variant="contained"
+          color="error"
+          size="small"
+          onClick={() => setShowDebugMode(true)}
+          sx={{
+            position: 'fixed',
+            top: 10,
+            right: 10,
+            zIndex: 2000,
+            fontSize: '0.75rem',
+            px: 1.5,
+            py: 0.5,
+          }}
+        >
+          🐛 Debug
+        </Button>
+      </Box>
+    </ThemeProvider>
   );
 }
