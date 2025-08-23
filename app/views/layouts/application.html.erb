@@ -32,10 +32,29 @@
     <!-- Favicon (if exists) -->
     <%#= favicon_link_tag 'favicon.ico', :rel => 'shortcut icon' %>
 
-    <!-- Individual JavaScript files for compatibility -->
-    <%= javascript_include_tag "tree.jquery", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "jquery.cookie", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "biru-map", "data-turbo-track": "reload" %>
+    <!-- jQuery plugins loaded after main application (skip for React pages) -->
+    <% unless content_for?(:react_app) || request.path.start_with?('/cosmos') || request.path.start_with?('/map') %>
+      <script>
+        // Wait for main application to load, then load plugins
+        document.addEventListener('DOMContentLoaded', function() {
+          if (typeof $ !== 'undefined') {
+            // Load plugins after jQuery is available
+            const scripts = [
+              '<%= asset_path("tree.jquery.js") %>',
+              '<%= asset_path("jquery.cookie.js") %>',
+              '<%= asset_path("biru-map.js") %>'
+            ];
+            
+            scripts.forEach(function(src, index) {
+              const script = document.createElement('script');
+              script.src = src;
+              script.async = false; // Maintain order
+              document.head.appendChild(script);
+            });
+          }
+        });
+      </script>
+    <% end %>
     
     <!-- Additional stylesheets for jqGrid -->
     <%= stylesheet_link_tag('jqgrid/ui.jqgrid', "data-turbo-track": "reload") %>
@@ -208,32 +227,39 @@
         }
       }
 
-      // Enhanced error handling for jQuery plugins
-      document.addEventListener('DOMContentLoaded', function() {
-        // Check for required libraries
-        if (typeof $ === 'undefined') {
-          console.error('jQuery is not loaded');
-          return;
-        }
+      // Enhanced error handling for jQuery plugins (skip for React pages)
+      <% unless content_for?(:react_app) || request.path.start_with?('/cosmos') || request.path.start_with?('/map') %>
+        document.addEventListener('DOMContentLoaded', function() {
+          // Wait for Vite to load jQuery, then initialize
+          setTimeout(function() {
+            if (typeof $ === 'undefined' && typeof jQuery === 'undefined') {
+              console.error('jQuery is not loaded');
+              return;
+            }
+            
+            // Use $ or jQuery whichever is available
+            const jq = typeof $ !== 'undefined' ? $ : jQuery;
+            
+            // tree.jquery plugin error handling
+            if (typeof jq.fn.tree === 'undefined') {
+              console.warn('tree.jquery plugin not loaded');
+            } else {
+              console.log('tree.jquery plugin loaded successfully');
+            }
 
-        // tree.jquery plugin error handling
-        if (typeof $.fn.tree === 'undefined') {
-          console.warn('tree.jquery plugin not loaded');
-        } else {
-          console.log('tree.jquery plugin loaded successfully');
-        }
+            // Initialize any global jQuery plugins here if needed
+            console.log('Application initialization complete');
+          }, 100);
 
-        // Global error handler for JavaScript
-        window.addEventListener('error', function(e) {
-          if (e.filename && e.filename.includes('tree.jquery')) {
-            console.warn('tree.jquery error:', e.message);
-            return false;
-          }
+          // Global error handler for JavaScript
+          window.addEventListener('error', function(e) {
+            if (e.filename && e.filename.includes('tree.jquery')) {
+              console.warn('tree.jquery error:', e.message);
+              return false;
+            }
+          });
         });
-
-        // Initialize any global jQuery plugins here if needed
-        console.log('Application initialization complete');
-      });
+      <% end %>
     </script>
   </body>
 </html>

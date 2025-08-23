@@ -3,6 +3,10 @@
 
 import "@hotwired/turbo-rails"
 import "controllers"
+import $ from "jquery"
+
+// Make jQuery globally available
+window.$ = window.jQuery = $
 
 // Custom application JavaScript
 // Note: Large JavaScript libraries are now managed through importmap
