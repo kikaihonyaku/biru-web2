@@ -3,9 +3,6 @@ import {
   Box,
   Fab,
   Tooltip,
-  SpeedDial,
-  SpeedDialAction,
-  SpeedDialIcon,
   Card,
   CardContent,
   Typography,
@@ -18,19 +15,15 @@ import {
   MyLocation as MyLocationIcon,
   Fullscreen as FullscreenIcon,
   FullscreenExit as FullscreenExitIcon,
-  Layers as LayersIcon,
-  Satellite as SatelliteIcon,
-  Map as MapIcon,
-  Terrain as TerrainIcon,
   Visibility as StreetViewIcon,
+  Info as InfoIcon,
 } from '@mui/icons-material';
 import { useGoogleMaps } from '../../hooks/useGoogleMaps';
 
-export default function MapContainer({ onMarkerSelect, selectedLayers = [] }) {
+export default function MapContainer({ onMarkerSelect, selectedLayers = [], rightPanelVisible, onToggleRightPanel, selectedObject }) {
   const [properties, setProperties] = useState([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [mapType, setMapType] = useState('roadmap');
-  const [speedDialOpen, setSpeedDialOpen] = useState(false);
   
   const { 
     map, 
@@ -200,12 +193,6 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [] }) {
     }
   };
 
-  // SpeedDialのアクション
-  const speedDialActions = [
-    { icon: <MapIcon />, name: '通常', onClick: () => changeMapType('roadmap') },
-    { icon: <SatelliteIcon />, name: '衛星', onClick: () => changeMapType('satellite') },
-    { icon: <TerrainIcon />, name: '地形', onClick: () => changeMapType('terrain') },
-  ];
 
   // 地図が読み込まれたら物件マーカーを配置
   useEffect(() => {
@@ -359,8 +346,8 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [] }) {
       <Box
         sx={{
           position: 'absolute',
-          top: 16,
-          right: 16,
+          top: 60, // GoogleMapボタンと重ならないよう調整
+          right: 10, // 6px右に移動（16 - 6 = 10）
           display: 'flex',
           flexDirection: 'column',
           gap: 1,
@@ -414,60 +401,27 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [] }) {
             {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
           </Fab>
         </Tooltip>
-      </Box>
 
-      {/* 地図タイプ切り替えのSpeedDial */}
-      <Box
-        sx={{
-          position: 'absolute',
-          bottom: 16,
-          right: 16,
-          zIndex: 100,
-        }}
-      >
-        <SpeedDial
-          ariaLabel="地図タイプ切り替え"
-          sx={{ position: 'absolute', bottom: 0, right: 0 }}
-          icon={<SpeedDialIcon icon={<LayersIcon />} />}
-          open={speedDialOpen}
-          onClose={() => setSpeedDialOpen(false)}
-          onOpen={() => setSpeedDialOpen(true)}
-          FabProps={{
-            size: 'medium',
-            color: 'primary',
-            sx: {
-              boxShadow: 2,
-              '&:hover': {
-                transform: 'scale(1.05)',
-              },
-            },
-          }}
-        >
-          {speedDialActions.map((action) => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.icon}
-              tooltipTitle={action.name}
-              onClick={(event) => {
-                action.onClick();
-                setSpeedDialOpen(false);
-              }}
-              FabProps={{
-                size: 'small',
-                sx: {
-                  bgcolor: mapType === action.name.toLowerCase() || 
-                         (mapType === 'roadmap' && action.name === '通常') ? 'primary.main' : 'background.paper',
-                  color: mapType === action.name.toLowerCase() || 
-                         (mapType === 'roadmap' && action.name === '通常') ? 'primary.contrastText' : 'text.primary',
-                  '&:hover': {
-                    transform: 'scale(1.1)',
-                  },
+        {/* 物件詳細表示ボタン - 右ペインが非表示の場合に表示 */}
+        {!rightPanelVisible && (
+          <Tooltip title="物件詳細を表示" placement="left">
+            <Fab
+              size="small"
+              color="primary"
+              onClick={onToggleRightPanel}
+              sx={{
+                boxShadow: 2,
+                '&:hover': {
+                  transform: 'scale(1.1)',
                 },
               }}
-            />
-          ))}
-        </SpeedDial>
+            >
+              <InfoIcon />
+            </Fab>
+          </Tooltip>
+        )}
       </Box>
+
     </Box>
   );
 }
