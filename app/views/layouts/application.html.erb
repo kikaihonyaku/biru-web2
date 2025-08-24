@@ -6,16 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= content_for?(:title) ? yield(:title) : "中央ビル管理Webシステム" %></title>
     
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-    <%= include_gon %>
-
     <!-- ViteRails Asset Pipeline -->
     <%= vite_stylesheet_tag "application" %>
     <%= vite_javascript_tag "application" %>
-    
-    <!-- Additional CSS files not in main bundle -->
-    <%= stylesheet_link_tag "jqgrid/themes/redroad/jquery-ui-1.8.custom", "data-turbo-track": "reload" %>
     
     <!-- Bootstrap print media fix -->
     <style type="text/css">
@@ -34,6 +27,17 @@
 
     <!-- jQuery plugins loaded after main application (skip for React pages) -->
     <% unless content_for?(:react_app) || request.path.start_with?('/cosmos') || request.path.start_with?('/map') %>
+
+      <%= csrf_meta_tags %>
+      <%= csp_meta_tag %>
+      <%= include_gon %>
+
+      <!-- Additional CSS files not in main bundle -->
+      <%= stylesheet_link_tag "jqgrid/themes/redroad/jquery-ui-1.8.custom", "data-turbo-track": "reload" %>
+
+      <!-- Additional stylesheets for jqGrid -->
+      <%= stylesheet_link_tag('jqgrid/ui.jqgrid', "data-turbo-track": "reload") %>
+      
       <script>
         // Wait for main application to load, then load plugins
         document.addEventListener('DOMContentLoaded', function() {
@@ -54,18 +58,17 @@
           }
         });
       </script>
+
+      <% if content_for?(:header) %>
+        <%= yield :header %>
+      <% end %>
+      
+      <% if content_for?(:slick_grid) %>
+        <%= yield :slick_grid %>
+      <% end %>
+
     <% end %>
     
-    <!-- Additional stylesheets for jqGrid -->
-    <%= stylesheet_link_tag('jqgrid/ui.jqgrid', "data-turbo-track": "reload") %>
-    
-    <% if content_for?(:header) %>
-      <%= yield :header %>
-    <% end %>
-    
-    <% if content_for?(:slick_grid) %>
-      <%= yield :slick_grid %>
-    <% end %>
   </head>
   
   <body>
@@ -90,6 +93,14 @@
     <% else %>
       <div class="container-fluid" style="height:100%;width:100%;padding:0;margin:0;" id="body-contents">
     <% end %>
+
+<!--
+    <div id="header">
+      <div class="container">
+        <p class="text-muted credit">中央ビル管理Webシステム</p>
+      </div>
+    </div>
+-->
 
     <div class="row-fluid" style="height:100%;" id="top-wrapper">
       <div style="height:100%" id="top-contents">
@@ -194,12 +205,6 @@
           <%= yield :sidebar_mail_reactions %>
         </div>
       <% end %>
-    </div>
-
-    <div id="footer">
-      <div class="container">
-        <p class="text-muted credit">中央ビル管理Webシステム</p>
-      </div>
     </div>
 
     </div> <!-- End container-fluid -->
