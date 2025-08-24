@@ -33,7 +33,8 @@ export default function LeftPanel({
   onSearch, 
   onLayerToggle,
   searchConditions = {},
-  selectedLayers = []
+  selectedLayers = [],
+  onHoverChange
 }) {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [expanded, setExpanded] = useState({
@@ -152,8 +153,14 @@ export default function LeftPanel({
             },
           },
         }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          onHoverChange && onHoverChange(true);
+        }}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          onHoverChange && onHoverChange(false);
+        }}
       >
         <Box
           sx={{

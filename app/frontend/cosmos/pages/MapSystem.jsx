@@ -23,6 +23,7 @@ export default function MapSystem() {
   const [selectedLayers, setSelectedLayers] = useState([]);
   const [showDebugMode, setShowDebugMode] = useState(false);
   const [rightPanelVisible, setRightPanelVisible] = useState(true);
+  const [leftPanelHovered, setLeftPanelHovered] = useState(false);
   
   // レスポンシブ設定
   const isMdUp = useMediaQuery(muiTheme.breakpoints.up('md'));
@@ -109,6 +110,7 @@ export default function MapSystem() {
               onLayerToggle={handleLayerToggle}
               searchConditions={searchConditions}
               selectedLayers={selectedLayers}
+              onHoverChange={setLeftPanelHovered}
             />
             {/* 中央の地図エリア */}
             <Box sx={{ flex: 1, position: 'relative' }}>
@@ -305,24 +307,37 @@ export default function MapSystem() {
 
         {/* 下ペイン表示ボタン（非表示時） */}
         {!bottomPanelVisible && (
-          <Fade in={true}>
-            <Button
-              variant="contained"
-              onClick={() => setBottomPanelVisible(true)}
-              sx={{
-                position: 'fixed',
-                bottom: 20,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                zIndex: 1000,
-                borderRadius: '25px',
-                px: 3,
-                py: 1.5,
-              }}
-            >
-              物件一覧を表示
-            </Button>
-          </Fade>
+          <Box
+            sx={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '80px',
+              pointerEvents: 'none', // 背景はクリック不可
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingLeft: leftPanelPinned || leftPanelHovered ? '320px' : '60px',
+              transition: 'padding-left 0.3s ease',
+              zIndex: 1000,
+            }}
+          >
+            <Fade in={true}>
+              <Button
+                variant="contained"
+                onClick={() => setBottomPanelVisible(true)}
+                sx={{
+                  pointerEvents: 'all', // ボタンのみクリック可能
+                  borderRadius: '25px',
+                  px: 3,
+                  py: 1.5,
+                }}
+              >
+                物件一覧を表示
+              </Button>
+            </Fade>
+          </Box>
         )}
         
         {/* 右ペイン表示ボタン（モバイル用） */}
