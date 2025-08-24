@@ -142,6 +142,11 @@ export default function LeftPanel({
             overflow: isPinned ? 'auto' : 'visible',
             transition: 'width 0.3s ease',
             zIndex: isPinned ? 1200 : isHovered ? 1300 : 1100,
+            // ホバー時・ピン留め時は固定位置でフルハイト、閉じているときは相対位置
+            position: (isPinned || (!isPinned && isHovered)) ? 'fixed' : 'relative',
+            height: (isPinned || (!isPinned && isHovered)) ? '100vh' : '100%',
+            top: (isPinned || (!isPinned && isHovered)) ? 0 : 'auto',
+            left: (isPinned || (!isPinned && isHovered)) ? 0 : 'auto',
             '&:hover': {
               width: 320,
             },

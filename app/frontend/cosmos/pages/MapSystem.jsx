@@ -79,21 +79,11 @@ export default function MapSystem() {
       <Box
         sx={{
           display: 'flex',
-          height: '100vh',
+          height: 'calc(100vh - 64px)', // ヘッダー分を除いた高さ
           overflow: 'hidden',
           bgcolor: 'background.default',
         }}
       >
-        {/* 左ペイン */}
-        <LeftPanel
-          isPinned={leftPanelPinned}
-          onTogglePin={handleTogglePin}
-          onSearch={handleSearch}
-          onLayerToggle={handleLayerToggle}
-          searchConditions={searchConditions}
-          selectedLayers={selectedLayers}
-        />
-
         {/* メインコンテンツエリア */}
         <Box
           sx={{
@@ -103,7 +93,7 @@ export default function MapSystem() {
             overflow: 'hidden',
           }}
         >
-          {/* 上部エリア（地図 + 右ペイン） */}
+          {/* 上部エリア（左ペイン + 地図 + 右ペイン） */}
           <Box
             sx={{
               display: 'flex',
@@ -111,6 +101,15 @@ export default function MapSystem() {
               overflow: 'hidden',
             }}
           >
+            {/* 左ペイン */}
+            <LeftPanel
+              isPinned={leftPanelPinned}
+              onTogglePin={handleTogglePin}
+              onSearch={handleSearch}
+              onLayerToggle={handleLayerToggle}
+              searchConditions={searchConditions}
+              selectedLayers={selectedLayers}
+            />
             {/* 中央の地図エリア */}
             <Box sx={{ flex: 1, position: 'relative' }}>
               <MapContainer onMarkerSelect={handleMarkerSelect} />
@@ -265,6 +264,8 @@ export default function MapSystem() {
                   borderRadius: 0,
                   zIndex: 1200,
                   position: 'relative',
+                  marginLeft: leftPanelPinned ? '320px' : '0px',
+                  transition: 'margin-left 0.3s ease',
                 }}
               >
                 <Box
