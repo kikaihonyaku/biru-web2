@@ -142,33 +142,34 @@ export default function LeftPanel({
             bgcolor: 'primary.main',
             color: 'white',
             overflow: isPinned || isHovered ? 'auto' : 'visible',
-            transition: 'width 0.3s ease',
+            transition: 'width 0.3s ease, left 0.3s ease, top 0.3s ease',
             position: 'absolute',
-            top: 0,
-            left: 0,
+            top: isPinned || isHovered ? 0 : '80px',
+            left: isPinned || isHovered ? 0 : '16px',
             height: isPinned ? '100vh' : (isHovered ? '100vh' : '220px'),
             zIndex: isPinned ? 1100 : (isHovered ? 1350 : 1300),
             flexShrink: isPinned ? 0 : undefined,
             display: 'flex',
             flexDirection: 'column',
           }}
-          onMouseEnter={() => {
-            setIsHovered(true);
-            onHoverChange && onHoverChange(true);
-          }}
-          onMouseLeave={() => {
-            setIsHovered(false);
-            onHoverChange && onHoverChange(false);
-          }}
         >
           <Box
             sx={{
-              width: 320,
+              width: isPinned || isHovered ? 320 : 60,
               height: '100%',
               p: isExpanded ? 2 : 0,
               display: 'flex',
               flexDirection: 'column',
               gap: isExpanded ? 2 : 0,
+              overflow: 'hidden',
+            }}
+            onMouseEnter={() => {
+              setIsHovered(true);
+              onHoverChange && onHoverChange(true);
+            }}
+            onMouseLeave={() => {
+              setIsHovered(false);
+              onHoverChange && onHoverChange(false);
             }}
           >
           {isExpanded ? (
