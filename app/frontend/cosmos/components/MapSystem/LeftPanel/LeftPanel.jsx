@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Drawer,
   Box,
   Accordion,
   AccordionSummary,
@@ -15,6 +14,8 @@ import {
   TextField,
   Paper,
   Tooltip,
+  Fade,
+  useMediaQuery,
 } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
@@ -26,6 +27,7 @@ import {
   FilterList as FilterListIcon,
 } from '@mui/icons-material';
 import SearchModal from './SearchModal';
+import muiTheme from '../../../theme/muiTheme';
 
 export default function LeftPanel({ 
   isPinned, 
@@ -43,6 +45,9 @@ export default function LeftPanel({
     quickActions: false,
   });
   const [isHovered, setIsHovered] = useState(false);
+  
+  // レスポンシブ設定
+  const isMdUp = useMediaQuery(muiTheme.breakpoints.up('md'));
 
   const handleAccordionChange = (panel) => (event, isExpanded) => {
     setExpanded(prev => ({ ...prev, [panel]: isExpanded }));
@@ -128,50 +133,44 @@ export default function LeftPanel({
 
   return (
     <>
-      <Drawer
-        variant="persistent"
-        open={true}
-        sx={{
-          width: isPinned ? 320 : 60,
-          flexShrink: 0,
-          transition: 'width 0.3s ease',
-          '& .MuiDrawer-paper': {
-            width: isPinned ? 320 : 60,
+      <Fade in={true}>
+        <Paper
+          elevation={2}
+          sx={{
+            width: isPinned ? 320 : (isHovered ? 320 : 60),
             boxSizing: 'border-box',
             bgcolor: 'primary.main',
             color: 'white',
-            overflow: isPinned ? 'auto' : 'visible',
+            overflow: isPinned || isHovered ? 'auto' : 'visible',
             transition: 'width 0.3s ease',
-            zIndex: isPinned ? 1200 : isHovered ? 1300 : 1100,
-            // ホバー時・ピン留め時は固定位置でフルハイト、閉じているときは相対位置
-            position: (isPinned || (!isPinned && isHovered)) ? 'fixed' : 'relative',
-            height: (isPinned || (!isPinned && isHovered)) ? '100vh' : '100%',
-            top: (isPinned || (!isPinned && isHovered)) ? 0 : 'auto',
-            left: (isPinned || (!isPinned && isHovered)) ? 0 : 'auto',
-            '&:hover': {
-              width: 320,
-            },
-          },
-        }}
-        onMouseEnter={() => {
-          setIsHovered(true);
-          onHoverChange && onHoverChange(true);
-        }}
-        onMouseLeave={() => {
-          setIsHovered(false);
-          onHoverChange && onHoverChange(false);
-        }}
-      >
-        <Box
-          sx={{
-            width: 320,
-            height: '100%',
-            p: isExpanded ? 2 : 0,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            height: isPinned ? '100vh' : (isHovered ? '100vh' : '220px'),
+            zIndex: isPinned ? 1100 : (isHovered ? 1350 : 1300),
+            flexShrink: isPinned ? 0 : undefined,
             display: 'flex',
             flexDirection: 'column',
-            gap: isExpanded ? 2 : 0,
+          }}
+          onMouseEnter={() => {
+            setIsHovered(true);
+            onHoverChange && onHoverChange(true);
+          }}
+          onMouseLeave={() => {
+            setIsHovered(false);
+            onHoverChange && onHoverChange(false);
           }}
         >
+          <Box
+            sx={{
+              width: 320,
+              height: '100%',
+              p: isExpanded ? 2 : 0,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: isExpanded ? 2 : 0,
+            }}
+          >
           {isExpanded ? (
             // 展開時のコンテンツ
             <>
@@ -251,7 +250,7 @@ export default function LeftPanel({
                     color: 'white',
                     bgcolor: 'rgba(255, 255, 255, 0.2)',
                     '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.3)' },
-                    mb: 2,
+                    mb: 1,
                   }}
                 >
                   <FilterListIcon />
@@ -433,8 +432,9 @@ export default function LeftPanel({
           </Accordion>
             </>
           )}
-        </Box>
-      </Drawer>
+          </Box>
+        </Paper>
+      </Fade>
 
       <SearchModal
         isOpen={isSearchModalOpen}

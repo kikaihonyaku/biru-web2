@@ -92,26 +92,29 @@ export default function MapSystem() {
             flexDirection: 'column',
             flex: 1,
             overflow: 'hidden',
+            position: 'relative',
           }}
         >
-          {/* 上部エリア（左ペイン + 地図 + 右ペイン） */}
+          {/* 左ペイン（ピン止め時・フローティング時共通） */}
+          <LeftPanel
+            isPinned={leftPanelPinned}
+            onTogglePin={handleTogglePin}
+            onSearch={handleSearch}
+            onLayerToggle={handleLayerToggle}
+            searchConditions={searchConditions}
+            selectedLayers={selectedLayers}
+            onHoverChange={setLeftPanelHovered}
+          />
+          {/* 上部エリア（地図 + 右ペイン） */}
           <Box
             sx={{
               display: 'flex',
               flex: 1,
               overflow: 'hidden',
+              marginLeft: leftPanelPinned ? '320px' : '0px',
+              transition: 'margin-left 0.3s ease',
             }}
           >
-            {/* 左ペイン */}
-            <LeftPanel
-              isPinned={leftPanelPinned}
-              onTogglePin={handleTogglePin}
-              onSearch={handleSearch}
-              onLayerToggle={handleLayerToggle}
-              searchConditions={searchConditions}
-              selectedLayers={selectedLayers}
-              onHoverChange={setLeftPanelHovered}
-            />
             {/* 中央の地図エリア */}
             <Box sx={{ flex: 1, position: 'relative' }}>
               <MapContainer 
