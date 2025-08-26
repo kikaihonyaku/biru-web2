@@ -4,15 +4,15 @@ const muiTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#0066cc',
-      light: '#3385d6',
-      dark: '#004499',
+      main: '#0168B7',
+      light: '#4087cc',
+      dark: '#004987',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#764ba2',
-      light: '#9970c4',
-      dark: '#533571',
+      main: '#E70012',
+      light: '#eb3347',
+      dark: '#a1000d',
       contrastText: '#ffffff',
     },
     background: {
@@ -142,9 +142,9 @@ const muiTheme = createTheme({
           },
         },
         containedPrimary: {
-          backgroundColor: '#0066cc',
+          backgroundColor: '#0168B7',
           '&:hover': {
-            backgroundColor: '#004499',
+            backgroundColor: '#004987',
           },
         },
       },
@@ -159,9 +159,9 @@ const muiTheme = createTheme({
           },
         },
         primary: {
-          backgroundColor: '#0066cc',
+          backgroundColor: '#0168B7',
           '&:hover': {
-            backgroundColor: '#004499',
+            backgroundColor: '#004987',
           },
         },
       },
@@ -169,7 +169,7 @@ const muiTheme = createTheme({
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          backgroundColor: '#0066cc',
+          backgroundColor: '#0168B7',
           color: '#ffffff',
         },
       },
@@ -250,7 +250,7 @@ const muiTheme = createTheme({
           fontWeight: 500,
         },
         colorPrimary: {
-          backgroundColor: '#0066cc',
+          backgroundColor: '#0168B7',
           color: '#ffffff',
         },
       },
@@ -262,7 +262,7 @@ const muiTheme = createTheme({
           borderRadius: 12,
           '& .MuiDataGrid-columnHeaders': {
             backgroundColor: '#f5f7fa',
-            borderBottom: '2px solid #0066cc',
+            borderBottom: '2px solid #0168B7',
             color: '#333333',
             fontSize: '0.875rem',
             fontWeight: 600,
@@ -277,13 +277,13 @@ const muiTheme = createTheme({
             borderBottom: '1px solid rgba(224, 224, 224, 0.5)',
           },
           '& .MuiDataGrid-sortIcon': {
-            color: '#0066cc',
+            color: '#0168B7',
           },
           '& .MuiDataGrid-menuIconButton': {
-            color: '#0066cc',
+            color: '#0168B7',
           },
           '& .MuiDataGrid-filterIcon': {
-            color: '#0066cc',
+            color: '#0168B7',
           },
         },
       },
