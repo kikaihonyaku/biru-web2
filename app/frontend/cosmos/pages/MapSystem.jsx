@@ -84,23 +84,10 @@ export default function MapSystem() {
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         {/* ヘッダーエリア */}
         <AppBar position="static" sx={{ zIndex: 2100 }}>
-          <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Toolbar variant="dense" sx={{ minHeight: '48px' }}>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontSize: '1.1rem' }}>
               地図システム
             </Typography>
-            <Button
-              variant="contained"
-              color="error"
-              size="small"
-              onClick={() => setShowDebugMode(true)}
-              sx={{
-                fontSize: '0.75rem',
-                px: 1.5,
-                py: 0.5,
-              }}
-            >
-              🐛 Debug
-            </Button>
           </Toolbar>
         </AppBar>
         
