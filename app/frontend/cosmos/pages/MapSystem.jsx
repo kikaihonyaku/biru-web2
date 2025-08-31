@@ -83,7 +83,7 @@ export default function MapSystem() {
       <CssBaseline />
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         {/* ヘッダーエリア */}
-        <AppBar position="static" sx={{ zIndex: 2100 }}>
+        <AppBar position="static" sx={{ zIndex: 2100, mx: '2px' }}>
           <Toolbar variant="dense" sx={{ minHeight: '48px' }}>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontSize: '1.1rem' }}>
               地図システム
@@ -126,7 +126,7 @@ export default function MapSystem() {
               display: 'flex',
               flex: 1,
               overflow: 'hidden',
-              marginLeft: leftPanelPinned ? '320px' : '0px',
+              marginLeft: leftPanelPinned ? '323px' : '0px',
               transition: 'margin-left 0.3s ease',
             }}
           >
@@ -148,10 +148,10 @@ export default function MapSystem() {
                   sx={{
                     width: isMdUp ? 320 : '100%',
                     position: isMdUp ? 'relative' : 'absolute',
-                    top: isMdUp ? '3px' : '3px',
-                    right: 0,
-                    height: isMdUp ? 'calc(100% - 3px)' : 'auto',
-                    maxHeight: isMdUp ? 'calc(100% - 3px)' : '80%',
+                    top: isMdUp ? '2px' : '2px',
+                    right: isMdUp ? '2px' : '2px',
+                    height: isMdUp ? 'calc(100% - 4px)' : 'auto',
+                    maxHeight: isMdUp ? 'calc(100% - 4px)' : '80%',
                     zIndex: isMdUp ? 'auto' : 1300,
                     display: 'flex',
                     flexDirection: 'column',
@@ -293,7 +293,7 @@ export default function MapSystem() {
                   borderRadius: 0,
                   zIndex: 1200,
                   position: 'relative',
-                  marginLeft: leftPanelPinned ? '320px' : '0px',
+                  marginLeft: leftPanelPinned ? '324px' : '0px',
                   transition: 'margin-left 0.3s ease',
                 }}
               >
