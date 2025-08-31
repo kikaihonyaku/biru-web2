@@ -28,6 +28,7 @@ export default function MapSystem() {
   const [showDebugMode, setShowDebugMode] = useState(false);
   const [rightPanelVisible, setRightPanelVisible] = useState(false);
   const [leftPanelHovered, setLeftPanelHovered] = useState(false);
+  const [headerVisible, setHeaderVisible] = useState(false);
   
   // レスポンシブ設定
   const isMdUp = useMediaQuery(muiTheme.breakpoints.up('md'));
@@ -82,14 +83,41 @@ export default function MapSystem() {
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        {/* ヘッダーホバーエリア */}
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '20px',
+            zIndex: 2200,
+            pointerEvents: 'all',
+          }}
+          onMouseEnter={() => setHeaderVisible(true)}
+          onMouseLeave={() => setHeaderVisible(false)}
+        />
+        
         {/* ヘッダーエリア */}
-        <AppBar position="static" sx={{ zIndex: 2100, mx: '2px' }}>
-          <Toolbar variant="dense" sx={{ minHeight: '45px' }}>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontSize: '1.1rem' }}>
-              地図システム
-            </Typography>
-          </Toolbar>
-        </AppBar>
+        <Fade in={headerVisible} timeout={200}>
+          <AppBar 
+            position="fixed" 
+            sx={{ 
+              zIndex: 2100, 
+              mx: '2px',
+              top: headerVisible ? 0 : '-60px',
+              transition: 'top 0.2s ease-in-out',
+            }}
+            onMouseEnter={() => setHeaderVisible(true)}
+            onMouseLeave={() => setHeaderVisible(false)}
+          >
+            <Toolbar variant="dense" sx={{ minHeight: '45px' }}>
+              <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontSize: '1.1rem' }}>
+                地図システム
+              </Typography>
+            </Toolbar>
+          </AppBar>
+        </Fade>
         
         {/* コンテンツエリア */}
         <Box
@@ -98,6 +126,8 @@ export default function MapSystem() {
             flex: 1,
             overflow: 'hidden',
             bgcolor: 'background.default',
+            paddingTop: headerVisible ? '47px' : '0px',
+            transition: 'padding-top 0.2s ease-in-out',
           }}
         >
         {/* メインコンテンツエリア */}
