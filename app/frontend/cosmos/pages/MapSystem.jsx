@@ -20,13 +20,13 @@ import PropertyTable from "../components/MapSystem/BottomPanel/PropertyTable";
 import MapTest from "../components/MapSystem/MapTest";
 
 export default function MapSystem() {
-  const [leftPanelPinned, setLeftPanelPinned] = useState(false);
-  const [bottomPanelVisible, setBottomPanelVisible] = useState(true);
+  const [leftPanelPinned, setLeftPanelPinned] = useState(true);
+  const [bottomPanelVisible, setBottomPanelVisible] = useState(false);
   const [selectedObject, setSelectedObject] = useState(null);
   const [searchConditions, setSearchConditions] = useState({});
   const [selectedLayers, setSelectedLayers] = useState([]);
   const [showDebugMode, setShowDebugMode] = useState(false);
-  const [rightPanelVisible, setRightPanelVisible] = useState(true);
+  const [rightPanelVisible, setRightPanelVisible] = useState(false);
   const [leftPanelHovered, setLeftPanelHovered] = useState(false);
   
   // レスポンシブ設定
@@ -325,6 +325,7 @@ export default function MapSystem() {
                   <PropertyTable
                     onPropertySelect={(property) => {
                       setSelectedObject({ type: 'property', data: property });
+                      setRightPanelVisible(true);
                     }}
                     searchConditions={searchConditions}
                   />
@@ -355,7 +356,12 @@ export default function MapSystem() {
             <Fade in={true}>
               <Button
                 variant="contained"
-                onClick={() => setBottomPanelVisible(true)}
+                onClick={() => {
+                  setBottomPanelVisible(true);
+                  if (selectedObject) {
+                    setRightPanelVisible(true);
+                  }
+                }}
                 sx={{
                   pointerEvents: 'all', // ボタンのみクリック可能
                   borderRadius: '25px',
