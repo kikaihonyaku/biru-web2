@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root "home#index"
+  root "frontend#index"
   # root to: "pages#index"
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -18,7 +18,7 @@ Rails.application.routes.draw do
   end
 
   # React Router に任せたいパスを全部 index に返す（APIは除外）
-  get "*path", to: "home#index", constraints: ->(req) do
+  get "*path", to: "frontend#index", constraints: ->(req) do
     req.format.html? && !req.path.start_with?("/rails", "/assets", "/api")
   end
 
