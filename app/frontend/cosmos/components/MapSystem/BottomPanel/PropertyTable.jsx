@@ -254,6 +254,9 @@ export default function PropertyTable({ properties = [], onPropertySelect, searc
         components={{
           Toolbar: CustomToolbar,
         }}
+        density="compact"
+        rowHeight={45}
+        columnHeaderHeight={45}
         sx={{
           border: 'none',
           '& .MuiDataGrid-row': {

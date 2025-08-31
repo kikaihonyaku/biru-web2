@@ -84,7 +84,7 @@ export default function MapSystem() {
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         {/* ヘッダーエリア */}
         <AppBar position="static" sx={{ zIndex: 2100, mx: '2px' }}>
-          <Toolbar variant="dense" sx={{ minHeight: '48px' }}>
+          <Toolbar variant="dense" sx={{ minHeight: '45px' }}>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontSize: '1.1rem' }}>
               地図システム
             </Typography>
@@ -163,10 +163,11 @@ export default function MapSystem() {
                       bgcolor: 'primary.main',
                       color: 'white',
                       px: 2,
-                      py: 0.75,
+                      py: 0.5,
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
+                      minHeight: '40px',
                     }}
                   >
                     <Box component="h3" sx={{ m: 0, fontSize: '1rem', fontWeight: 600 }}>
@@ -302,10 +303,11 @@ export default function MapSystem() {
                     bgcolor: 'primary.main',
                     color: 'white',
                     px: 2,
-                    py: 0.75,
+                    py: 0.5,
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
+                    minHeight: '40px',
                   }}
                 >
                   <Box component="h3" sx={{ m: 0, fontSize: '1rem', fontWeight: 600 }}>
