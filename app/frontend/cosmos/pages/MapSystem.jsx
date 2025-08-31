@@ -148,10 +148,10 @@ export default function MapSystem() {
                   sx={{
                     width: isMdUp ? 320 : '100%',
                     position: isMdUp ? 'relative' : 'absolute',
-                    top: isMdUp ? 'auto' : 0,
+                    top: isMdUp ? '3px' : '3px',
                     right: 0,
-                    height: isMdUp ? '100%' : 'auto',
-                    maxHeight: isMdUp ? '100%' : '80%',
+                    height: isMdUp ? 'calc(100% - 3px)' : 'auto',
+                    maxHeight: isMdUp ? 'calc(100% - 3px)' : '80%',
                     zIndex: isMdUp ? 'auto' : 1300,
                     display: 'flex',
                     flexDirection: 'column',

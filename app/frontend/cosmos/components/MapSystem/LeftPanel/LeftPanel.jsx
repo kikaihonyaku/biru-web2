@@ -144,7 +144,7 @@ export default function LeftPanel({
             overflow: isPinned || isHovered ? 'auto' : 'visible',
             transition: 'width 0.3s ease, left 0.3s ease, top 0.3s ease',
             position: 'absolute',
-            top: isPinned || isHovered ? 0 : '80px',
+            top: isPinned || isHovered ? '3px' : '80px',
             left: isPinned || isHovered ? 0 : '16px',
             height: isPinned ? '100vh' : (isHovered ? '100vh' : '220px'),
             zIndex: isPinned ? 1100 : (isHovered ? 1350 : 1300),
