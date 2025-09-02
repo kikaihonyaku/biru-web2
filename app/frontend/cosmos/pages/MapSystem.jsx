@@ -18,17 +18,26 @@ import MapContainer from "../components/MapSystem/MapContainer";
 import LeftPanel from "../components/MapSystem/LeftPanel/LeftPanel";
 import PropertyTable from "../components/MapSystem/BottomPanel/PropertyTable";
 import MapTest from "../components/MapSystem/MapTest";
+import { useMapData } from '../hooks/useMapData';
 
 export default function MapSystem() {
   const [leftPanelPinned, setLeftPanelPinned] = useState(true);
   const [bottomPanelVisible, setBottomPanelVisible] = useState(false);
   const [selectedObject, setSelectedObject] = useState(null);
-  const [searchConditions, setSearchConditions] = useState({});
   const [selectedLayers, setSelectedLayers] = useState([]);
   const [showDebugMode, setShowDebugMode] = useState(false);
   const [rightPanelVisible, setRightPanelVisible] = useState(false);
   const [leftPanelHovered, setLeftPanelHovered] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(false);
+  
+  // useMapDataフックを使用してデータ管理
+  const { 
+    properties, 
+    isLoading, 
+    error, 
+    searchConditions, 
+    searchProperties 
+  } = useMapData();
   
   // レスポンシブ設定
   const isMdUp = useMediaQuery(muiTheme.breakpoints.up('md'));
@@ -38,10 +47,13 @@ export default function MapSystem() {
     setSelectedObject({ type, data });
   };
 
-  const handleSearch = (conditions) => {
-    setSearchConditions(conditions);
-    // ここで地図の表示を更新する処理を追加
-    console.log('Search conditions:', conditions);
+  const handleSearch = async (conditions) => {
+    try {
+      await searchProperties(conditions);
+    } catch (error) {
+      console.error('Search error:', error);
+      // エラーハンドリングは後で追加
+    }
   };
 
   const handleLayerToggle = (layerId, enabled) => {
@@ -149,6 +161,8 @@ export default function MapSystem() {
             searchConditions={searchConditions}
             selectedLayers={selectedLayers}
             onHoverChange={setLeftPanelHovered}
+            isLoading={isLoading}
+            error={error}
           />
           {/* 上部エリア（地図 + 右ペイン） */}
           <Box
@@ -167,6 +181,8 @@ export default function MapSystem() {
                 rightPanelVisible={rightPanelVisible}
                 onToggleRightPanel={() => setRightPanelVisible(true)}
                 selectedObject={selectedObject}
+                properties={properties}
+                isLoading={isLoading}
               />
             </Box>
 
@@ -353,6 +369,7 @@ export default function MapSystem() {
                 </Box>
                 <Box sx={{ flex: 1, overflow: 'auto' }}>
                   <PropertyTable
+                    properties={properties}
                     onPropertySelect={(property) => {
                       setSelectedObject({ type: 'property', data: property });
                       setRightPanelVisible(true);

@@ -12,13 +12,14 @@ import {
   Button,
   IconButton,
   Typography,
-  Box
+  Box,
+  CircularProgress
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 
-export default function SearchModal({ isOpen, onClose, onSearch, currentConditions = {} }) {
+export default function SearchModal({ isOpen, onClose, onSearch, currentConditions = {}, isLoading = false }) {
   const [searchForm, setSearchForm] = useState({
     propertyName: '',
     address: '',
@@ -317,7 +318,8 @@ export default function SearchModal({ isOpen, onClose, onSearch, currentConditio
           <Button
             type="submit"
             variant="contained"
-            startIcon={<SearchIcon />}
+            startIcon={isLoading ? <CircularProgress size={16} color="inherit" /> : <SearchIcon />}
+            disabled={isLoading}
             sx={{
               minWidth: 120,
               boxShadow: 'none',
@@ -326,7 +328,7 @@ export default function SearchModal({ isOpen, onClose, onSearch, currentConditio
               }
             }}
           >
-            検索実行
+            {isLoading ? '検索中...' : '検索実行'}
           </Button>
         </DialogActions>
       </Box>

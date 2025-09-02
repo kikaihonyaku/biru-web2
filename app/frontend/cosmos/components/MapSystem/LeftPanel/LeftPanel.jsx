@@ -16,6 +16,7 @@ import {
   Tooltip,
   Fade,
   useMediaQuery,
+  CircularProgress,
 } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
@@ -25,6 +26,7 @@ import {
   Clear as ClearIcon,
   Layers as LayersIcon,
   FilterList as FilterListIcon,
+  Warning as WarningIcon,
 } from '@mui/icons-material';
 import SearchModal from './SearchModal';
 import muiTheme from '../../../theme/muiTheme';
@@ -36,7 +38,9 @@ export default function LeftPanel({
   onLayerToggle,
   searchConditions = {},
   selectedLayers = [],
-  onHoverChange
+  onHoverChange,
+  isLoading = false,
+  error = null
 }) {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [expanded, setExpanded] = useState({
@@ -289,6 +293,35 @@ export default function LeftPanel({
             </AccordionSummary>
             <AccordionDetails>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                {/* ローディング状態表示 */}
+                {isLoading && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 1 }}>
+                    <CircularProgress size={16} sx={{ color: 'white' }} />
+                    <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                      検索中...
+                    </Typography>
+                  </Box>
+                )}
+                
+                {/* エラー状態表示 */}
+                {error && (
+                  <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1, 
+                    py: 1,
+                    px: 2,
+                    bgcolor: 'rgba(244, 67, 54, 0.1)',
+                    borderRadius: 1,
+                    border: '1px solid rgba(244, 67, 54, 0.3)'
+                  }}>
+                    <WarningIcon size={16} sx={{ color: '#f44336' }} />
+                    <Typography variant="body2" sx={{ color: '#f44336', fontSize: '0.75rem' }}>
+                      {error}
+                    </Typography>
+                  </Box>
+                )}
+                
                 {conditionChips.length > 0 ? (
                   <>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -323,7 +356,7 @@ export default function LeftPanel({
                       条件をクリア
                     </Button>
                   </>
-                ) : (
+                ) : !isLoading && !error && (
                   <Typography variant="body2" sx={{ opacity: 0.8 }}>
                     条件なし
                   </Typography>
@@ -442,6 +475,7 @@ export default function LeftPanel({
         onClose={() => setIsSearchModalOpen(false)}
         onSearch={onSearch}
         currentConditions={searchConditions}
+        isLoading={isLoading}
       />
     </>
   );

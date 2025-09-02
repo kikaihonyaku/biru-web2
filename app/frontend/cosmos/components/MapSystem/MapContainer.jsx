@@ -20,8 +20,15 @@ import {
 } from '@mui/icons-material';
 import { useGoogleMaps } from '../../hooks/useGoogleMaps';
 
-export default function MapContainer({ onMarkerSelect, selectedLayers = [], rightPanelVisible, onToggleRightPanel, selectedObject }) {
-  const [properties, setProperties] = useState([]);
+export default function MapContainer({ 
+  onMarkerSelect, 
+  selectedLayers = [], 
+  rightPanelVisible, 
+  onToggleRightPanel, 
+  selectedObject,
+  properties = [],
+  isLoading = false 
+}) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [mapType, setMapType] = useState('roadmap');
   
@@ -76,7 +83,8 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [], righ
 
   // 物件タイプに応じたアイコンを取得
   const getPropertyIcon = (property) => {
-    const vacancyRate = property.vacantRooms / property.rooms;
+    // APIからのデータ構造に対応
+    const vacancyRate = property.room_cnt > 0 ? property.free_cnt / property.room_cnt : 0;
     
     // 空室率に応じてアイコンの色を決定（Google Maps標準アイコンを使用）
     if (vacancyRate === 0) {
@@ -112,7 +120,7 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [], righ
 
   // InfoWindow用のHTMLコンテンツを生成（MUI風のスタイル）
   const createInfoWindowContent = (property) => {
-    const vacancyRate = ((property.vacantRooms / property.rooms) * 100).toFixed(1);
+    const vacancyRate = property.room_cnt > 0 ? ((property.free_cnt / property.room_cnt) * 100).toFixed(1) : '0.0';
     
     return `
       <div style="padding: 16px; min-width: 280px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
@@ -121,11 +129,11 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [], righ
         <div style="margin: 16px 0; display: flex; flex-direction: column; gap: 8px;">
           <div style="display: flex; justify-content: space-between; padding: 8px; background: #f5f5f5; border-radius: 4px;">
             <span style="font-weight: 500; color: #666;">総戸数</span>
-            <span style="font-weight: 600; color: #333;">${property.rooms}戸</span>
+            <span style="font-weight: 600; color: #333;">${property.room_cnt}戸</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding: 8px; background: #f5f5f5; border-radius: 4px;">
             <span style="font-weight: 500; color: #666;">空室数</span>
-            <span style="font-weight: 600; color: #333;">${property.vacantRooms}戸</span>
+            <span style="font-weight: 600; color: #333;">${property.free_cnt}戸</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding: 8px; background: #f5f5f5; border-radius: 4px;">
             <span style="font-weight: 500; color: #666;">空室率</span>
@@ -187,7 +195,8 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [], righ
 
   // 全体表示
   const fitToAllProperties = () => {
-    const positions = properties.map(p => ({ lat: p.latitude, lng: p.longitude }));
+    const currentProperties = properties.length > 0 ? properties : sampleProperties;
+    const positions = currentProperties.map(p => ({ lat: p.latitude, lng: p.longitude }));
     if (positions.length > 0) {
       fitBounds(positions);
     }
@@ -197,11 +206,12 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [], righ
   // 地図が読み込まれたら物件マーカーを配置
   useEffect(() => {
     if (isLoaded && map) {
-      setProperties(sampleProperties);
+      // 表示用のデータを決定（APIデータがあればそれを使用、なければサンプルデータ）
+      const currentProperties = properties.length > 0 ? properties : sampleProperties;
       
       // グローバル関数として物件選択関数を設定
       window.selectProperty = (propertyId) => {
-        const property = sampleProperties.find(p => p.id === propertyId);
+        const property = currentProperties.find(p => p.id === propertyId);
         if (property && onMarkerSelect) {
           onMarkerSelect('property', property);
         }
@@ -217,7 +227,7 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [], righ
       clearMarkers();
 
       // 各物件にマーカーを配置
-      sampleProperties.forEach(property => {
+      currentProperties.forEach(property => {
         const iconUrl = getPropertyIcon(property);
         console.log(`Creating marker for ${property.name} with icon: ${iconUrl}`);
         
@@ -250,7 +260,7 @@ export default function MapContainer({ onMarkerSelect, selectedLayers = [], righ
         delete window.showStreetView;
       }
     };
-  }, [isLoaded, map]);
+  }, [isLoaded, map, properties]);
 
   return (
     <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
