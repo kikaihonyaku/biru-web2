@@ -12,7 +12,12 @@ import {
   Toolbar,
   Typography,
   IconButton,
+  Tooltip,
 } from '@mui/material';
+import { 
+  Fullscreen as FullscreenIcon,
+  FullscreenExit as FullscreenExitIcon 
+} from '@mui/icons-material';
 import muiTheme from '../theme/muiTheme';
 import MapContainer from "../components/MapSystem/MapContainer";
 import LeftPanel from "../components/MapSystem/LeftPanel/LeftPanel";
@@ -29,6 +34,7 @@ export default function MapSystem() {
   const [rightPanelVisible, setRightPanelVisible] = useState(false);
   const [leftPanelHovered, setLeftPanelHovered] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(false);
+  const [propertyListMaximized, setPropertyListMaximized] = useState(false);
   
   // useMapDataフックを使用してデータ管理
   const { 
@@ -70,6 +76,26 @@ export default function MapSystem() {
 
   const handleTogglePin = () => {
     setLeftPanelPinned(!leftPanelPinned);
+  };
+
+  const handleToggleBottomPanel = () => {
+    setBottomPanelVisible(!bottomPanelVisible);
+  };
+
+  const handleTogglePropertyListMaximize = () => {
+    setPropertyListMaximized(!propertyListMaximized);
+    // 最大化時は下ペインを非表示に
+    if (!propertyListMaximized) {
+      setBottomPanelVisible(false);
+    } else {
+      // 最小化時（最大化を解除時）は下ペインを表示
+      setBottomPanelVisible(true);
+    }
+  };
+
+  const handleClosePropertyList = () => {
+    setPropertyListMaximized(false);
+    setBottomPanelVisible(false);
   };
 
   // デバッグモード表示
@@ -176,14 +202,89 @@ export default function MapSystem() {
           >
             {/* 中央の地図エリア */}
             <Box sx={{ flex: 1, position: 'relative' }}>
-              <MapContainer 
-                onMarkerSelect={handleMarkerSelect}
-                rightPanelVisible={rightPanelVisible}
-                onToggleRightPanel={() => setRightPanelVisible(true)}
-                selectedObject={selectedObject}
-                properties={properties}
-                isLoading={isLoading}
-              />
+              {propertyListMaximized ? (
+                /* 最大化された物件一覧 */
+                <Fade in={true} timeout={300}>
+                  <Paper 
+                    elevation={2}
+                    sx={{ 
+                      position: 'absolute',
+                      top: '2px',
+                      left: '2px',
+                      right: rightPanelVisible && isMdUp ? '4px' : '2px',
+                      bottom: '2px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      overflow: 'hidden'
+                    }}
+                  >
+                  <Box sx={{ 
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    px: 2,
+                    py: 0.5,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    minHeight: '40px'
+                  }}>
+                    <Box component="h3" sx={{ m: 0, fontSize: '1rem', fontWeight: 600 }}>
+                      物件一覧（最大化表示）
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Tooltip title="元に戻す" placement="top">
+                        <Button
+                          size="small"
+                          onClick={handleTogglePropertyListMaximize}
+                          sx={{ 
+                            color: 'white', 
+                            minWidth: 'auto', 
+                            p: 0.5,
+                            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' }
+                          }}
+                        >
+                          <FullscreenExitIcon fontSize="small" />
+                        </Button>
+                      </Tooltip>
+                      <Tooltip title="閉じる" placement="top">
+                        <Button
+                          size="small"
+                          onClick={handleClosePropertyList}
+                          sx={{ 
+                            color: 'white', 
+                            minWidth: 'auto', 
+                            p: 0.5,
+                            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' }
+                          }}
+                        >
+                          ✕
+                        </Button>
+                      </Tooltip>
+                    </Box>
+                  </Box>
+                  <Box sx={{ flex: 1, overflow: 'auto' }}>
+                    <PropertyTable
+                      properties={properties}
+                      onPropertySelect={(property) => {
+                        setSelectedObject({ type: 'property', data: property });
+                        setRightPanelVisible(true);
+                      }}
+                      searchConditions={searchConditions}
+                    />
+                  </Box>
+                  </Paper>
+                </Fade>
+              ) : (
+                /* 通常の地図表示 */
+                <MapContainer 
+                  onMarkerSelect={handleMarkerSelect}
+                  rightPanelVisible={rightPanelVisible}
+                  onToggleRightPanel={() => setRightPanelVisible(true)}
+                  selectedObject={selectedObject}
+                  properties={properties}
+                  isLoading={isLoading}
+                />
+              )}
             </Box>
 
             {/* 右ペイン */}
@@ -328,8 +429,8 @@ export default function MapSystem() {
             )}
           </Box>
 
-          {/* 下ペイン */}
-          {(!leftPanelPinned || isMdUp) && (
+          {/* 下ペイン - 最大化時は非表示 */}
+          {(!leftPanelPinned || isMdUp) && !propertyListMaximized && (
             <Collapse in={bottomPanelVisible}>
               <Paper
                 elevation={2}
@@ -337,10 +438,11 @@ export default function MapSystem() {
                   maxHeight: '40vh',
                   display: 'flex',
                   flexDirection: 'column',
-                  borderRadius: 0,
+                  overflow: 'hidden',
                   zIndex: 1200,
                   position: 'relative',
                   marginLeft: leftPanelPinned ? '324px' : '0px',
+                  marginRight: '1px',
                   transition: 'margin-left 0.3s ease',
                 }}
               >
@@ -359,13 +461,30 @@ export default function MapSystem() {
                   <Box component="h3" sx={{ m: 0, fontSize: '1rem', fontWeight: 600 }}>
                     物件一覧
                   </Box>
-                  <Button
-                    size="small"
-                    onClick={() => setBottomPanelVisible(false)}
-                    sx={{ color: 'white', minWidth: 'auto', p: 0.5 }}
-                  >
-                    ✕
-                  </Button>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Tooltip title="最大化" placement="top">
+                      <IconButton
+                        size="small"
+                        onClick={handleTogglePropertyListMaximize}
+                        sx={{ 
+                          color: 'white',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                          }
+                        }}
+                      >
+                        <FullscreenIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Button
+                      size="small"
+                      onClick={() => setBottomPanelVisible(false)}
+                      sx={{ color: 'white', minWidth: 'auto', p: 0.5 }}
+                      title="閉じる"
+                    >
+                      ✕
+                    </Button>
+                  </Box>
                 </Box>
                 <Box sx={{ flex: 1, overflow: 'auto' }}>
                   <PropertyTable
@@ -382,8 +501,8 @@ export default function MapSystem() {
           )}
         </Box>
 
-        {/* 下ペイン表示ボタン（非表示時） */}
-        {!bottomPanelVisible && (
+        {/* 下ペイン表示ボタン（非表示時かつ非最大化時） */}
+        {!bottomPanelVisible && !propertyListMaximized && (
           <Box
             sx={{
               position: 'fixed',
