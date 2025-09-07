@@ -1,6 +1,11 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+import muiTheme from "../cosmos/theme/muiTheme";
+import { AuthProvider } from "../cosmos/contexts/AuthContext";
+import PrivateRoute from "../cosmos/components/Auth/PrivateRoute";
 import App from "../cosmos/App";
 import Home from "../cosmos/pages/Home";
 import About from "../cosmos/pages/About";
@@ -12,7 +17,11 @@ import NotFound from "../cosmos/pages/NotFound";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: (
+      <PrivateRoute>
+        <App />
+      </PrivateRoute>
+    ),
     children: [
       { index: true, element: <Home /> },
       { path: "about", element: <About /> },
@@ -24,4 +33,11 @@ const router = createBrowserRouter([
 ]);
 
 const container = document.getElementById("root");
-createRoot(container).render(<RouterProvider router={router} />);
+createRoot(container).render(
+  <ThemeProvider theme={muiTheme}>
+    <CssBaseline />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  </ThemeProvider>
+);

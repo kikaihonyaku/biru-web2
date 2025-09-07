@@ -11,11 +11,22 @@ Rails.application.routes.draw do
       post 'properties/search', to: 'properties#search'
       get 'layers/:type', to: 'layers#show'
       
+      # Authentication routes
+      post 'auth/login', to: 'auth#login'
+      get 'auth/google', to: 'auth#google_auth'
+      get 'auth/me', to: 'auth#me'
+      post 'auth/logout', to: 'auth#logout'
+      post 'auth/link_google', to: 'auth#link_google'
+      
       # CORS preflight requests
       match 'properties/*path', to: 'properties#options', via: :options
       match 'layers/*path', to: 'layers#options', via: :options
+      match 'auth/*path', to: 'auth#options', via: :options
     end
   end
+
+  # OAuth callbacks
+  get '/auth/google/callback', to: 'api/v1/auth#google_callback'
 
   # React Router に任せたいパスを全部 index に返す（APIは除外）
   get "*path", to: "frontend#index", constraints: ->(req) do
