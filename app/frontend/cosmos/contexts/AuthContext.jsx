@@ -73,8 +73,6 @@ export const AuthProvider = ({ children }) => {
   // 既存認証（社員番号・パスワード）でのログイン
   const login = async (code, password) => {
     try {
-      setLoading(true);
-      
       const response = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: {
@@ -96,8 +94,6 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('ログインエラー:', error);
       return { success: false, error: 'ネットワークエラーが発生しました' };
-    } finally {
-      setLoading(false);
     }
   };
 

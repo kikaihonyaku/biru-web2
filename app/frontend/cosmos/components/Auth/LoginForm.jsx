@@ -19,7 +19,9 @@ const LoginForm = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
+  
   const { login, loginWithGoogle } = useAuth();
+
 
   const handleChange = (e) => {
     setFormData({
@@ -32,6 +34,8 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation(); // イベントの伝播を停止
+    
     setError('');
     setLoading(true);
 
@@ -45,14 +49,18 @@ const LoginForm = () => {
       const result = await login(formData.code, formData.password);
       
       if (!result.success) {
-        setError(result.error || 'ログインに失敗しました');
+        const errorMessage = result.error || 'IDまたはパスワードに誤りがあります。正しい社員番号とパスワードを入力してください。';
+        setError(errorMessage);
+        setLoading(false); // エラー時はここでloadingを false に
+        return; // エラー時は early return
       }
       // 成功の場合、AuthContextがユーザー状態を更新し、
       // アプリケーションが自動的にリダイレクトします
       
     } catch (err) {
-      setError('予期しないエラーが発生しました');
-      console.error('Login error:', err);
+      console.error('ログイン処理中のエラー:', err);
+      const errorMessage = 'ネットワークエラーが発生しました。しばらく時間をおいて再度お試しください。';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -103,12 +111,21 @@ const LoginForm = () => {
         </Typography>
 
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mb: 2,
+              '& .MuiAlert-message': {
+                fontSize: '0.95rem',
+                fontWeight: 500
+              }
+            }}
+          >
             {error}
           </Alert>
         )}
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ mb: 3 }}>
+        <Box component="form" onSubmit={handleSubmit} noValidate>
           <TextField
             fullWidth
             label="社員番号"
@@ -119,6 +136,14 @@ const LoginForm = () => {
             required
             autoFocus
             disabled={loading}
+            error={!!error}
+            helperText={error && formData.code === '' ? '社員番号を入力してください' : ''}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
           />
           
           <TextField
@@ -131,12 +156,21 @@ const LoginForm = () => {
             margin="normal"
             required
             disabled={loading}
+            error={!!error}
+            helperText={error && formData.password === '' ? 'パスワードを入力してください' : ''}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
           />
           
           <Button
-            type="submit"
+            type="button"
             fullWidth
             variant="contained"
+            onClick={handleSubmit}
             sx={{ mt: 3, mb: 2, py: 1.5 }}
             disabled={loading}
           >
@@ -148,6 +182,8 @@ const LoginForm = () => {
           </Button>
         </Box>
 
+        {/* Google認証ボタンは一時的に非表示 */}
+        {/* 
         <Divider sx={{ my: 2 }}>
           <Typography variant="body2" color="textSecondary">
             または
@@ -178,6 +214,7 @@ const LoginForm = () => {
             Googleでログイン
           </Box>
         </Button>
+        */}
       </Paper>
     </Box>
   );

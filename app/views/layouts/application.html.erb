@@ -26,7 +26,22 @@
     <%#= favicon_link_tag 'favicon.ico', :rel => 'shortcut icon' %>
 
     <!-- jQuery plugins loaded after main application (skip for React pages) -->
-    <% unless content_for?(:react_app) || request.path.start_with?('/cosmos') || request.path.start_with?('/map') %>
+    <% 
+      is_react_app = content_for?(:react_app) || @is_react_app
+      is_cosmos = request.path.start_with?('/cosmos') || @is_cosmos_app
+      is_map = request.path.start_with?('/map')
+      should_skip_jquery = is_react_app || is_cosmos || is_map
+    %>
+    <script>
+      console.log('Path check:', {
+        path: '<%= request.path %>',
+        isReactApp: <%= is_react_app %>,
+        isCosmos: <%= is_cosmos %>,
+        isMap: <%= is_map %>,
+        shouldSkipJquery: <%= should_skip_jquery %>
+      });
+    </script>
+    <% unless should_skip_jquery %>
 
       <%= csrf_meta_tags %>
       <%= csp_meta_tag %>
@@ -233,7 +248,8 @@
       }
 
       // Enhanced error handling for jQuery plugins (skip for React pages)
-      <% unless content_for?(:react_app) || request.path.start_with?('/cosmos') || request.path.start_with?('/map') %>
+      <% unless should_skip_jquery %>
+        console.log('Initializing jQuery for traditional Rails page:', window.location.pathname);
         document.addEventListener('DOMContentLoaded', function() {
           // Wait for Vite to load jQuery, then initialize
           setTimeout(function() {

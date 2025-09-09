@@ -14,12 +14,7 @@ class Api::V1::AuthController < ApplicationController
       return
     end
     
-    # 数値の場合は文字列に変換
-    if code.to_i != 0
-      code = code.to_i.to_s
-    end
-    
-    user = BiruUser.authenticate(code, password)
+    user = authenticate_user_with_code_normalization(code, password)
     
     if user
       # ログイン履歴の保存
@@ -32,14 +27,14 @@ class Api::V1::AuthController < ApplicationController
         success: true,
         user: {
           id: user.id,
-          code: user.code,
+          code: format_employee_code(code),  # 入力コードを5桁にフォーマット
           name: user.name,
           email: user.email,
           auth_provider: user.auth_provider || 'local'
         }
       }
     else
-      render json: { error: '社員番号またはパスワードが違います' }, status: 401
+      render json: { error: 'IDまたはパスワードに誤りがあります。正しい社員番号とパスワードを入力してください。' }, status: 401
     end
   end
   
@@ -80,11 +75,12 @@ class Api::V1::AuthController < ApplicationController
     if session[:biru_user]
       begin
         user = BiruUser.find(session[:biru_user])
+        
         render json: {
           success: true,
           user: {
             id: user.id,
-            code: user.code,
+            code: format_employee_code(user.code),  # DBの社員番号を5桁にフォーマット
             name: user.name,
             email: user.email,
             auth_provider: user.auth_provider || 'local'
@@ -181,5 +177,48 @@ class Api::V1::AuthController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     reset_session
     nil
+  end
+  
+  # 社員番号の正規化を行いながら認証を試行
+  def authenticate_user_with_code_normalization(code, password)
+    # パターン1: 入力されたコードをそのまま使用（先頭0保持）
+    user = BiruUser.authenticate(code, password)
+    return user if user
+    
+    # パターン2: 数値変換したコード（既存の互換性のため）
+    # ただし、先頭が0でない場合や、純粋な数値入力の場合のみ
+    if code.match?(/\A\d+\z/) && !code.start_with?('0')
+      normalized_code = code.to_i.to_s
+      if normalized_code != code
+        user = BiruUser.authenticate(normalized_code, password)
+        return user if user
+      end
+    end
+    
+    # パターン3: 先頭0を削除したコード（レガシー対応）
+    if code.start_with?('0') && code.length > 1
+      trimmed_code = code.sub(/\A0+/, '')
+      user = BiruUser.authenticate(trimmed_code, password)
+      return user if user
+    end
+    
+    # 認証失敗
+    nil
+  end
+  
+  # 社員番号を5桁にフォーマット（4桁以下の場合は先頭に0を追加）
+  def format_employee_code(code)
+    return code if code.blank?
+    
+    # 数値でない場合はそのまま返す
+    return code unless code.to_s.match?(/\A\d+\z/)
+    
+    # 5桁以上の場合はそのまま、4桁以下の場合は先頭に0を追加して5桁にする
+    code_str = code.to_s
+    if code_str.length <= 4
+      code_str.rjust(5, '0')
+    else
+      code_str
+    end
   end
 end
