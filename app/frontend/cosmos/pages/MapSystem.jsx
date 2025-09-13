@@ -8,8 +8,6 @@ import {
   Button,
   Paper,
   Collapse,
-  AppBar,
-  Toolbar,
   Typography,
   IconButton,
   Tooltip,
@@ -19,6 +17,7 @@ import {
   FullscreenExit as FullscreenExitIcon 
 } from '@mui/icons-material';
 import muiTheme from '../theme/muiTheme';
+import Header from "../components/shared/Header";
 import MapContainer from "../components/MapSystem/MapContainer";
 import LeftPanel from "../components/MapSystem/LeftPanel/LeftPanel";
 import PropertyTable from "../components/MapSystem/BottomPanel/PropertyTable";
@@ -138,23 +137,20 @@ export default function MapSystem() {
         
         {/* ヘッダーエリア */}
         <Fade in={headerVisible} timeout={200}>
-          <AppBar 
-            position="fixed" 
+          <Box 
             sx={{ 
-              zIndex: 2100, 
-              mx: '2px',
+              position: 'fixed',
               top: headerVisible ? 0 : '-60px',
+              left: 0,
+              right: 0,
+              zIndex: 2100, 
               transition: 'top 0.2s ease-in-out',
             }}
             onMouseEnter={() => setHeaderVisible(true)}
             onMouseLeave={() => setHeaderVisible(false)}
           >
-            <Toolbar variant="dense" sx={{ minHeight: '45px' }}>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontSize: '1.1rem' }}>
-                地図システム
-              </Typography>
-            </Toolbar>
-          </AppBar>
+            <Header />
+          </Box>
         </Fade>
         
         {/* コンテンツエリア */}
@@ -164,7 +160,7 @@ export default function MapSystem() {
             flex: 1,
             overflow: 'hidden',
             bgcolor: 'background.default',
-            paddingTop: headerVisible ? '47px' : '0px',
+            paddingTop: headerVisible ? '45px' : '0px',
             transition: 'padding-top 0.2s ease-in-out',
           }}
         >
