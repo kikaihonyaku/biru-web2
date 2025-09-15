@@ -21,7 +21,7 @@ export default function Header() {
     <AppBar position="static" elevation={1} sx={{ bgcolor: 'primary.main', borderBottom: '1px solid #ddd' }}>
       <Toolbar variant="dense" sx={{ minHeight: '45px' }}>
         <Link to="/" style={{ textDecoration: "none", fontWeight: 700, marginRight: "2rem", color: 'white' }}>
-          ココスモ
+          CoCoスモ
         </Link>
         
         <Box sx={{ flexGrow: 1, display: 'flex' }}>
