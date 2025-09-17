@@ -11,6 +11,7 @@ import Home from "../cosmos/pages/Home";
 import About from "../cosmos/pages/About";
 import Properties from "../cosmos/pages/Properties";
 import MapSystem from "../cosmos/pages/MapSystem";
+import PropertyDetail from "../cosmos/pages/PropertyDetail";
 import NotFound from "../cosmos/pages/NotFound";
 
 // ルータ定義（v7）
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "about", element: <About /> },
       { path: "properties", element: <Properties /> },
+      { path: "property/:id", element: <PropertyDetail /> },
       { path: "map", element: <MapSystem /> },
       { path: "*", element: <NotFound /> },
     ],

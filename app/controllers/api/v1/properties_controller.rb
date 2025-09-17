@@ -130,6 +130,119 @@ class Api::V1::PropertiesController < ApplicationController
     }, status: 500
   end
   
+  # 物件詳細取得
+  def show
+    begin
+      property = Building.includes(:shop, :build_type, :rooms, :trusts => :owner).find(params[:id])
+      
+      # 部屋数と空室数を計算
+      total_rooms = property.rooms.count
+      vacant_rooms = property.rooms.where(free_state: 1).count
+      vacancy_rate = total_rooms > 0 ? (vacant_rooms.to_f / total_rooms * 100).round(1) : 0
+      
+      render json: {
+        status: 'success',
+        data: {
+          id: property.id,
+          code: property.code,
+          name: property.name,
+          address: property.address,
+          latitude: property.latitude,
+          longitude: property.longitude,
+          postcode: property.postcode,
+          description: property.description,
+          biru_age: property.biru_age,
+          build_type_id: property.build_type_id,
+          build_type_name: property.build_type&.name,
+          shop_id: property.shop_id,
+          shop_name: property.shop&.name,
+          total_rooms: total_rooms,
+          vacant_rooms: vacant_rooms,
+          vacancy_rate: vacancy_rate,
+          created_at: property.created_at,
+          updated_at: property.updated_at,
+          # オーナー情報も含める
+          owners: property.owners.map do |owner|
+            {
+              id: owner.id,
+              name: owner.name,
+              address: owner.address,
+              tel: owner.tel
+            }
+          end
+        }
+      }
+      
+    rescue ActiveRecord::RecordNotFound
+      render json: {
+        status: 'error',
+        message: '物件が見つかりません'
+      }, status: 404
+    rescue => e
+      Rails.logger.error "PropertiesController#show error: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      
+      render json: {
+        status: 'error',
+        message: '物件詳細の取得に失敗しました',
+        error: e.message
+      }, status: 500
+    end
+  end
+  
+  # 物件情報更新
+  def update
+    begin
+      property = Building.find(params[:id])
+      
+      update_params = params.require(:property).permit(
+        :name, :address, :postcode, :description, :biru_age, 
+        :build_type_id, :latitude, :longitude
+      )
+      
+      if property.update(update_params)
+        render json: {
+          status: 'success',
+          message: '物件情報を更新しました',
+          data: {
+            id: property.id,
+            code: property.code,
+            name: property.name,
+            address: property.address,
+            latitude: property.latitude,
+            longitude: property.longitude,
+            postcode: property.postcode,
+            description: property.description,
+            biru_age: property.biru_age,
+            build_type_id: property.build_type_id,
+            updated_at: property.updated_at
+          }
+        }
+      else
+        render json: {
+          status: 'error',
+          message: '物件情報の更新に失敗しました',
+          errors: property.errors.full_messages
+        }, status: 422
+      end
+      
+    rescue ActiveRecord::RecordNotFound
+      render json: {
+        status: 'error',
+        message: '物件が見つかりません'
+      }, status: 404
+    rescue => e
+      Rails.logger.error "PropertiesController#update error: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      
+      render json: {
+        status: 'error',
+        message: '物件情報の更新に失敗しました',
+        error: e.message
+      }, status: 500
+    end
+  end
+
   # 物件検索
   def search
     search_params = params.permit(:property_name, :address, :building_type, :management_type, 
@@ -138,6 +251,11 @@ class Api::V1::PropertiesController < ApplicationController
     # map_dataメソッドを再利用
     params[:search] = search_params.to_h
     map_data
+  end
+  
+  # CORS preflight request
+  def options
+    head :ok
   end
   
   private

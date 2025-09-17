@@ -11,6 +11,12 @@ Rails.application.routes.draw do
       post 'properties/search', to: 'properties#search'
       get 'layers/:type', to: 'layers#show'
       
+      # Property detail routes
+      resources :properties, only: [:show, :update] do
+        resources :rooms, except: [:edit, :new]
+        resources :photos, only: [:index, :create, :destroy]
+      end
+      
       # Authentication routes
       post 'auth/login', to: 'auth#login'
       get 'auth/google', to: 'auth#google_auth'
@@ -22,6 +28,8 @@ Rails.application.routes.draw do
       match 'properties/*path', to: 'properties#options', via: :options
       match 'layers/*path', to: 'layers#options', via: :options
       match 'auth/*path', to: 'auth#options', via: :options
+      match 'rooms/*path', to: 'rooms#options', via: :options
+      match 'photos/*path', to: 'photos#options', via: :options
     end
   end
 

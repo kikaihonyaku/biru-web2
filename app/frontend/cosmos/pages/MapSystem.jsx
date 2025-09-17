@@ -395,7 +395,11 @@ export default function MapSystem() {
                             </Paper>
                             
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 2 }}>
-                              <Button variant="contained" fullWidth>
+                              <Button 
+                                variant="contained" 
+                                fullWidth
+                                onClick={() => window.open(`/property/${selectedObject.data.id}`, '_blank')}
+                              >
                                 詳細ページを開く
                               </Button>
                               <Button variant="outlined" fullWidth>

@@ -5,9 +5,10 @@ import Header from "./components/shared/Header";
 export default function App() {
   const location = useLocation();
   const isMapSystem = location.pathname === '/map';
+  const isPropertyDetail = location.pathname.startsWith('/property/');
 
-  // 地図システムページでは全画面レイアウト
-  if (isMapSystem) {
+  // 地図システムページと物件詳細ページでは全画面レイアウト
+  if (isMapSystem || isPropertyDetail) {
     return (
       <div style={{ fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif" }}>
         <Outlet />

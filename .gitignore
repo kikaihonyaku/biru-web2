@@ -41,3 +41,7 @@ config/master.key
 .env
 .env.*
 /vendor/bundle
+
+# 物件写真ディレクトリ（アップロードファイル）
+/public/property_photos/*
+!/public/property_photos/.keep
