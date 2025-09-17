@@ -6,7 +6,7 @@ gem "rails", "~> 8.0.2"
 gem "propshaft"
 
 # takashi add
-gem "tiny_tds", "~> 3.2"
+gem "tiny_tds", "~> 3.3"
 gem "activerecord-sqlserver-adapter", "~> 8.0.2"
 
 
