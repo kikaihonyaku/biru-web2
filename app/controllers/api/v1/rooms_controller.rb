@@ -19,18 +19,19 @@ class Api::V1::RoomsController < ApplicationController
         {
           id: room.id,
           name: room.name,
-          floor: room.floor,
-          area: room.area,
+          code: room.code,
           rent: room.rent,
-          management_fee: room.management_fee,
-          deposit: room.deposit,
-          key_money: room.key_money,
           room_layout_id: room.room_layout_id,
           room_layout_name: room.room_layout&.name,
           room_status_id: room.room_status_id,
           room_status_name: room.room_status&.name,
+          room_type_id: room.room_type_id,
+          room_type_name: room.room_type&.name,
+          manage_type_id: room.manage_type_id,
+          trust_id: room.trust_id,
           free_state: room.free_state,
-          description: room.description,
+          owner_stop_state: room.owner_stop_state,
+          advertise_state: room.advertise_state,
           created_at: room.created_at,
           updated_at: room.updated_at
         }
@@ -61,18 +62,19 @@ class Api::V1::RoomsController < ApplicationController
         data: {
           id: @room.id,
           name: @room.name,
-          floor: @room.floor,
-          area: @room.area,
+          code: @room.code,
           rent: @room.rent,
-          management_fee: @room.management_fee,
-          deposit: @room.deposit,
-          key_money: @room.key_money,
           room_layout_id: @room.room_layout_id,
           room_layout_name: @room.room_layout&.name,
           room_status_id: @room.room_status_id,
           room_status_name: @room.room_status&.name,
+          room_type_id: @room.room_type_id,
+          room_type_name: @room.room_type&.name,
+          manage_type_id: @room.manage_type_id,
+          trust_id: @room.trust_id,
           free_state: @room.free_state,
-          description: @room.description,
+          owner_stop_state: @room.owner_stop_state,
+          advertise_state: @room.advertise_state,
           building_id: @room.building_id,
           created_at: @room.created_at,
           updated_at: @room.updated_at
@@ -94,13 +96,13 @@ class Api::V1::RoomsController < ApplicationController
   def create
     begin
       room_params = params.require(:room).permit(
-        :name, :floor, :area, :rent, :management_fee, :deposit, :key_money,
-        :room_layout_id, :room_status_id, :description
+        :name, :code, :rent, :room_layout_id, :room_status_id, :room_type_id, :manage_type_id, :trust_id
       )
       
-      # 空室状態を設定（room_status_idが'1'（空室）の場合はfree_state=1）
-      room_params[:free_state] = room_params[:room_status_id] == '1' ? 1 : 0
+      # 空室状態を設定（room_status_idが'1'（空室）の場合はfree_state=true）
+      room_params[:free_state] = room_params[:room_status_id] == '1' ? true : false
       room_params[:building_id] = @property.id
+      room_params[:building_cd] = @property.code.to_i if @property.code # building_cdも設定
       
       room = Room.new(room_params)
       
@@ -111,16 +113,16 @@ class Api::V1::RoomsController < ApplicationController
           data: {
             id: room.id,
             name: room.name,
-            floor: room.floor,
-            area: room.area,
+            code: room.code,
             rent: room.rent,
-            management_fee: room.management_fee,
-            deposit: room.deposit,
-            key_money: room.key_money,
             room_layout_id: room.room_layout_id,
             room_status_id: room.room_status_id,
+            room_type_id: room.room_type_id,
+            manage_type_id: room.manage_type_id,
+            trust_id: room.trust_id,
             free_state: room.free_state,
-            description: room.description,
+            owner_stop_state: room.owner_stop_state,
+            advertise_state: room.advertise_state,
             building_id: room.building_id,
             created_at: room.created_at,
             updated_at: room.updated_at
@@ -150,12 +152,11 @@ class Api::V1::RoomsController < ApplicationController
   def update
     begin
       room_params = params.require(:room).permit(
-        :name, :floor, :area, :rent, :management_fee, :deposit, :key_money,
-        :room_layout_id, :room_status_id, :description
+        :name, :code, :rent, :room_layout_id, :room_status_id, :room_type_id, :manage_type_id, :trust_id
       )
       
       # 空室状態を設定
-      room_params[:free_state] = room_params[:room_status_id] == '1' ? 1 : 0
+      room_params[:free_state] = room_params[:room_status_id] == '1' ? true : false
       
       if @room.update(room_params)
         render json: {
@@ -164,16 +165,16 @@ class Api::V1::RoomsController < ApplicationController
           data: {
             id: @room.id,
             name: @room.name,
-            floor: @room.floor,
-            area: @room.area,
+            code: @room.code,
             rent: @room.rent,
-            management_fee: @room.management_fee,
-            deposit: @room.deposit,
-            key_money: @room.key_money,
             room_layout_id: @room.room_layout_id,
             room_status_id: @room.room_status_id,
+            room_type_id: @room.room_type_id,
+            manage_type_id: @room.manage_type_id,
+            trust_id: @room.trust_id,
             free_state: @room.free_state,
-            description: @room.description,
+            owner_stop_state: @room.owner_stop_state,
+            advertise_state: @room.advertise_state,
             updated_at: @room.updated_at
           }
         }

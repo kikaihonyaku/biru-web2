@@ -31,7 +31,7 @@ export default function PropertyInfoPanel({ property, editMode, onSave, loading 
     address: '',
     biru_age: '',
     build_type_id: '',
-    description: '',
+    memo: '',
     postcode: '',
     ...property
   });
@@ -49,7 +49,7 @@ export default function PropertyInfoPanel({ property, editMode, onSave, loading 
         address: property.address || '',
         biru_age: property.biru_age || '',
         build_type_id: property.build_type_id || '',
-        description: property.description || '',
+        memo: property.memo || '',
         postcode: property.postcode || '',
         ...property
       });
@@ -164,8 +164,8 @@ export default function PropertyInfoPanel({ property, editMode, onSave, loading 
                   label="説明・備考"
                   multiline
                   rows={3}
-                  value={formData.description}
-                  onChange={handleChange('description')}
+                  value={formData.memo}
+                  onChange={handleChange('memo')}
                   disabled={!editMode}
                   variant={editMode ? "outlined" : "filled"}
                   size="small"

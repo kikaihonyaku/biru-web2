@@ -150,7 +150,7 @@ class Api::V1::PropertiesController < ApplicationController
           latitude: property.latitude,
           longitude: property.longitude,
           postcode: property.postcode,
-          description: property.description,
+          memo: property.memo,
           biru_age: property.biru_age,
           build_type_id: property.build_type_id,
           build_type_name: property.build_type&.name,
@@ -196,7 +196,7 @@ class Api::V1::PropertiesController < ApplicationController
       property = Building.find(params[:id])
       
       update_params = params.require(:property).permit(
-        :name, :address, :postcode, :description, :biru_age, 
+        :name, :address, :postcode, :memo, :biru_age, 
         :build_type_id, :latitude, :longitude
       )
       
@@ -212,7 +212,7 @@ class Api::V1::PropertiesController < ApplicationController
             latitude: property.latitude,
             longitude: property.longitude,
             postcode: property.postcode,
-            description: property.description,
+            memo: property.memo,
             biru_age: property.biru_age,
             build_type_id: property.build_type_id,
             updated_at: property.updated_at

@@ -49,15 +49,13 @@ export default function RoomsPanel({ propertyId, rooms, onRoomsUpdate, editMode 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    floor: '',
+    code: '',
     room_layout_id: '',
-    area: '',
     rent: '',
-    management_fee: '',
-    deposit: '',
-    key_money: '',
     room_status_id: '',
-    description: '',
+    room_type_id: '',
+    manage_type_id: '',
+    trust_id: '',
   });
   
   // 部屋ステータスの定義
@@ -87,15 +85,13 @@ export default function RoomsPanel({ propertyId, rooms, onRoomsUpdate, editMode 
     setEditingRoom(null);
     setFormData({
       name: '',
-      floor: '',
+      code: '',
       room_layout_id: '',
-      area: '',
       rent: '',
-      management_fee: '',
-      deposit: '',
-      key_money: '',
       room_status_id: '1',
-      description: '',
+      room_type_id: '',
+      manage_type_id: '',
+      trust_id: '',
     });
     setRoomDialogOpen(true);
   };
@@ -104,15 +100,13 @@ export default function RoomsPanel({ propertyId, rooms, onRoomsUpdate, editMode 
     setEditingRoom(room);
     setFormData({
       name: room.name || '',
-      floor: room.floor || '',
+      code: room.code || '',
       room_layout_id: room.room_layout_id || '',
-      area: room.area || '',
       rent: room.rent || '',
-      management_fee: room.management_fee || '',
-      deposit: room.deposit || '',
-      key_money: room.key_money || '',
       room_status_id: room.room_status_id || '1',
-      description: room.description || '',
+      room_type_id: room.room_type_id || '',
+      manage_type_id: room.manage_type_id || '',
+      trust_id: room.trust_id || '',
     });
     setRoomDialogOpen(true);
     handleMenuClose();
@@ -280,9 +274,8 @@ export default function RoomsPanel({ propertyId, rooms, onRoomsUpdate, editMode 
               <TableHead>
                 <TableRow>
                   <TableCell>部屋名</TableCell>
-                  <TableCell>階</TableCell>
+                  <TableCell>部屋コード</TableCell>
                   <TableCell>間取り</TableCell>
-                  <TableCell align="right">面積</TableCell>
                   <TableCell align="right">賃料</TableCell>
                   <TableCell>状態</TableCell>
                   {editMode && <TableCell align="center">操作</TableCell>}
@@ -298,20 +291,12 @@ export default function RoomsPanel({ propertyId, rooms, onRoomsUpdate, editMode 
                           {room.name}
                         </Typography>
                       </TableCell>
-                      <TableCell>{room.floor}F</TableCell>
+                      <TableCell>{room.code || '-'}</TableCell>
                       <TableCell>{getLayoutName(room.room_layout_id)}</TableCell>
-                      <TableCell align="right">
-                        {room.area ? `${room.area}㎡` : '-'}
-                      </TableCell>
                       <TableCell align="right">
                         <Typography variant="body2">
                           {formatCurrency(room.rent)}
                         </Typography>
-                        {room.management_fee && (
-                          <Typography variant="caption" color="text.secondary" display="block">
-                            管理費: {formatCurrency(room.management_fee)}
-                          </Typography>
-                        )}
                       </TableCell>
                       <TableCell>
                         <Chip
@@ -382,10 +367,9 @@ export default function RoomsPanel({ propertyId, rooms, onRoomsUpdate, editMode 
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="階数"
-                type="number"
-                value={formData.floor}
-                onChange={handleChange('floor')}
+                label="部屋コード"
+                value={formData.code}
+                onChange={handleChange('code')}
                 size="small"
               />
             </Grid>
@@ -410,54 +394,10 @@ export default function RoomsPanel({ propertyId, rooms, onRoomsUpdate, editMode 
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="面積 (㎡)"
-                type="number"
-                value={formData.area}
-                onChange={handleChange('area')}
-                size="small"
-              />
-            </Grid>
-            
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
                 label="賃料"
                 type="number"
                 value={formData.rent}
                 onChange={handleChange('rent')}
-                size="small"
-              />
-            </Grid>
-            
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="管理費"
-                type="number"
-                value={formData.management_fee}
-                onChange={handleChange('management_fee')}
-                size="small"
-              />
-            </Grid>
-            
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="敷金"
-                type="number"
-                value={formData.deposit}
-                onChange={handleChange('deposit')}
-                size="small"
-              />
-            </Grid>
-            
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="礼金"
-                type="number"
-                value={formData.key_money}
-                onChange={handleChange('key_money')}
                 size="small"
               />
             </Grid>
@@ -480,18 +420,6 @@ export default function RoomsPanel({ propertyId, rooms, onRoomsUpdate, editMode 
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
-            
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="備考"
-                multiline
-                rows={3}
-                value={formData.description}
-                onChange={handleChange('description')}
-                size="small"
-              />
             </Grid>
           </Grid>
         </DialogContent>
