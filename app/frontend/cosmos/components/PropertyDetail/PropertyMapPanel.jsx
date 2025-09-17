@@ -51,17 +51,26 @@ export default function PropertyMapPanel({ property, onLocationUpdate }) {
   }, [property]);
   
   const loadGoogleMaps = () => {
-    const script = document.createElement('script');
-    // Viteでは import.meta.env を使用。APIキーがない場合はライブラリのみ読み込み
     const apiKey = import.meta.env?.VITE_GOOGLE_MAPS_API_KEY || '';
-    const keyParam = apiKey ? `key=${apiKey}&` : '';
-    script.src = `https://maps.googleapis.com/maps/api/js?${keyParam}libraries=places`;
+    const isValidApiKey = apiKey && apiKey !== 'your_google_maps_api_key_here';
+    
+    // 有効なAPIキーがない場合は地図読み込みをスキップ
+    if (!isValidApiKey) {
+      console.warn('Google Maps APIキーが設定されていないため、地図を表示できません');
+      setLoading(false);
+      setMapLoaded(false);
+      return;
+    }
+    
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
     script.async = true;
     script.defer = true;
     script.onload = initializeMap;
     script.onerror = () => {
       console.error('Google Maps APIの読み込みに失敗しました');
       setLoading(false);
+      setMapLoaded(false);
     };
     document.head.appendChild(script);
   };

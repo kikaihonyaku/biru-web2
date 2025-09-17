@@ -193,10 +193,29 @@ export default function PropertyTable({ properties = [], onPropertySelect, searc
 
   // データにidフィールドを追加（DataGridで必要）
   const rowsWithId = useMemo(() => {
-    return allProperties.map((property) => ({
-      ...property,
-      id: property.id || Math.random(), // idが無い場合は一意のidを生成
-    }));
+    const uniqueMap = new Map();
+    const processedData = [];
+    
+    allProperties.forEach((property, index) => {
+      // 基本IDを決定
+      const baseId = property.id || `temp-${index}`;
+      
+      // 重複チェック
+      let uniqueId = baseId;
+      let counter = 1;
+      while (uniqueMap.has(uniqueId)) {
+        uniqueId = `${baseId}-duplicate-${counter}`;
+        counter++;
+      }
+      
+      uniqueMap.set(uniqueId, true);
+      processedData.push({
+        ...property,
+        id: uniqueId,
+      });
+    });
+    
+    return processedData;
   }, [allProperties]);
 
   // カスタムツールバー

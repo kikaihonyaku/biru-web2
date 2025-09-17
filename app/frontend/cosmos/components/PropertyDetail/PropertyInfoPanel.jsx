@@ -111,11 +111,11 @@ export default function PropertyInfoPanel({ property, editMode, onSave, loading 
           </AccordionSummary>
           <AccordionDetails sx={{ pt: 0 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   label="物件名"
-                  value={formData.name}
+                  value={formData.name || ''}
                   onChange={handleChange('name')}
                   disabled={!editMode}
                   variant={editMode ? "outlined" : "filled"}
@@ -123,11 +123,11 @@ export default function PropertyInfoPanel({ property, editMode, onSave, loading 
                 />
               </Grid>
               
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>建物種別</InputLabel>
                   <Select
-                    value={formData.build_type_id}
+                    value={buildTypes.some(type => type.id === formData.build_type_id) ? formData.build_type_id : ''}
                     label="建物種別"
                     onChange={handleChange('build_type_id')}
                     disabled={!editMode}
@@ -142,12 +142,12 @@ export default function PropertyInfoPanel({ property, editMode, onSave, loading 
                 </FormControl>
               </Grid>
               
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   label="築年数"
                   type="number"
-                  value={formData.biru_age}
+                  value={formData.biru_age || ''}
                   onChange={handleChange('biru_age')}
                   disabled={!editMode}
                   variant={editMode ? "outlined" : "filled"}
@@ -158,13 +158,13 @@ export default function PropertyInfoPanel({ property, editMode, onSave, loading 
                 />
               </Grid>
               
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   label="説明・備考"
                   multiline
                   rows={3}
-                  value={formData.memo}
+                  value={formData.memo || ''}
                   onChange={handleChange('memo')}
                   disabled={!editMode}
                   variant={editMode ? "outlined" : "filled"}
@@ -187,11 +187,11 @@ export default function PropertyInfoPanel({ property, editMode, onSave, loading 
           </AccordionSummary>
           <AccordionDetails sx={{ pt: 0 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={4}>
+              <Grid size={{ xs: 12, sm: 4 }}>
                 <TextField
                   fullWidth
                   label="郵便番号"
-                  value={formData.postcode}
+                  value={formData.postcode || ''}
                   onChange={handleChange('postcode')}
                   disabled={!editMode}
                   variant={editMode ? "outlined" : "filled"}
@@ -200,11 +200,11 @@ export default function PropertyInfoPanel({ property, editMode, onSave, loading 
                 />
               </Grid>
               
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   label="住所"
-                  value={formData.address}
+                  value={formData.address || ''}
                   onChange={handleChange('address')}
                   disabled={!editMode}
                   variant={editMode ? "outlined" : "filled"}
@@ -213,7 +213,7 @@ export default function PropertyInfoPanel({ property, editMode, onSave, loading 
               </Grid>
               
               {property.latitude && property.longitude && (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1, bgcolor: 'grey.50', borderRadius: 1 }}>
                     <LocationIcon color="action" fontSize="small" />
                     <Typography variant="body2" color="text.secondary">
@@ -239,7 +239,7 @@ export default function PropertyInfoPanel({ property, editMode, onSave, loading 
           <AccordionDetails sx={{ pt: 0 }}>
             <Grid container spacing={2}>
               {property.shop_name && (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography variant="body2" color="text.secondary">担当営業所:</Typography>
                     <Chip label={property.shop_name} size="small" color="primary" variant="outlined" />
@@ -248,7 +248,7 @@ export default function PropertyInfoPanel({ property, editMode, onSave, loading 
               )}
               
               {property.code && (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography variant="body2" color="text.secondary">物件コード:</Typography>
                     <Typography variant="body2" fontFamily="monospace">{property.code}</Typography>
@@ -256,7 +256,7 @@ export default function PropertyInfoPanel({ property, editMode, onSave, loading 
                 </Grid>
               )}
               
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CalendarIcon color="action" fontSize="small" />
                   <Typography variant="body2" color="text.secondary">

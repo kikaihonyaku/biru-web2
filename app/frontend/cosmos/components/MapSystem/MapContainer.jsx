@@ -141,9 +141,9 @@ export default function MapContainer({
           </div>
         </div>
         <div style="margin-top: 16px; display: flex; gap: 8px;">
-          <button onclick="window.selectProperty(${property.id})" 
+          <button onclick="window.openPropertyDetail(${property.id})" 
                   style="background-color: #0066cc; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; flex: 1;">
-            詳細を表示
+            詳細ページを開く
           </button>
           <button onclick="window.showStreetView(${property.latitude}, ${property.longitude})" 
                   style="background: #f5f5f5; color: #666; border: 1px solid #ddd; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 500;">
@@ -209,7 +209,12 @@ export default function MapContainer({
       // 表示用のデータを決定（APIデータがあればそれを使用、なければサンプルデータ）
       const currentProperties = properties.length > 0 ? properties : sampleProperties;
       
-      // グローバル関数として物件選択関数を設定
+      // 詳細ページを新しいタブで開く関数
+      window.openPropertyDetail = (propertyId) => {
+        window.open(`/property/${propertyId}`, '_blank');
+      };
+
+      // グローバル関数として物件選択関数を設定（右パネル用）
       window.selectProperty = (propertyId) => {
         const property = currentProperties.find(p => p.id === propertyId);
         if (property && onMarkerSelect) {
@@ -241,6 +246,11 @@ export default function MapContainer({
             
             // 地図の中心を移動
             panToLocation({ lat: property.latitude, lng: property.longitude }, 15);
+            
+            // 右パネルに詳細情報を表示（MapSystemで自動的に右パネルも開かれる）
+            if (onMarkerSelect) {
+              onMarkerSelect('property', property);
+            }
           }
         });
       });
@@ -253,6 +263,9 @@ export default function MapContainer({
     }
 
     return () => {
+      if (window.openPropertyDetail) {
+        delete window.openPropertyDetail;
+      }
       if (window.selectProperty) {
         delete window.selectProperty;
       }

@@ -50,6 +50,8 @@ export default function MapSystem() {
 
   const handleMarkerSelect = (type, data) => {
     setSelectedObject({ type, data });
+    // 右パネルが既に表示されている場合のみ情報を更新
+    // 非表示の場合は表示状態を変更しない
   };
 
   const handleSearch = async (conditions) => {

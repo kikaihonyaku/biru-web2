@@ -99,8 +99,8 @@ class Api::V1::RoomsController < ApplicationController
         :name, :code, :rent, :room_layout_id, :room_status_id, :room_type_id, :manage_type_id, :trust_id
       )
       
-      # 空室状態を設定（room_status_idが'1'（空室）の場合はfree_state=true）
-      room_params[:free_state] = room_params[:room_status_id] == '1' ? true : false
+      # 空室状態を設定（room_status_idが'status_1'（空室）の場合はfree_state=true）
+      room_params[:free_state] = room_params[:room_status_id] == 'status_1' ? true : false
       room_params[:building_id] = @property.id
       room_params[:building_cd] = @property.code.to_i if @property.code # building_cdも設定
       
@@ -156,7 +156,7 @@ class Api::V1::RoomsController < ApplicationController
       )
       
       # 空室状態を設定
-      room_params[:free_state] = room_params[:room_status_id] == '1' ? true : false
+      room_params[:free_state] = room_params[:room_status_id] == 'status_1' ? true : false
       
       if @room.update(room_params)
         render json: {

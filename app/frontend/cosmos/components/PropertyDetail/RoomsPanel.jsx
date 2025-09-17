@@ -60,25 +60,25 @@ export default function RoomsPanel({ propertyId, rooms, onRoomsUpdate, editMode 
   
   // 部屋ステータスの定義
   const roomStatuses = [
-    { id: '1', name: '空室', color: 'success', icon: <CheckCircleIcon /> },
-    { id: '2', name: '入居中', color: 'default', icon: <HomeIcon /> },
-    { id: '3', name: '入居予定', color: 'warning', icon: <HourglassEmptyIcon /> },
-    { id: '4', name: '退去予定', color: 'error', icon: <CancelIcon /> },
+    { id: 'status_1', name: '空室', color: 'success', icon: <CheckCircleIcon /> },
+    { id: 'status_2', name: '入居中', color: 'default', icon: <HomeIcon /> },
+    { id: 'status_3', name: '入居予定', color: 'warning', icon: <HourglassEmptyIcon /> },
+    { id: 'status_4', name: '退去予定', color: 'error', icon: <CancelIcon /> },
   ];
   
   // 間取りの定義
   const roomLayouts = [
-    { id: '1', name: '1R' },
-    { id: '2', name: '1K' },
-    { id: '3', name: '1DK' },
-    { id: '4', name: '1LDK' },
-    { id: '5', name: '2K' },
-    { id: '6', name: '2DK' },
-    { id: '7', name: '2LDK' },
-    { id: '8', name: '3K' },
-    { id: '9', name: '3DK' },
-    { id: '10', name: '3LDK' },
-    { id: '11', name: '4LDK以上' },
+    { id: 'layout_1', name: '1R' },
+    { id: 'layout_2', name: '1K' },
+    { id: 'layout_3', name: '1DK' },
+    { id: 'layout_4', name: '1LDK' },
+    { id: 'layout_5', name: '2K' },
+    { id: 'layout_6', name: '2DK' },
+    { id: 'layout_7', name: '2LDK' },
+    { id: 'layout_8', name: '3K' },
+    { id: 'layout_9', name: '3DK' },
+    { id: 'layout_10', name: '3LDK' },
+    { id: 'layout_11', name: '4LDK以上' },
   ];
   
   const handleAddRoom = () => {
@@ -88,7 +88,7 @@ export default function RoomsPanel({ propertyId, rooms, onRoomsUpdate, editMode 
       code: '',
       room_layout_id: '',
       rent: '',
-      room_status_id: '1',
+      room_status_id: 'status_1',
       room_type_id: '',
       manage_type_id: '',
       trust_id: '',
@@ -103,7 +103,7 @@ export default function RoomsPanel({ propertyId, rooms, onRoomsUpdate, editMode 
       code: room.code || '',
       room_layout_id: room.room_layout_id || '',
       rent: room.rent || '',
-      room_status_id: room.room_status_id || '1',
+      room_status_id: room.room_status_id || 'status_1',
       room_type_id: room.room_type_id || '',
       manage_type_id: room.manage_type_id || '',
       trust_id: room.trust_id || '',
