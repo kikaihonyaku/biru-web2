@@ -52,7 +52,10 @@ export default function PropertyMapPanel({ property, onLocationUpdate }) {
   
   const loadGoogleMaps = () => {
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
+    // Viteでは import.meta.env を使用。APIキーがない場合はライブラリのみ読み込み
+    const apiKey = import.meta.env?.VITE_GOOGLE_MAPS_API_KEY || '';
+    const keyParam = apiKey ? `key=${apiKey}&` : '';
+    script.src = `https://maps.googleapis.com/maps/api/js?${keyParam}libraries=places`;
     script.async = true;
     script.defer = true;
     script.onload = initializeMap;
@@ -65,6 +68,13 @@ export default function PropertyMapPanel({ property, onLocationUpdate }) {
   
   const initializeMap = () => {
     try {
+      // Google Maps APIが読み込まれているかチェック
+      if (!window.google || !window.google.maps) {
+        console.error('Google Maps APIが読み込まれていません');
+        setLoading(false);
+        return;
+      }
+
       const defaultLat = property?.latitude || 35.6762;
       const defaultLng = property?.longitude || 139.6503;
       
@@ -243,7 +253,7 @@ export default function PropertyMapPanel({ property, onLocationUpdate }) {
         }}
       />
       
-      {/* ローディング */}
+      {/* ローディング・エラー表示 */}
       {loading && (
         <Box sx={{
           position: 'absolute',
@@ -251,8 +261,42 @@ export default function PropertyMapPanel({ property, onLocationUpdate }) {
           left: '50%',
           transform: 'translate(-50%, -50%)',
           zIndex: 2,
+          textAlign: 'center',
         }}>
           <CircularProgress />
+          <Typography variant="body2" sx={{ mt: 2 }}>
+            地図を読み込んでいます...
+          </Typography>
+        </Box>
+      )}
+      
+      {/* APIキー未設定の場合の表示 */}
+      {!loading && !mapLoaded && (
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 2,
+          textAlign: 'center',
+          p: 2,
+        }}>
+          <Typography variant="h6" color="text.secondary" gutterBottom>
+            地図表示
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Google Maps APIキーが設定されていません
+          </Typography>
+          {property?.latitude && property?.longitude && (
+            <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
+              <Typography variant="body2">
+                緯度: {property.latitude.toFixed(6)}
+              </Typography>
+              <Typography variant="body2">
+                経度: {property.longitude.toFixed(6)}
+              </Typography>
+            </Box>
+          )}
         </Box>
       )}
       
